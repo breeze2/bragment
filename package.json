@@ -1,0 +1,89 @@
+{
+  "name": "bragment",
+  "version": "0.0.0",
+  "private": true,
+  "description": "An Electron app for marking down the fragments of your thought.",
+  "author": {
+    "email": "805511939@qq.com",
+    "name": "breezelin",
+    "url": "https://github.com/breeze2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/breeze2/bragment.git"
+  },
+  "main": "public/electron.js",
+  "dependencies": {},
+  "scripts": {
+    "prebuild": "yarn build:main",
+    "preelectron:dev": "yarn build:main",
+    "commit": "git-cz",
+    "commit:amend": "git commit --amend --no-edit",
+    "format": "pretty-quick --staged",
+    "lint": "tslint src/**/*.ts src/**/*.tsx -e src/serviceWorker.ts",
+    "electron:dev": "cross-env BROWSER=none concurrently \"yarn start\" \"wait-on http://127.0.0.1:3000 && electron .\"",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "build:main": "yarn webpack --config ./main/webpack.config.js",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn check --integrity && yarn format && yarn lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "commitizen": "^4.0.3",
+    "concurrently": "^5.0.2",
+    "cross-env": "^6.0.3",
+    "customize-cra": "^0.9.1",
+    "cz-conventional-changelog": "3.0.2",
+    "electron": "^7.1.7",
+    "husky": "^3.1.0",
+    "node-sass": "^4.13.0",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "react": "^16.12.0",
+    "react-app-rewired": "^2.1.5",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.1.0",
+    "typescript": "~3.7.2",
+    "wait-on": "^3.3.0",
+    "webpack-cli": "^3.3.10"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
