@@ -1,7 +1,7 @@
-const { override } = require('customize-cra');
+const { fixBabelImports, override } = require('customize-cra');
 
 const setWebpackTarget = config => {
-  config.target = 'electron-renderer';
+  // config.target = 'electron-renderer';
   return config;
 };
 
@@ -16,7 +16,15 @@ const setWebpackPublicPath = config => {
 
 module.exports = {
   // The Webpack config to use when compiling your react app for development or production.
-  webpack: override(setWebpackPublicPath, setWebpackTarget),
+  webpack: override(
+    fixBabelImports('import', {
+      libraryName: 'antd',
+      libraryDirectory: 'es',
+      style: 'css',
+    }),
+    setWebpackPublicPath,
+    setWebpackTarget
+  ),
   // The Jest config to use when running your jest tests - note that the normal rewires do not
   // work here.
   jest: function(config) {
