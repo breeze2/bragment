@@ -1,24 +1,21 @@
 import React from 'react';
-import './App.css';
-import logo from './logo.svg';
+import { IntlProvider } from 'react-intl';
+import { useSelector } from 'react-redux';
+import { Route, Switch } from 'react-router-dom';
+import { defaultLanguage, messages } from './locales';
+import HomePage from './pages/Home';
+import { IReduxState } from './redux/types';
 
 const App: React.FC = () => {
+  const language = useSelector((state: IReduxState) => state.common.language);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
+    <IntlProvider
+      locale={language}
+      messages={messages[language] || messages[defaultLanguage]}>
+      <Switch>
+        <Route path="/" component={HomePage} />
+      </Switch>
+    </IntlProvider>
   );
 };
 
