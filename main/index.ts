@@ -9,6 +9,8 @@ function createWindow() {
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
+      // TODO: only dev mode
+      webSecurity: false,
       webviewTag: true,
     },
 

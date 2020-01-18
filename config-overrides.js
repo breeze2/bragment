@@ -1,7 +1,7 @@
 const { fixBabelImports, override } = require('customize-cra');
 
 const setWebpackTarget = config => {
-  // config.target = 'electron-renderer';
+  config.target = 'electron-renderer';
   return config;
 };
 

@@ -1,0 +1,24 @@
+.overlay {
+  .content {
+    width: 152px;
+  }
+  :global(.ant-popover-inner-content) {
+    padding-bottom: 0;
+  }
+  :global(.anticon) {
+    cursor: pointer;
+    margin-bottom: 12px;
+    padding: 5px;
+    border-radius: 2px;
+    background-size: cover;
+    svg {
+      color: var(--none-color);
+    }
+    &.selected {
+      box-shadow: 0 0 4px currentColor;
+      svg {
+        color: var(--white);
+      }
+    }
+  }
+}

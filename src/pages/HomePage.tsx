@@ -1,13 +1,14 @@
 import { Layout } from 'antd';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Header from '../../components/Header';
-import Navigator from '../../components/Navigator';
-import BoardsPage from '../Boards';
-import SettingsPage from '../Settings';
-import styles from './styles.module.scss';
+import Header from '../components/Header';
+import Navigator from '../components/Navigator';
+import BoardsPage from './BoardsPage';
+import SettingsPage from './SettingsPage';
 
-const Home: React.FC = React.memo(() => {
+import styles from '../styles/HomePage.module.scss';
+
+const HomePage: React.FC = React.memo(() => {
   return (
     <Layout className={styles.layout}>
       <Navigator />
@@ -22,4 +23,4 @@ const Home: React.FC = React.memo(() => {
   );
 });
 
-export default Home;
+export default HomePage;
