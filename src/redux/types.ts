@@ -18,7 +18,9 @@ export interface ICommonState {
 }
 
 export interface IBoardState {
+  all: Immutable.List<IBoard>;
   createDialogVisible: boolean;
+  current: IBoard | null;
   recentList: Immutable.List<IBoard>;
   personalList: Immutable.List<IBoard>;
   standbyBgColors: Immutable.List<string>;

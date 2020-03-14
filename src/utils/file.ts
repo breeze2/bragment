@@ -11,7 +11,7 @@ export function joinPaths(...dirs: string[]) {
   return path.join(...dirs);
 }
 
-export function formatFileUrl(pathname: string) {
+export function formatFileURL(pathname: string) {
   return url.format({
     pathname,
     protocol: 'file',

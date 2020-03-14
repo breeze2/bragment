@@ -2,3 +2,19 @@
   height: 100%;
   width: 100%;
 }
+
+.content {
+  padding: 18px 24px 36px 24px;
+}
+
+.boardList {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.boardListLabel {
+  display: block;
+  span {
+    margin-right: 4px;
+  }
+}

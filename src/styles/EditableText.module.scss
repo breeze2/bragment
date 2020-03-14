@@ -1,0 +1,13 @@
+.wrapper {
+  font-size: 14px;
+  &.showText .input,
+  &.showInput .text {
+    display: none;
+  }
+}
+.text {
+  font-size: 14px;
+  line-height: 24px;
+  padding: 4px 12px;
+  margin-bottom: 0;
+}
