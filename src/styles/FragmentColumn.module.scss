@@ -1,0 +1,22 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+}
+.header {
+  flex: 0 0 auto;
+  display: block;
+  width: 266px;
+  padding: 8px 16px 8px 16px;
+  font-size: 16px;
+  line-height: 24px;
+  background-color: var(--fregment-background-color);
+  .titleInput:not(:focus) {
+    border-color: var(--fregment-background-color);
+    background-color: var(--fregment-background-color);
+    cursor: inherit;
+  }
+}
+.title {
+  font-weight: bold;
+}

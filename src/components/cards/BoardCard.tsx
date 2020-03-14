@@ -1,9 +1,9 @@
 import { Card } from 'antd';
 import React from 'react';
+import { getBoardImageURL } from '../../api/board';
 import { IBoard } from '../../api/types';
 
 import styles from '../../styles/BoardCard.module.scss';
-import { formatFileUrl, joinPaths } from '../../utils';
 
 interface IBoardCardProps {
   board: IBoard;
@@ -15,9 +15,7 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo(props => {
   const style: React.CSSProperties = {
     backgroundColor: color,
     backgroundImage:
-      path && image
-        ? `url(${formatFileUrl(joinPaths(path, image))})`
-        : undefined,
+      path && image ? `url(${getBoardImageURL(board)})` : undefined,
   };
 
   return (

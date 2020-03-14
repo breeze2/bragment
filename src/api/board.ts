@@ -1,12 +1,34 @@
-import { asyncCopyImage, asyncCreateDirectory, joinPaths } from '../utils';
+import {
+  asyncCopyImage,
+  asyncCreateDirectory,
+  formatFileURL,
+  joinPaths,
+} from '../utils';
 import db from './dexie';
-import { IBoard } from './types';
+import { IBoard, IPartial } from './types';
+
+export function getBoardImageURL(board: IBoard) {
+  return formatFileURL(joinPaths(board.path, board.image));
+}
 
 export async function asyncSelectAllBoards() {
   const result = await db.boards
     .orderBy('created_at')
     .reverse()
     .toArray();
+  return result;
+}
+
+export async function asyncFetchBoard(id: number) {
+  const result = await db.boards.get(id);
+  return result;
+}
+
+export async function asyncUpdateBoard(id: number, changes: IPartial<IBoard>) {
+  const result = await db.boards.update(id, {
+    ...changes,
+    updated_at: Date.now(),
+  });
   return result;
 }
 
@@ -22,17 +44,17 @@ export async function asyncInsertNewBoard(board: IBoard) {
     board.image = background;
   }
 
-  // 3. check existed
+  // step3: check existed
   const { path } = board;
   const existed = await db.boards.get({ path });
 
-  // 4. save in dexie db
+  // step4: save in dexie db
   if (existed && existed.id) {
-    await db.boards.update(existed.id, {
+    asyncUpdateBoard(existed.id, {
       color: board.color,
       image: board.image,
       title: board.title,
-      updated_at: board.updated_at,
+      type: board.type,
     });
     return existed;
   }

@@ -15,10 +15,8 @@ function createWindow() {
     },
 
     frame: !isWindows,
-    height: 600,
     minHeight: 600,
     minWidth: 960,
-    width: 960,
 
     icon: path.join(__dirname, './icons/png/256x256.png'),
     show: false,
@@ -37,6 +35,7 @@ function createWindow() {
   });
   mainWindow.once('ready-to-show', () => {
     if (mainWindow) {
+      mainWindow.maximize();
       mainWindow.show();
     }
   });

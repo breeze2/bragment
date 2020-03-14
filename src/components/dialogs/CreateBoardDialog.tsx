@@ -4,7 +4,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { openDirectoryDialog } from '../../api/electron';
-import { IBoard } from '../../api/types';
+import { IBoard, EBoardType } from '../../api/types';
 import {
   asyncCreateBoard,
   asyncDispatch,
@@ -73,10 +73,12 @@ const CreateBoardCard: React.FC = React.memo(() => {
     const now = Date.now();
     const newBoard: IBoard = {
       color: '',
-      created_at: now,
       image: '',
       path,
       title: title.trim(),
+      type: EBoardType.PERSON,
+      checked_at: now,
+      created_at: now,
       updated_at: now,
     };
     if (realBackground.image) {
@@ -133,7 +135,7 @@ const CreateBoardCard: React.FC = React.memo(() => {
             addonAfter={<FolderOutlined />}
           />
         </div>
-        <div className={styles.action}>
+        <div>
           <Button
             type="primary"
             onClick={handleCreate}

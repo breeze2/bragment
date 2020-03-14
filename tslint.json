@@ -2,7 +2,7 @@
   "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
   "rules": {
     "jsx-boolean-value": [true, "never"],
-    "no-console": [true, "debug", "log", "time", "timeEnd", "trace"],
+    "no-console": [true, "debug", "log", "trace"],
     "no-empty-interface": false,
     "no-eval": true,
     "no-implicit-dependencies": false,
@@ -15,6 +15,7 @@
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
+    "ordered-imports": true,
     "variable-name": [
       true,
       "allow-leading-underscore",
