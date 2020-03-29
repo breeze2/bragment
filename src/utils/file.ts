@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import request from 'request-promise-native';
 import * as url from 'url';
 
 export function getPathBasename(dir: string) {
@@ -19,8 +18,16 @@ export function formatFileURL(pathname: string) {
   });
 }
 
+export function checkFileExisted(pathname: string) {
+  return fs.existsSync(pathname);
+}
+
+export function asyncStatFile(pathname: string) {
+  return fs.promises.stat(pathname);
+}
+
 export function asyncCreateDirectory(dir: string) {
-  return fs.promises.mkdir(dir, { recursive: true }).catch(err => {
+  return fs.promises.mkdir(dir, { recursive: true }).catch((err) => {
     if (err && err.code !== 'EEXIST') {
       throw err;
     }
@@ -29,25 +36,25 @@ export function asyncCreateDirectory(dir: string) {
   });
 }
 
-export async function asyncCopyImage(source: string, destination: string) {
-  let body: Buffer | undefined;
+export async function asyncRenameFile(oldPath: string, newPath: string) {
+  return fs.promises.rename(oldPath, newPath);
+}
+
+export async function asyncDownloadImage(
+  source: string,
+  destination: string,
+  neverThrow = true
+) {
   try {
-    if (source.substr(0, 4) === 'http') {
-      // download from server
-      body = await request({
-        encoding: null,
-        method: 'GET',
-        uri: source,
-      });
-    } else {
-      // read from local
-      // TODO:
-    }
-    if (body) {
-      await fs.promises.writeFile(destination, body, 'binary');
-    }
+    const response = await fetch(source);
+    const ab = await response.arrayBuffer();
+    await fs.promises.writeFile(destination, Buffer.from(ab), 'binary');
   } catch (err) {
     // TODO: send to sentry
-    console.error(err);
+    if (neverThrow) {
+      console.error(err);
+    } else {
+      throw err;
+    }
   }
 }

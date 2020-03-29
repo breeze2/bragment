@@ -4,8 +4,12 @@ import React from 'react';
 import styles from '../styles/EditableText.module.scss';
 
 export interface IEditableTextProps {
-  defaultValue: string;
+  defaultValue?: string;
+  inputValue?: string;
+  textValue?: string | React.ReactNode;
+  className?: string;
   placeholder?: string;
+  editAddon?: React.ReactNode;
   onChange?: (value: string) => void;
 }
 
@@ -14,26 +18,27 @@ export enum EEditableTextStatus {
   EDITING,
 }
 
-const EditableText: React.FC<IEditableTextProps> = React.memo(props => {
+const EditableText: React.FC<IEditableTextProps> = React.memo((props) => {
+  const defaultInputValue = props.inputValue || props.defaultValue || '';
   const [status, setStatus] = React.useState<EEditableTextStatus>(
     EEditableTextStatus.NORMAL
   );
-  const [value, setValue] = React.useState(props.defaultValue);
+  const [inputValue, setInputValue] = React.useState(defaultInputValue);
   const inputRef = React.useRef<Input>(null);
   const handleTextClick = () => {
-    setValue(props.defaultValue);
+    setInputValue(defaultInputValue);
     setStatus(EEditableTextStatus.EDITING);
   };
   const handleInputBlur = () => {
-    if (props.onChange) {
-      props.onChange(value);
+    if (props.onChange && inputValue !== defaultInputValue) {
+      props.onChange(inputValue);
     }
     setStatus(EEditableTextStatus.NORMAL);
   };
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
-      setValue(target.value);
+      setInputValue(target.value);
     }
   };
   React.useLayoutEffect(() => {
@@ -43,22 +48,23 @@ const EditableText: React.FC<IEditableTextProps> = React.memo(props => {
   }, [status]);
   return (
     <div
-      className={`${styles.wrapper} ${
+      className={`${styles.wrapper} ${props.className} ${
         status === EEditableTextStatus.NORMAL
           ? styles.showText
           : styles.showInput
       }`}>
       <p onClick={handleTextClick} className={styles.text}>
-        {props.defaultValue}
+        {props.textValue || props.defaultValue}
       </p>
       <Input
         ref={inputRef}
         className={styles.input}
-        value={value}
+        value={inputValue}
         placeholder={props.placeholder}
         onBlur={handleInputBlur}
         onChange={handleInputChange}
       />
+      <div className={styles.editAddon}>{props.editAddon}</div>
     </div>
   );
 });

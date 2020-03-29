@@ -31,8 +31,8 @@ code {
   --dark-font-color: rgba(0, 0, 0, 0.65);
   --light-font-color: rgba(255, 255, 255, 0.65);
 
-  --creating-board-bg-color: #e0e0e0;
-  --creating-board-font-color: rgba(0, 0, 0, 0.45);
+  --board-card-creator-bg-color: #e0e0e0;
+  --board-card-creator-font-color: rgba(0, 0, 0, 0.45);
 
   --fregment-background-color: rgb(235, 236, 240);
 }

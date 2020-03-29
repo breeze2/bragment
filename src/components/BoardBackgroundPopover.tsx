@@ -5,29 +5,31 @@ import { useSelector } from 'react-redux';
 import { IUnsplashPhoto } from '../api/types';
 import { IReduxState } from '../redux/types';
 
-import styles from '../styles/SelectBoardBgPopover.module.scss';
+import styles from '../styles/BoardBackgroundPopover.module.scss';
 
-export interface ISelectedValue {
+export interface ISelectedBackground {
   color?: string;
   image?: IUnsplashPhoto;
 }
 
-interface ISelectBoardBgPopoverProps {
-  defaultValue: ISelectedValue;
-  onChange?: (value: ISelectedValue) => void;
+interface IBoardBackgroundPopoverProps {
+  defaultValue: ISelectedBackground;
+  children?: React.ReactElement;
+  onChange?: (value: ISelectedBackground) => void;
 }
 
-const SelectBoardBgPopover: React.FC<ISelectBoardBgPopoverProps> = React.memo(
-  props => {
+const BoardBackgroundPopover: React.FC<IBoardBackgroundPopoverProps> = React.memo(
+  (props) => {
     const colors = useSelector(
       (state: IReduxState) => state.board.standbyBgColors
     );
     const images = useSelector(
       (state: IReduxState) => state.board.standbyBgImages
     );
-    const [selectedValue, setSelectedValue] = React.useState<ISelectedValue>(
-      {}
-    );
+    const [selectedValue, setSelectedValue] = React.useState<
+      ISelectedBackground
+    >({});
+
     const handleContentClick = (
       event: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
@@ -37,7 +39,7 @@ const SelectBoardBgPopover: React.FC<ISelectBoardBgPopoverProps> = React.memo(
         return;
       }
       const index = icon.dataset.index;
-      const value: ISelectedValue = {};
+      const value: ISelectedBackground = {};
       if (icon.dataset.type === 'color') {
         const color = colors.get(parseInt(index, 10));
         if (color && color !== selectedValue.color) {
@@ -111,4 +113,4 @@ const SelectBoardBgPopover: React.FC<ISelectBoardBgPopoverProps> = React.memo(
   }
 );
 
-export default SelectBoardBgPopover;
+export default BoardBackgroundPopover;

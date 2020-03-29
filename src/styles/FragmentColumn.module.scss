@@ -2,21 +2,97 @@
   display: flex;
   flex-direction: column;
   margin: 8px;
+  border-radius: 2px;
+  overflow: hidden;
 }
+
+// header
 .header {
   flex: 0 0 auto;
   display: block;
+  position: relative;
   width: 266px;
-  padding: 8px 16px 8px 16px;
-  font-size: 16px;
-  line-height: 24px;
+  height: 48px;
+  padding: 8px;
+  font-size: 14px;
+  line-height: 32px;
   background-color: var(--fregment-background-color);
-  .titleInput:not(:focus) {
-    border-color: var(--fregment-background-color);
-    background-color: var(--fregment-background-color);
-    cursor: inherit;
+  .title {
+    display: inline-block;
+    width: calc(100% - 32px);
+  }
+  .title.textMode .input,
+  .title.inputMode .text {
+    display: none;
+  }
+  .text {
+    padding: 0 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .text,
+  .input {
+    font-weight: bold;
+  }
+  .addon {
+    cursor: pointer;
+    display: inline-block;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    line-height: 24px;
+    font-size: 16px;
   }
 }
-.title {
-  font-weight: bold;
+
+// creator
+.creator {
+  width: 266px;
+  border-radius: 2px;
+  padding: 8px;
+  overflow: hidden;
+  .label {
+    padding: 0 4px;
+    height: 32px;
+    line-height: 32px;
+  }
+  &.labelMode {
+    height: 48px;
+    background: linear-gradient(
+      60deg,
+      rgba(46, 62, 79, 0.7),
+      rgba(46, 62, 79, 0.7)
+    );
+    &:hover {
+      background: linear-gradient(
+        60deg,
+        rgba(46, 62, 79, 0.7),
+        rgba(46, 62, 79, 1)
+      );
+    }
+    .field {
+      display: none;
+    }
+  }
+  &.fieldMode {
+    height: 88px;
+    background-color: var(--fregment-background-color);
+    .label {
+      display: none;
+    }
+  }
+
+  .actions {
+    margin-top: 8px;
+  }
+  .close {
+    margin-left: 12px;
+  }
+
+  transition: height 0.3s, background 0.2s;
 }

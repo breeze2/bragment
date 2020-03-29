@@ -1,11 +1,21 @@
 const path = require('path');
 const webpack = require('webpack');
 
+function setExternal(name) {
+  return (context, request, callback) => {
+    if (request === name) {
+      return callback(null, 'commonjs ' + request);
+    }
+    callback();
+  };
+}
+
 module.exports = {
   context: path.resolve(__dirname),
   devtool: 'source-map', // only for sentry
   entry: './index.ts',
   mode: 'production',
+  externals: [setExternal('electron-devtools-installer')],
   module: {
     rules: [
       {
