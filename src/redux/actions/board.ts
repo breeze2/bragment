@@ -6,6 +6,7 @@ export const ASYNC_FETCH_ALL_BOARDS = 'ASYNC_FETCH_ALL_BOARDS';
 export const ASYNC_FETCH_BOARD_BG_IMAGES = 'ASYNC_FETCH_BOARD_BG_IMAGES';
 export const ASYNC_FETCH_CURRENT_BOARD = 'ASYNC_FETCH_CURRENT_BOARD';
 export const INSERT_BOARD = 'INSERT_BOARD';
+export const UPDATE_BOARD = 'UPDATE_BOARD';
 export const SET_CREATE_BOARD_DIALOG_VISIBLE =
   'SET_CREATE_BOARD_DIALOG_VISIBLE';
 export const SET_ALL_BOARD_LIST = 'SET_ALL_BOARD_LIST';
@@ -42,6 +43,11 @@ export type IInsertBoardAction = IReduxAction<
   { index: number; board: IBoard }
 >;
 
+export type IUpdateBoardAction = IReduxAction<
+  typeof UPDATE_BOARD,
+  { index: number; board: IBoard }
+>;
+
 export type ISetCreateBoardVisibleAction = IReduxAction<
   typeof SET_CREATE_BOARD_DIALOG_VISIBLE,
   { visible: boolean }
@@ -72,7 +78,8 @@ export type IBoardAction =
   | ISetCreateBoardVisibleAction
   | ISetCurrentBoardAction
   | ISetAllBoardListAction
-  | ISetStandbyBoardBgImagesAction;
+  | ISetStandbyBoardBgImagesAction
+  | IUpdateBoardAction;
 
 export const asyncAddRecentBoard = (
   board: IBoard
@@ -109,6 +116,14 @@ export const insertBoard = (
 ): IInsertBoardAction => ({
   payload: { index, board },
   type: INSERT_BOARD,
+});
+
+export const updateBoard = (
+  index: number,
+  board: IBoard
+): IUpdateBoardAction => ({
+  payload: { index, board },
+  type: UPDATE_BOARD,
 });
 
 export const setCreateBoardDialogVisible = (

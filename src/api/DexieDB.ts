@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import { IBoard } from './types';
 
-export class Database extends Dexie {
+export default class DexieDB extends Dexie {
   public boards: Dexie.Table<IBoard, number>;
   constructor() {
     super('bragment');
@@ -11,6 +11,3 @@ export class Database extends Dexie {
     this.boards = this.table('boards');
   }
 }
-
-const db = new Database();
-export default db;

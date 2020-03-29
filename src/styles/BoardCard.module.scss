@@ -1,13 +1,27 @@
 .wrapper {
+  position: relative;
   height: 96px;
   opacity: 0.82;
-  background-size: cover;
-  background-repeat: no-repeat;
   &:hover {
     opacity: 1;
+    .background {
+      transform: scale(1.1);
+    }
   }
-  :global(.ant-card-body) {
+  .background {
     height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.4s;
+  }
+  .frontground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     padding: 8px;
   }
   .title {
@@ -22,20 +36,31 @@
     margin: 6px 0 8px 0;
     color: var(--white);
   }
+  :global {
+    .ant-card-body {
+      height: 100%;
+      padding: 0px;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+  }
 }
-.creating {
+
+.creator {
   opacity: 1;
   height: 96px;
-  background-color: var(--creating-board-bg-color);
-  :global(.ant-card-body) {
-    height: 100%;
-    padding: 37px 8px;
-  }
+  background-color: var(--board-card-creator-bg-color);
   .title {
     font-size: 14px;
     font-weight: normal;
-    color: var(--creating-board-font-color);
+    color: var(--board-card-creator-font-color);
     text-align: center;
     margin: 0;
+  }
+  :global {
+    .ant-card-body {
+      height: 100%;
+      padding: 37px 8px;
+    }
   }
 }

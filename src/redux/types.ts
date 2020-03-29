@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import { IBoard, IUnsplashPhoto } from '../api/types';
+import { IBoard, IFragmentColumn, IUnsplashPhoto } from '../api/types';
 
 export enum EAppPages {
   BOARDS = 'BOARDS',
@@ -27,14 +27,21 @@ export interface IBoardState {
   standbyBgImages: Immutable.List<IUnsplashPhoto>;
 }
 
+export interface IFragmentState {
+  columns: Immutable.List<IFragmentColumn>;
+}
+
 export type IICommonState = Immutable.Record<ICommonState> &
   Readonly<ICommonState>;
 export type IIBoardState = Immutable.Record<IBoardState> &
   Readonly<IBoardState>;
+export type IIFragmentState = Immutable.Record<IFragmentState> &
+  Readonly<IFragmentState>;
 
 export interface IReduxState {
   common: IICommonState;
   board: IIBoardState;
+  fragment: IIFragmentState;
 }
 
 export interface IReduxAction<T = any, P = any> {

@@ -1,22 +1,4 @@
-.creating {
-  :global(.ant-modal-content) {
-    border-radius: 2px;
-  }
-  :global(.ant-modal-close-x) {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-  }
-  :global(.ant-modal-close) {
-    top: 12px;
-    right: 12px;
-  }
-  :global(.ant-modal-body) {
-    padding: 0;
-    border-radius: 2px;
-    background-size: cover;
-    background-repeat: no-repeat;
-  }
+.wrapper {
   .body {
     padding: 56px 24px 28px 24px;
     border-radius: 2px;
@@ -25,6 +7,9 @@
 
   .field {
     margin-bottom: 16px;
+    input {
+      cursor: text;
+    }
   }
 
   .bgSelect {
@@ -34,23 +19,41 @@
     line-height: 32px;
   }
 
-  :global(.ant-input) {
-    border: none;
-    background-color: rgba(25, 25, 25, 0.5);
-    font-weight: bold;
-    color: var(--white);
-    &:hover {
-      background: rgba(25, 25, 25, 0.55);
-      box-shadow: none;
+  :global {
+    .ant-modal-close-x {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
     }
-    &:focus {
-      background: rgba(25, 25, 25, 0.6);
-      box-shadow: none;
+    .ant-modal-close {
+      top: 12px;
+      right: 12px;
     }
-  }
-  :global(.ant-input-group-addon) {
-    cursor: pointer;
-    border: none;
-    background-color: rgba(25, 25, 25, 0.5);
+    .ant-modal-body {
+      padding: 0;
+      border-radius: 2px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .ant-input {
+      border: none;
+      background-color: rgba(25, 25, 25, 0.5);
+      font-weight: bold;
+      color: var(--white);
+      &:hover {
+        background: rgba(25, 25, 25, 0.55);
+        box-shadow: none;
+      }
+      &:focus {
+        background: rgba(25, 25, 25, 0.6);
+        box-shadow: none;
+      }
+    }
+    .ant-input-group-addon {
+      cursor: pointer;
+      border: none;
+      background-color: rgba(25, 25, 25, 0.5);
+    }
   }
 }

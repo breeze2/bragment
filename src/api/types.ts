@@ -14,10 +14,29 @@ export interface IBoard {
   title: string;
   color: string;
   image: string;
+  archived: boolean;
   type: EBoardType;
   checked_at: number;
   created_at: number;
   updated_at: number;
+}
+
+export enum EFragmentType {
+  SNIPPET = 'SNIPPET',
+  LINK = 'LINK',
+}
+
+export interface IFragment {
+  title: string;
+  archived: boolean;
+  tags: string[];
+  type: EFragmentType;
+}
+
+export interface IFragmentColumn {
+  title: string;
+  fragments: IFragment[];
+  archived: boolean;
 }
 
 export interface IUnsplashPhoto {
@@ -33,3 +52,25 @@ export interface IUnsplashPhoto {
     regular: string;
   };
 }
+
+export interface IBragmentDB {
+  version: '1.0.0';
+  board: IBoard;
+  columns: IFragmentColumn[];
+}
+
+export const DefaultBragmentDB: IBragmentDB = {
+  version: '1.0.0',
+  board: {
+    path: '',
+    title: '',
+    color: '',
+    image: '',
+    archived: false,
+    type: EBoardType.PERSON,
+    checked_at: 0,
+    created_at: 0,
+    updated_at: 0,
+  },
+  columns: [],
+};

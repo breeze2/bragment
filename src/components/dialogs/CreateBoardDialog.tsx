@@ -4,15 +4,17 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { openDirectoryDialog } from '../../api/electron';
-import { IBoard, EBoardType } from '../../api/types';
+import { EBoardType, IBoard } from '../../api/types';
 import {
   asyncCreateBoard,
   asyncDispatch,
   setCreateBoardDialogVisible,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
-import { getPathBasename } from '../../utils';
-import SelectBoardBgPopover, { ISelectedValue } from '../SelectBoardBgPopover';
+import { getPathBasename, preloadImage } from '../../utils';
+import BoardBackgroundPopover, {
+  ISelectedBackground,
+} from '../BoardBackgroundPopover';
 
 import styles from '../../styles/BoardDialog.module.scss';
 
@@ -28,8 +30,15 @@ const CreateBoardCard: React.FC = React.memo(() => {
   const colors = useSelector(
     (state: IReduxState) => state.board.standbyBgColors
   );
+  // NOTE: preload images
+  React.useEffect(() => {
+    images.forEach((image) => {
+      preloadImage(image.urls.small);
+      preloadImage(image.urls.thumb);
+    });
+  }, [images]);
 
-  const defaultBackground: ISelectedValue = {};
+  const defaultBackground: ISelectedBackground = {};
   if (images.size > 0) {
     defaultBackground.image = images.get(0);
   } else if (colors.size > 0) {
@@ -38,7 +47,7 @@ const CreateBoardCard: React.FC = React.memo(() => {
   const [isCreating, setIsCreating] = React.useState(false);
   const [path, setPath] = React.useState('');
   const [title, setTitle] = React.useState('');
-  const [background, setBackground] = React.useState<ISelectedValue>({});
+  const [background, setBackground] = React.useState<ISelectedBackground>({});
 
   const realBackground =
     background.color || background.image ? background : defaultBackground;
@@ -53,7 +62,7 @@ const CreateBoardCard: React.FC = React.memo(() => {
   const handleClose = () => dispatch(setCreateBoardDialogVisible(false));
   const hanleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setTitle(event.target.value);
-  const handleBgSelectChange = (value: ISelectedValue) => {
+  const handleBgSelectChange = (value: ISelectedBackground) => {
     setBackground(value);
   };
   const handlePathSelect = () => {
@@ -76,6 +85,7 @@ const CreateBoardCard: React.FC = React.memo(() => {
       image: '',
       path,
       title: title.trim(),
+      archived: false,
       type: EBoardType.PERSON,
       checked_at: now,
       created_at: now,
@@ -104,7 +114,7 @@ const CreateBoardCard: React.FC = React.memo(() => {
 
   return (
     <Modal
-      className={styles.creating}
+      className={styles.wrapper}
       maskClosable={false}
       footer={null}
       visible={visible}
@@ -117,13 +127,13 @@ const CreateBoardCard: React.FC = React.memo(() => {
             onChange={hanleTitleChange}
             placeholder={f({ id: 'addBoardTitle' })}
             addonAfter={
-              <SelectBoardBgPopover
+              <BoardBackgroundPopover
                 defaultValue={defaultBackground}
                 onChange={handleBgSelectChange}>
                 <div className={styles.bgSelect}>
                   <EditOutlined />
                 </div>
-              </SelectBoardBgPopover>
+              </BoardBackgroundPopover>
             }
           />
         </div>

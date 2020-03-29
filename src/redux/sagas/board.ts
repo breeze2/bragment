@@ -1,11 +1,14 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import Immutable from 'immutable';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import {
   asyncFetchBoard,
-  asyncInsertNewBoard,
+  asyncInsertBoard,
   asyncSelectAllBoards,
+  asyncSetBoardLocally,
   asyncUpdateBoard,
 } from '../../api/board';
-import { IBoard } from '../../api/types';
+import { asyncGetFragmentColumnsLocally } from '../../api/fragment';
+import { IBoard, IFragmentColumn, IUnsplashPhoto } from '../../api/types';
 import { getRandomPhoto } from '../../api/unsplash';
 import {
   ASYNC_CREATE_BOARD,
@@ -17,13 +20,16 @@ import {
   insertBoard,
   setAllBoardList,
   setCurrentBoard,
+  setFragmentColumns,
   setStandbyBoardBgImages,
+  updateBoard,
 } from '../actions';
+import { getAllBoards } from './selectors';
 
 import { makeSagaWorkerDispatcher } from './helpers';
 
 function* fetchBoardBgImagesSaga() {
-  const images = yield call(getRandomPhoto, 4);
+  const images: IUnsplashPhoto[] = yield call(getRandomPhoto, 4);
   yield put(setStandbyBoardBgImages(images));
 }
 
@@ -35,9 +41,18 @@ function* fetchAllBoards() {
 
 function* createBoardSaga(action: IAsyncCreateBoardAction) {
   const { board } = action.payload;
-  const result = yield call(asyncInsertNewBoard, board);
-  yield put(insertBoard(0, board));
-  return result;
+  const newBoard = yield call(asyncInsertBoard, board);
+  const allBoards: Immutable.List<IBoard> = yield select(getAllBoards);
+  const index = allBoards.findIndex((oldBoard) => newBoard.id === oldBoard.id);
+  // NOTE: save in json db
+  asyncSetBoardLocally(newBoard);
+
+  if (index > -1) {
+    yield put(updateBoard(index, newBoard));
+  } else {
+    yield put(insertBoard(0, newBoard));
+  }
+  return newBoard;
 }
 
 function* fetchCurrentBoardSaga(action: IAsyncFetchCurrentBoardAction) {
@@ -46,7 +61,12 @@ function* fetchCurrentBoardSaga(action: IAsyncFetchCurrentBoardAction) {
   if (board && board.id) {
     const now = Date.now();
     board.checked_at = now;
+    const columns: IFragmentColumn[] = yield call(
+      asyncGetFragmentColumnsLocally,
+      board
+    );
     yield put(setCurrentBoard(board));
+    yield put(setFragmentColumns(columns));
     yield call(asyncUpdateBoard, board.id, { checked_at: now });
   }
 }

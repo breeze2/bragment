@@ -27,6 +27,18 @@ function createWindow() {
   if (app.isPackaged) {
     mainWindow.loadFile(path.join(__dirname, '/../build/index.html'));
   } else {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS,
+    } = require('electron-devtools-installer');
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then((name: string) => console.info(`Added Extension:  ${name}`))
+      .catch((err: any) => console.error('An error occurred: ', err));
+    installExtension(REDUX_DEVTOOLS)
+      .then((name: string) => console.info(`Added Extension:  ${name}`))
+      .catch((err: any) => console.error('An error occurred: ', err));
+
     mainWindow.loadURL('http://localhost:3000');
   }
 

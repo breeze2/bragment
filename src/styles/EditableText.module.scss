@@ -1,7 +1,8 @@
 .wrapper {
   font-size: 14px;
   &.showText .input,
-  &.showInput .text {
+  &.showInput .text,
+  &.showInput .editAddon {
     display: none;
   }
 }

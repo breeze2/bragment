@@ -1,15 +1,15 @@
 import { Card } from 'antd';
 import React from 'react';
-import { getBoardImageURL } from '../../api/board';
-import { IBoard } from '../../api/types';
+import { getBoardImageURL } from '../../../api/board';
+import { IBoard } from '../../../api/types';
 
-import styles from '../../styles/BoardCard.module.scss';
+import styles from '../../styles/FragmentCard.module.scss';
 
-interface IBoardCardProps {
+interface IFragmentCardProps {
   board: IBoard;
 }
 
-const BoardCard: React.FC<IBoardCardProps> = React.memo(props => {
+const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
   const { board } = props;
   const { color, image, path, title } = board;
   const style: React.CSSProperties = {
@@ -25,4 +25,4 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo(props => {
   );
 });
 
-export default BoardCard;
+export default FragmentCard;

@@ -6,10 +6,12 @@ import {
   INSERT_BOARD,
   ISetAllBoardListAction,
   ISetCurrentBoardAction,
+  IUpdateBoardAction,
   SET_ALL_BOARD_LIST,
   SET_CREATE_BOARD_DIALOG_VISIBLE,
   SET_CURRENT_BOARD,
   SET_STANDBY_BOARD_BG_IMAGES,
+  UPDATE_BOARD,
 } from '../actions';
 import { IBoardState, IIBoardState } from '../types';
 
@@ -37,7 +39,7 @@ function refreshAllBoards(state: IIBoardState, all: Immutable.List<IBoard>) {
     .set('all', all)
     .set(
       'personalList',
-      all.filter(board => board.type === EBoardType.PERSON)
+      all.filter((board) => board.type === EBoardType.PERSON)
     )
     .set(
       'recentList',
@@ -49,6 +51,12 @@ function handleInsertBoard(state: IIBoardState, action: IInsertBoardAction) {
   const all = state.get('all');
   const { index, board } = action.payload;
   return refreshAllBoards(state, all.splice(index, 0, board));
+}
+
+function handleUpdateBoard(state: IIBoardState, action: IUpdateBoardAction) {
+  const all = state.get('all');
+  const { index, board } = action.payload;
+  return refreshAllBoards(state, all.set(index, board));
 }
 
 function handleSetAllBoardList(
@@ -66,7 +74,7 @@ function handleSetCurrentBoard(
   let all = state.get('all');
   const current = action.payload.board;
   const index = all.findIndex(
-    board => board.id === current.id && board.path === current.path
+    (board) => board.id === current.id && board.path === current.path
   );
   all = all.setIn([index, 'checked_at'], current.checked_at);
   return state
@@ -82,6 +90,8 @@ const boardReducer = (state = initialBoardState, action: IBoardAction) => {
   switch (action.type) {
     case INSERT_BOARD:
       return handleInsertBoard(state, action);
+    case UPDATE_BOARD:
+      return handleUpdateBoard(state, action);
     case SET_CREATE_BOARD_DIALOG_VISIBLE:
       return state.set('createDialogVisible', action.payload.visible);
     case SET_CURRENT_BOARD:
