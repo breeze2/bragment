@@ -4,8 +4,8 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import BoardCard from '../../components/cards/BoardCard';
-import BoardCardCreator from '../../components/cards/BoardCard/Creator';
+import BoardCard from '../../components/BoardCard';
+import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../components/dialogs/CreateBoardDialog';
 import { asyncFetchAllBoards } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
@@ -28,7 +28,7 @@ const BoardsPage: React.FC = React.memo(() => {
 
   return (
     <Layout.Content className={styles.content}>
-      {recentList.size && (
+      {recentList.size > 0 && (
         <div className={styles.boardList}>
           <p className={styles.boardListLabel}>
             <ClockCircleOutlined />

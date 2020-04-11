@@ -74,7 +74,7 @@ export async function asyncInsertBoard(board: IBoard) {
 }
 
 // JsonDB
-export async function asyncSetBoardLocally(board: IBoard) {
+export async function asyncSaveBoardLocally(board: IBoard) {
   const file = getBoardJsonDBPath(board);
   const jsonDB = new JsonDB<IBragmentDB>(file, DefaultBragmentDB);
   await jsonDB.update((idata) => {

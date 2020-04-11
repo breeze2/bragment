@@ -1,9 +1,9 @@
 import { Card } from 'antd';
 import React from 'react';
-import { getBoardImageURL } from '../../../api/board';
-import { IBoard } from '../../../api/types';
+import { getBoardImageURL } from '../../api/board';
+import { IBoard } from '../../api/types';
 
-import styles from '../../../styles/BoardCard.module.scss';
+import styles from '../../styles/BoardCard.module.scss';
 
 interface IBoardCardProps {
   board: IBoard;

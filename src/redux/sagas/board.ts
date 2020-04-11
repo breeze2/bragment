@@ -3,8 +3,8 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import {
   asyncFetchBoard,
   asyncInsertBoard,
+  asyncSaveBoardLocally,
   asyncSelectAllBoards,
-  asyncSetBoardLocally,
   asyncUpdateBoard,
 } from '../../api/board';
 import { asyncGetFragmentColumnsLocally } from '../../api/fragment';
@@ -45,7 +45,7 @@ function* createBoardSaga(action: IAsyncCreateBoardAction) {
   const allBoards: Immutable.List<IBoard> = yield select(getAllBoards);
   const index = allBoards.findIndex((oldBoard) => newBoard.id === oldBoard.id);
   // NOTE: save in json db
-  asyncSetBoardLocally(newBoard);
+  asyncSaveBoardLocally(newBoard);
 
   if (index > -1) {
     yield put(updateBoard(index, newBoard));

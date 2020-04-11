@@ -1,0 +1,16 @@
+.wrapper {
+  margin: 0px 8px 8px 8px;
+  padding: 0;
+  .title {
+    padding: 8px;
+    margin-bottom: 0;
+  }
+  :global {
+    .ant-card-body {
+      height: 100%;
+      padding: 0px;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+  }
+}

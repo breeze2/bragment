@@ -3,20 +3,25 @@ import { Button, Input } from 'antd';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { asyncCreateFragmentColumn, asyncDispatch } from '../../redux/actions';
+import { EFragmentType } from '../../api/types';
+import { asyncCreateFragment, asyncDispatch } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
 import styles from '../../styles/FragmentColumn.module.scss';
 
-export interface IFragmentColumnCreatorProps {}
-
-enum EMode {
+export enum EMode {
   FIELD,
   LABEL,
 }
 
-const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
+interface IFragmentColumnFooterProps {
+  id: string;
+  onModeChange?: (mode: EMode) => void;
+}
+
+const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
   (props) => {
+    const { id, onModeChange } = props;
     const { formatMessage: f } = useIntl();
     const dispatch = useDispatch();
     const [mode, setMode] = React.useState(EMode.LABEL);
@@ -34,18 +39,23 @@ const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
         return;
       }
       setSubmitting(true);
-      asyncDispatch(dispatch, asyncCreateFragmentColumn(currentBoard, title))
+      asyncDispatch(
+        dispatch,
+        asyncCreateFragment(currentBoard, id, title, EFragmentType.GIST, [])
+      )
         .catch(() => {
           // EXCEPTION:
         })
         .finally(() => {
           inputRef.current?.setValue('');
-          setLabelMode();
           setSubmitting(false);
+          setLabelMode();
         });
     };
-
     React.useLayoutEffect(() => {
+      if (onModeChange) {
+        onModeChange(mode);
+      }
       if (mode === EMode.FIELD) {
         inputRef.current?.focus();
         const handleBodyMouseUp = (event: MouseEvent) => {
@@ -62,32 +72,36 @@ const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
           document.body.removeEventListener('mouseup', handleBodyMouseUp);
         };
       }
-    }, [mode]);
-    console.info('FragmentColumnCreator rendering...');
+    }, [mode, onModeChange]);
+    console.info('FragmentColumnFooter rendering...');
     return (
-      <div
-        ref={selfRef}
-        className={`${styles.creator} ${
-          mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
-        }`}>
-        <div className={styles.label} onClick={setFieldMode}>
-          <PlusOutlined /> {f({ id: 'addAnotherColumn' })}
-        </div>
-        <div className={styles.field}>
-          <Input
-            ref={inputRef}
-            placeholder={f({ id: 'inputColumnTitle' })}
-            onPressEnter={handleSubmit}
-          />
-          <div className={styles.actions}>
-            <Button type="primary" loading={submitting} onClick={handleSubmit}>
-              {f({ id: 'addColumn' })}
-            </Button>
-            <CloseOutlined
-              style={{ display: submitting ? 'none' : undefined }}
-              className={styles.close}
-              onClick={setLabelMode}
+      <div ref={selfRef} className={styles.footer}>
+        <div
+          className={`${styles.creator} ${
+            mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
+          }`}>
+          <div className={styles.label} onClick={setFieldMode}>
+            <PlusOutlined /> {f({ id: 'addAnotherCard' })}
+          </div>
+          <div className={styles.field}>
+            <Input
+              ref={inputRef}
+              placeholder={f({ id: 'inputCardTitle' })}
+              onPressEnter={handleSubmit}
             />
+            <div className={styles.actions}>
+              <Button
+                type="primary"
+                loading={submitting}
+                onClick={handleSubmit}>
+                {f({ id: 'addCard' })}
+              </Button>
+              <CloseOutlined
+                style={{ display: submitting ? 'none' : undefined }}
+                className={styles.close}
+                onClick={setLabelMode}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -95,4 +109,4 @@ const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
   }
 );
 
-export default FragmentColumnCreator;
+export default FragmentColumnFooter;
