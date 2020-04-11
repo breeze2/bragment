@@ -2,6 +2,9 @@ import { Layout } from 'antd';
 import React from 'react';
 import {
   DragDropContext,
+  DraggableLocation,
+  DragStart,
+  DragUpdate,
   Droppable,
   DroppableProvided,
   DroppableStateSnapshot,
@@ -16,19 +19,78 @@ import FragmentColumnCreator from '../components/FragmentColumn/Creator';
 import Header from '../components/Header';
 import { usePrevious } from '../components/hooks';
 import {
+  asyncDispatch,
   asyncFetchCurrentBoard,
+  asyncMoveFragment,
   asyncSaveFragmentColumnsData,
   moveFragmentColumn,
 } from '../redux/actions';
 import { IReduxState } from '../redux/types';
+import { debounce } from '../utils';
 
 import styles from '../styles/BoardPage.module.scss';
+import FragmentCardStyles from '../styles/FragmentCard.module.scss';
+import FragmentColumnStyles from '../styles/FragmentColumn.module.scss';
 
 interface IBoardPageRouteParams {
   id?: string;
 }
 
 interface IBoardPageProps extends RouteComponentProps<IBoardPageRouteParams> {}
+
+function getColumnHeight(column: HTMLDivElement) {
+  const height = Array.prototype.reduce.call(
+    column.children,
+    (prev, el) => prev + el.offsetHeight,
+    0
+  );
+  return (height || column.offsetHeight || 0) as number;
+}
+
+function getColumnPlacehodlerStyle(
+  from: DraggableLocation,
+  to: DraggableLocation
+) {
+  const fromIndex = from.index;
+  const toIndex = to.index;
+  const fromColumn: HTMLDivElement | null = document.querySelector(
+    `.${FragmentColumnStyles.layout}:nth-of-type(${fromIndex + 2})`
+  );
+  if (fromColumn) {
+    const style = `display: block; height: ${getColumnHeight(
+      fromColumn
+    )}px; left: ${266 * toIndex + 16 * toIndex + 16}px; top: 16px`;
+    return style;
+  }
+}
+
+function getCardPlaceholderStyle(
+  from: DraggableLocation,
+  to: DraggableLocation
+) {
+  const fromColumn = document.querySelector(
+    `.${FragmentColumnStyles.container}[data-rbd-droppable-id=${from.droppableId}]`
+  ) as HTMLDivElement;
+  const toColumn = document.querySelector(
+    `.${FragmentColumnStyles.container}[data-rbd-droppable-id=${to.droppableId}]`
+  ) as HTMLDivElement;
+  if (fromColumn && toColumn) {
+    const toCards = toColumn.querySelectorAll(`.${FragmentCardStyles.wrapper}`);
+    const fromCard: HTMLDivElement | null = fromColumn.querySelector(
+      `.${FragmentCardStyles.wrapper}:nth-of-type(${from.index + 2})`
+    );
+    if (fromCard) {
+      const top = Array.prototype.slice.call(toCards, 0, to.index).reduce(
+        (value, card) => {
+          return value + card.offsetHeight + 8;
+        },
+        toCards.length === 0 ? 6 : 0
+      );
+      const style = `display: block; height: ${fromCard.offsetHeight}px; position: absolute; top: ${top}px; left: 8px`;
+      return style;
+    }
+  }
+}
 
 const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
   const boardID = props.match.params.id;
@@ -38,12 +100,89 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
   );
   const prevProps = usePrevious({ boardID, fragmentColumns });
   const dispatch = useDispatch();
+
   const handleDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-    if (destination) {
+    const { destination, source, type } = result;
+    if (type === 'COLUMN' && destination) {
+      document
+        .querySelector(`.${styles.columnPlaceholder}`)
+        ?.removeAttribute('style');
       dispatch(moveFragmentColumn(source.index, destination.index));
     }
+    if (type === 'CARD' && destination) {
+      document
+        .querySelectorAll(`.${FragmentColumnStyles.cardPlaceholder}`)
+        .forEach((el) => el.removeAttribute('style'));
+      asyncDispatch(
+        dispatch,
+        asyncMoveFragment(
+          source.droppableId,
+          source.index,
+          destination.droppableId,
+          destination.index
+        )
+      ).catch((error) => {
+        // TODO: show error tips
+        console.error(error);
+      });
+    }
   };
+  const handleDragStart = (initial: DragStart) => {
+    const { type } = initial;
+    if (type === 'CARD') {
+      const style = getCardPlaceholderStyle(initial.source, initial.source);
+      if (style) {
+        const placeholder: HTMLDivElement | null = document.querySelector(
+          `.${FragmentColumnStyles.container}[data-rbd-droppable-id=${initial.source.droppableId}] .${FragmentColumnStyles.cardPlaceholder}`
+        );
+        if (placeholder) {
+          placeholder.setAttribute('style', style);
+        }
+      }
+    } else if (type === 'COLUMN') {
+      const style = getColumnPlacehodlerStyle(initial.source, initial.source);
+      if (style) {
+        document
+          .querySelector(`.${styles.columnPlaceholder}`)
+          ?.setAttribute('style', style);
+      }
+    }
+  };
+  const handleDragUpdate = debounce((initial: DragUpdate) => {
+    if (initial.destination) {
+      if (initial.type === 'COLUMN') {
+        const style = getColumnPlacehodlerStyle(
+          initial.source,
+          initial.destination
+        );
+        const placeholder: HTMLDivElement | null = document.querySelector(
+          `.${styles.columnPlaceholder}`
+        );
+        if (style) {
+          placeholder?.setAttribute('style', style);
+        } else {
+          placeholder?.removeAttribute('style');
+        }
+      }
+    }
+    if (initial.type === 'CARD') {
+      document
+        .querySelectorAll(`.${FragmentColumnStyles.cardPlaceholder}`)
+        .forEach((el) => el.removeAttribute('style'));
+      if (initial.destination) {
+        const style = getCardPlaceholderStyle(
+          initial.source,
+          initial.destination
+        );
+        if (style) {
+          const placeholder: HTMLDivElement | null = document.querySelector(
+            `.${FragmentColumnStyles.container}[data-rbd-droppable-id=${initial.destination.droppableId}] .${FragmentColumnStyles.cardPlaceholder}`
+          );
+          placeholder?.setAttribute('style', style);
+        }
+      }
+    }
+  }, 20);
   React.useEffect(() => {
     if (boardID) {
       dispatch(asyncFetchCurrentBoard(parseInt(boardID, 10)));
@@ -76,20 +215,28 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
       <Header />
       <Layout.Content>
         <Scrollbars autoHide>
-          <DragDropContext onDragEnd={handleDragEnd}>
+          <DragDropContext
+            onDragStart={handleDragStart}
+            onDragUpdate={handleDragUpdate}
+            onDragEnd={handleDragEnd}>
             <Droppable droppableId="board" type="COLUMN" direction="horizontal">
               {(
                 provided: DroppableProvided,
                 snapshot: DroppableStateSnapshot
               ) => (
                 <div
-                  className={styles.container}
                   ref={provided.innerRef}
+                  className={`${styles.container} ${
+                    snapshot.isDraggingOver ? styles.draggingOver : ''
+                  }`}
                   {...provided.droppableProps}>
+                  <div className={styles.columnPlaceholder} />
                   {fragmentColumns.map((column, index) => (
                     <FragmentColumn
+                      id={column.id}
                       key={column.title}
                       index={index}
+                      fragments={column.fragments}
                       title={column.title}
                     />
                   ))}

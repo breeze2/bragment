@@ -20,3 +20,17 @@
   flex-direction: column;
   margin: 8px;
 }
+
+.columnPlaceholder {
+  position: absolute;
+  display: none;
+  width: 266px;
+  border-radius: 2px;
+  background-color: rgba(46, 62, 79, 0.45);
+}
+
+.container:not(.draggingOver) {
+  .columnPlaceholder {
+    display: none !important;
+  }
+}

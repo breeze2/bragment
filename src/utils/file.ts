@@ -26,6 +26,18 @@ export function asyncStatFile(pathname: string) {
   return fs.promises.stat(pathname);
 }
 
+export function asyncMoveFile(from: string, to: string) {
+  return fs.promises.rename(from, to);
+}
+
+export function moveFile(from: string, to: string) {
+  return fs.renameSync(from, to);
+}
+
+export function asyncCreateFile(pathname: string, content: string = '') {
+  return fs.promises.writeFile(pathname, content);
+}
+
 export function asyncCreateDirectory(dir: string) {
   return fs.promises.mkdir(dir, { recursive: true }).catch((err) => {
     if (err && err.code !== 'EEXIST') {

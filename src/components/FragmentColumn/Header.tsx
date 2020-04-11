@@ -13,6 +13,7 @@ import {
 import styles from '../../styles/FragmentColumn.module.scss';
 
 interface IFragmentColumnHeaderProps {
+  id: string;
   title: string;
   dragHandle?: DraggableProvidedDragHandleProps;
 }
@@ -24,30 +25,31 @@ enum EMode {
 
 const FragmentColumnHeader: React.FC<IFragmentColumnHeaderProps> = React.memo(
   (props) => {
-    const { title, dragHandle } = props;
-    const [mode, setMode] = React.useState(EMode.TEXT);
+    const { id, title, dragHandle } = props;
     const inputRef = React.useRef<Input>(null);
+    const [mode, setMode] = React.useState(EMode.TEXT);
     const { formatMessage: f } = useIntl();
     const dispatch = useDispatch();
     const setInputMode = () => setMode(EMode.INPUT);
     const setTextMode = () => setMode(EMode.TEXT);
+
     const handleTitleBlur = () => {
       inputRef.current?.setValue(title);
       setTextMode();
     };
-    // const a = useSelector((state: IReduxState) => state.fragment.columns);
+
     const handleTitleSubmit = () => {
       const newTitle = inputRef.current?.state.value;
       if (!newTitle || newTitle === title) {
         return;
       }
-      asyncDispatch(dispatch, asyncRenameFragmentColumn(title, newTitle)).catch(
+      asyncDispatch(dispatch, asyncRenameFragmentColumn(id, newTitle)).catch(
         (error: EFragmentActionError) => {
           switch (error) {
             case EFragmentActionError.EXISTED_ARCHIVE:
             case EFragmentActionError.EXISTED_DIRECTORY:
             case EFragmentActionError.EXISTED_FILE:
-              message.error(f({ id: 'aColumnWithTheSameTitleAlreadyExists' }));
+              message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
               break;
             default:
               break;

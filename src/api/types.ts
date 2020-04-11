@@ -22,11 +22,14 @@ export interface IBoard {
 }
 
 export enum EFragmentType {
-  SNIPPET = 'SNIPPET',
+  GIST = 'GIST',
   LINK = 'LINK',
+  POST = 'POST',
+  TODO = 'TODO',
 }
 
 export interface IFragment {
+  id: string;
   title: string;
   archived: boolean;
   tags: string[];
@@ -34,6 +37,7 @@ export interface IFragment {
 }
 
 export interface IFragmentColumn {
+  id: string;
   title: string;
   fragments: IFragment[];
   archived: boolean;

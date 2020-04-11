@@ -1,9 +1,41 @@
-.column {
+.layout {
   display: flex;
   flex-direction: column;
   margin: 8px;
   border-radius: 2px;
   overflow: hidden;
+  &.empty {
+    .header {
+      height: 42px;
+      padding-bottom: 2px;
+    }
+  }
+}
+.content {
+  flex: 0 1 auto;
+  background-color: var(--fregment-background-color);
+}
+
+.container {
+  position: relative;
+  min-height: 6px;
+}
+
+.empty .container {
+  padding-top: 6px;
+}
+
+.cardPlaceholder {
+  display: none;
+  width: 250px;
+  border-radius: 2px;
+  background-color: rgba(46, 62, 79, 0.45);
+}
+
+.container:not(.draggingOver) {
+  .cardPlaceholder {
+    display: none !important;
+  }
 }
 
 // header
@@ -60,16 +92,17 @@
     padding: 0 4px;
     height: 32px;
     line-height: 32px;
+    color: var(--light-font-color);
   }
   &.labelMode {
     height: 48px;
-    background: linear-gradient(
+    background-image: linear-gradient(
       60deg,
       rgba(46, 62, 79, 0.7),
       rgba(46, 62, 79, 0.7)
     );
     &:hover {
-      background: linear-gradient(
+      background-image: linear-gradient(
         60deg,
         rgba(46, 62, 79, 0.7),
         rgba(46, 62, 79, 1)
@@ -95,4 +128,42 @@
   }
 
   transition: height 0.3s, background 0.2s;
+}
+
+// footer
+.footer {
+  flex: 0 0 auto;
+  display: block;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    background-image: radial-gradient(
+      circle at 100% 100%,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 70.71%,
+      var(--fregment-background-color) 70.71%
+    );
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 2px;
+    background-image: radial-gradient(
+      circle at 0% 100%,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 70.71%,
+      var(--fregment-background-color) 70.71%
+    );
+  }
+  .creator {
+    width: 100%;
+  }
 }
