@@ -3,22 +3,22 @@ import { Button, Input, Modal } from 'antd';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { openDirectoryDialog } from '../../api/electron';
-import { EBoardType, IBoard } from '../../api/types';
+import { openDirectoryDialog } from '../api/electron';
+import { EBoardType, IBoard } from '../api/types';
+import BoardBackgroundPopover, {
+  ISelectedBackground,
+} from '../components/BoardBackgroundPopover';
 import {
   asyncCreateBoard,
   asyncDispatch,
   setCreateBoardDialogVisible,
-} from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
-import { getPathBasename, preloadImage } from '../../utils';
-import BoardBackgroundPopover, {
-  ISelectedBackground,
-} from '../BoardBackgroundPopover';
+} from '../redux/actions';
+import { IReduxState } from '../redux/types';
+import { getPathBasename, preloadImage } from '../utils';
 
-import styles from '../../styles/BoardDialog.module.scss';
+import styles from '../styles/BoardDialog.module.scss';
 
-const CreateBoardCard: React.FC = React.memo(() => {
+const CreateBoardDialog: React.FC = React.memo(() => {
   const { formatMessage: f } = useIntl();
   const dispatch = useDispatch();
   const visible = useSelector(
@@ -159,4 +159,4 @@ const CreateBoardCard: React.FC = React.memo(() => {
   );
 });
 
-export default CreateBoardCard;
+export default CreateBoardDialog;

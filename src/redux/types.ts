@@ -1,12 +1,17 @@
 import Immutable from 'immutable';
-import { IBoard, IFragmentColumn, IUnsplashPhoto } from '../api/types';
+import {
+  IBoard,
+  IFragment,
+  IFragmentColumn,
+  IUnsplashPhoto,
+} from '../api/types';
 
-export enum EAppPages {
+export enum EAppPage {
   BOARDS = 'BOARDS',
   SETTINGS = 'SETTINGS',
 }
 
-export enum EAppThemes {
+export enum EAppTheme {
   DARK = 'DARK',
   LIGHT = 'LIGHT',
 }
@@ -14,7 +19,7 @@ export enum EAppThemes {
 export interface ICommonState {
   language: string;
   onLine: boolean;
-  theme: EAppThemes;
+  theme: EAppTheme;
 }
 
 export interface IBoardState {
@@ -29,6 +34,7 @@ export interface IBoardState {
 
 export interface IFragmentState {
   columns: Immutable.List<IFragmentColumn>;
+  current: IFragment | null;
 }
 
 export type IICommonState = Immutable.Record<ICommonState> &

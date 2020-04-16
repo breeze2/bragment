@@ -14,11 +14,13 @@ import {
   PUSH_FRAGMENT_COLUMN,
   RENAME_FRAGMENT_COLUMN,
   SET_FRAGMENT_COLUMNS,
+  SET_CURRENT_FRAGMENT,
 } from '../actions';
 import { IFragmentState, IIFragmentState } from '../types';
 
 const initialFragmentState = Immutable.Record<IFragmentState>({
   columns: Immutable.List<IFragmentColumn>([]),
+  current: null,
 })();
 
 function handleMoveFragment(
@@ -134,6 +136,8 @@ const fragmentReducer = (
         'columns',
         Immutable.List<IFragmentColumn>(action.payload.columns)
       );
+    case SET_CURRENT_FRAGMENT:
+      return state.set('current', action.payload.current);
     case MOVE_FRAGMENT:
       return handleMoveFragment(state, action);
     case PUSH_FRAGMENT:

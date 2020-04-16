@@ -10,7 +10,7 @@ import {
 import { Scrollbars } from 'react-custom-scrollbars';
 import { IFragment } from '../../api/types';
 import FragmentCard from '../FragmentCard';
-import Footer, { EMode } from './Footer';
+import Footer, { EMode as EFooterMode } from './Footer';
 import Header from './Header';
 
 import styles from '../../styles/FragmentColumn.module.scss';
@@ -27,8 +27,8 @@ const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = React.useState(
     'calc(100vh - 192px)'
   );
-  const handleFooterModeChange = (mode: EMode) => {
-    if (mode === EMode.LABEL) {
+  const handleFooterModeChange = (mode: EFooterMode) => {
+    if (mode === EFooterMode.LABEL) {
       setScrollbarMaxHeight('calc(100vh - 192px)');
     } else {
       setScrollbarMaxHeight('calc(100vh - 232px)');
@@ -70,10 +70,9 @@ const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
                   <div className={styles.cardPlaceholder} />
                   {fragments.map((fragment, index) => (
                     <FragmentCard
-                      id={fragment.id}
+                      fragment={fragment}
                       index={index}
                       key={fragment.id}
-                      title={fragment.title}
                     />
                   ))}
                   {dropProvided.placeholder}
