@@ -1,4 +1,4 @@
-import { EAppThemes, IReduxAction } from '../types';
+import { EAppTheme, IReduxAction } from '../types';
 
 export const SET_APP_LANGUAGE = 'SET_APP_LANGUAGE';
 export const SET_APP_ON_LINE = 'SET_APP_ON_LINE';
@@ -15,7 +15,7 @@ export type ISetAppOnLineAction = IReduxAction<
 >;
 export type ISetAppThemeAction = IReduxAction<
   typeof SET_APP_THEME,
-  { theme: EAppThemes }
+  { theme: EAppTheme }
 >;
 
 export type ICommonAction =
@@ -33,7 +33,7 @@ export const setAppOnLine = (onLine: boolean): ISetAppOnLineAction => ({
   type: SET_APP_ON_LINE,
 });
 
-export const setAppTheme = (theme: EAppThemes): ISetAppThemeAction => ({
+export const setAppTheme = (theme: EAppTheme): ISetAppThemeAction => ({
   payload: { theme },
   type: SET_APP_THEME,
 });

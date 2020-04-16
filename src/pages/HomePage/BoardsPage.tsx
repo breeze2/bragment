@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
-import CreateBoardDialog from '../../components/dialogs/CreateBoardDialog';
+import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import { asyncFetchAllBoards } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 

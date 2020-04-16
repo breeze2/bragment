@@ -18,6 +18,7 @@ import FragmentColumn from '../components/FragmentColumn';
 import FragmentColumnCreator from '../components/FragmentColumn/Creator';
 import Header from '../components/Header';
 import { usePrevious } from '../components/hooks';
+import GistFormDialog from '../dialogs/GistFormDialog';
 import {
   asyncDispatch,
   asyncFetchCurrentBoard,
@@ -249,6 +250,7 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
             </Droppable>
           </DragDropContext>
         </Scrollbars>
+        <GistFormDialog />
       </Layout.Content>
     </Layout>
   );

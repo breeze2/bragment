@@ -20,6 +20,7 @@ export const ASYNC_RENAME_FRAGMENT_COLUMN = 'ASYNC_RENAME_FRAGMENT_COLUMN';
 export const ASYNC_SAVE_FRAGMENT_COLUMNS_DATA =
   'ASYNC_SAVE_FRAGMENT_COLUMNS_DATA';
 export const SET_FRAGMENT_COLUMNS = 'SET_FRAGMENT_COLUMNS';
+export const SET_CURRENT_FRAGMENT = 'SET_CURRENT_FRAGMENT';
 export const PUSH_FRAGMENT = 'PUSH_FRAGMENT';
 export const PUSH_FRAGMENT_COLUMN = 'PUSH_FRAGMENT_COLUMN';
 export const MOVE_FRAGMENT = 'MOVE_FRAGMENT';
@@ -29,6 +30,11 @@ export const RENAME_FRAGMENT_COLUMN = 'RENAME_FRAGMENT_COLUMN';
 export type ISetFragmentColumnsAction = IReduxAction<
   typeof SET_FRAGMENT_COLUMNS,
   { columns: IFragmentColumn[] }
+>;
+
+export type ISetCurrentFragmentAction = IReduxAction<
+  typeof SET_CURRENT_FRAGMENT,
+  { current: IFragment | null }
 >;
 
 export type IPushFragmentAction = IReduxAction<
@@ -114,6 +120,7 @@ export type IFragmentAction =
   | IPushFragmentColumnAction
   | IMoveFragmentColumnAction
   | IRenameFragmentColumnAction
+  | ISetCurrentFragmentAction
   | ISetFragmentColumnsAction;
 
 export const asyncCreateFragment = (
@@ -156,6 +163,13 @@ export const asyncRenameFragmentColumn = (
 export const asyncSaveFragmentColumnsData = (): IAsyncSaveFragmentColumnsDataAction => ({
   payload: undefined,
   type: ASYNC_SAVE_FRAGMENT_COLUMNS_DATA,
+});
+
+export const setCurrentFragment = (
+  current: IFragment | null
+): ISetCurrentFragmentAction => ({
+  payload: { current },
+  type: SET_CURRENT_FRAGMENT,
 });
 
 export const setFragmentColumns = (

@@ -3,20 +3,20 @@ import { Layout, Menu } from 'antd';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { EAppPages } from '../redux/types';
+import { EAppPage } from '../redux/types';
 
 const Navigator: React.FC = React.memo(() => {
   const { formatMessage: f } = useIntl();
   return (
     <Layout.Sider theme={'light'}>
       <Menu>
-        <Menu.Item key={EAppPages.BOARDS}>
+        <Menu.Item key={EAppPage.BOARDS}>
           <Link to="/boards">
             <ProjectOutlined />
             {f({ id: 'boards' })}
           </Link>
         </Menu.Item>
-        <Menu.Item key={EAppPages.SETTINGS}>
+        <Menu.Item key={EAppPage.SETTINGS}>
           <Link to="/settings">
             <SettingOutlined />
             {f({ id: 'settings' })}

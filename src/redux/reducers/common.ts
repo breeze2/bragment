@@ -5,12 +5,12 @@ import {
   SET_APP_ON_LINE,
   SET_APP_THEME,
 } from '../actions';
-import { EAppThemes, ICommonState } from '../types';
+import { EAppTheme, ICommonState } from '../types';
 
 const LANGUAGE = 'LANGUAGE';
 const defaultLanguage =
   window.localStorage.getItem(LANGUAGE) || navigator.language;
-const defaultTheme = EAppThemes.LIGHT;
+const defaultTheme = EAppTheme.LIGHT;
 
 const initialCommonState = Immutable.Record<ICommonState>({
   language: defaultLanguage,
