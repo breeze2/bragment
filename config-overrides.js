@@ -3,7 +3,11 @@ const {
   fixBabelImports,
   override,
 } = require('customize-cra');
+const dotenv = require('dotenv');
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
+const webpack = require('webpack');
+
+dotenv.config();
 
 const setWebpackTarget = (config) => {
   config.target = 'electron-renderer';
@@ -18,6 +22,13 @@ const setWebpackPublicPath = (config) => {
   }
   return config;
 };
+
+const setEnv = new webpack.DefinePlugin({
+  'process.env.UNSPLASH_ACCESSKEY': JSON.stringify(
+    process.env.UNSPLASH_ACCESSKEY
+  ),
+  'process.env.UNSPLASH_SECRET': JSON.stringify(process.env.UNSPLASH_SECRET),
+});
 
 const monacoEditorPlugin = new MonacoEditorWebpackPlugin({
   filename: '[name].worker.js',
@@ -139,6 +150,7 @@ module.exports = {
     }),
     setWebpackPublicPath,
     setWebpackTarget,
+    addWebpackPlugin(setEnv),
     addWebpackPlugin(monacoEditorPlugin)
   ),
   // The Jest config to use when running your jest tests - note that the normal rewires do not
