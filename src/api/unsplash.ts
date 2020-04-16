@@ -2,8 +2,8 @@ import Unsplash, { toJson } from 'unsplash-js';
 import { IUnsplashPhoto } from './types';
 
 const unsplash = new Unsplash({
-  accessKey: 'c74a14663141cce0f901fdc3cb99c1a2c49ada0f4910c96e7f99079afd3c595f',
-  secret: '',
+  accessKey: process.env.UNSPLASH_ACCESSKEY || '',
+  secret: process.env.UNSPLASH_SECRET || '',
 });
 
 export async function getRandomPhoto(count: number = 4) {
