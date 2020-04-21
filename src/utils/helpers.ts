@@ -36,3 +36,7 @@ export function insertArrayItem<T>(list: T[], item: T, index: number) {
     }
   });
 }
+
+export function renew<T>(current: T, next: T): T {
+  return { ...current, ...next };
+}

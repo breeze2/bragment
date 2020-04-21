@@ -1,31 +1,35 @@
-import Immutable from 'immutable';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 import {
   asyncFetchBoard,
   asyncInsertBoard,
-  asyncSaveBoardLocally,
-  asyncSelectAllBoards,
-  asyncUpdateBoard,
+  asyncSelectPersonalBoards,
 } from '../../api/board';
-import { asyncGetFragmentColumnsLocally } from '../../api/fragment';
-import { IBoard, IFragmentColumn, IUnsplashPhoto } from '../../api/types';
+import {
+  IBoard,
+  IFragmentCard,
+  IFragmentColumn,
+  IUnsplashPhoto,
+} from '../../api/types';
 import { getRandomPhoto } from '../../api/unsplash';
 import {
   ASYNC_CREATE_BOARD,
-  ASYNC_FETCH_ALL_BOARDS,
   ASYNC_FETCH_BOARD_BG_IMAGES,
   ASYNC_FETCH_CURRENT_BOARD,
+  ASYNC_FETCH_PERSONAL_BOARDS,
   IAsyncCreateBoardAction,
   IAsyncFetchCurrentBoardAction,
   insertBoard,
-  setAllBoardList,
   setCurrentBoard,
-  setFragmentColumns,
+  setFragmentCardMap,
+  setFragmentColumnMap,
+  setPersonalBoardList,
   setStandbyBoardBgImages,
-  updateBoard,
 } from '../actions';
-import { getAllBoards } from './selectors';
 
+import {
+  asyncFetchFragmentCardMap,
+  asyncFetchFragmentColumnMap,
+} from '../../api/fragment';
 import { makeSagaWorkerDispatcher } from './helpers';
 
 function* fetchBoardBgImagesSaga() {
@@ -33,47 +37,73 @@ function* fetchBoardBgImagesSaga() {
   yield put(setStandbyBoardBgImages(images));
 }
 
-function* fetchAllBoards() {
-  const boards: IBoard[] = yield call(asyncSelectAllBoards);
-  yield put(setAllBoardList(boards));
+function* fetchPersonalBoards() {
+  // TODO: get user id
+  const userId = '1';
+  const boards: IBoard[] = yield call(asyncSelectPersonalBoards, userId);
+  yield put(setPersonalBoardList(boards));
   return boards;
 }
 
 function* createBoardSaga(action: IAsyncCreateBoardAction) {
-  const { board } = action.payload;
-  const newBoard = yield call(asyncInsertBoard, board);
-  const allBoards: Immutable.List<IBoard> = yield select(getAllBoards);
-  const index = allBoards.findIndex((oldBoard) => newBoard.id === oldBoard.id);
-  // NOTE: save in json db
-  asyncSaveBoardLocally(newBoard);
-
-  if (index > -1) {
-    yield put(updateBoard(index, newBoard));
-  } else {
-    yield put(insertBoard(0, newBoard));
+  const { board: options } = action.payload;
+  // TODO: get user id
+  options.userId = '1';
+  const board: IBoard | undefined = yield call(asyncInsertBoard, options);
+  if (board) {
+    yield put(insertBoard(0, board));
   }
-  return newBoard;
+}
+
+function* fetchBoardSaga(boardId: string) {
+  const board = yield call(asyncFetchBoard, boardId);
+  yield put(setCurrentBoard(board));
+  return board;
+}
+
+function* fetchBoardCardMapSaga(boardId: string) {
+  const cardMap = yield call(asyncFetchFragmentCardMap, boardId);
+  yield put(setFragmentCardMap(cardMap));
+  return cardMap;
+}
+
+function* fetchBoardColumnMapSaga(boardId: string) {
+  const columnMap = yield call(asyncFetchFragmentColumnMap, boardId);
+  yield put(setFragmentColumnMap(columnMap));
+  return columnMap;
 }
 
 function* fetchCurrentBoardSaga(action: IAsyncFetchCurrentBoardAction) {
-  const { boardID } = action.payload;
-  const board: IBoard | undefined = yield call(asyncFetchBoard, boardID);
-  if (board && board.id) {
-    const now = Date.now();
-    board.checked_at = now;
-    const columns: IFragmentColumn[] = yield call(
-      asyncGetFragmentColumnsLocally,
-      board
-    );
-    yield put(setCurrentBoard(board));
-    yield put(setFragmentColumns(columns));
-    yield call(asyncUpdateBoard, board.id, { checked_at: now });
+  const { id } = action.payload;
+  const {
+    board,
+    cardMap,
+    columnMap,
+  }: {
+    board: IBoard;
+    cardMap: Map<string, IFragmentCard>;
+    columnMap: Map<string, IFragmentColumn>;
+  } = yield all({
+    board: call(fetchBoardSaga, id),
+    cardMap: call(fetchBoardCardMapSaga, id),
+    columnMap: call(fetchBoardColumnMapSaga, id),
+  });
+  if (board.columnOrder.length < columnMap.size) {
+    // TODO: do something
+  }
+  if (
+    Array.from(columnMap.keys()).reduce((prev, key) => {
+      const column = columnMap.get(key);
+      return prev + (column ? column.cardOrder.length : 0);
+    }, 0) < cardMap.size
+  ) {
+    // TODO: do something
   }
 }
 
 const dispatcher = makeSagaWorkerDispatcher({
   [ASYNC_CREATE_BOARD]: createBoardSaga,
-  [ASYNC_FETCH_ALL_BOARDS]: fetchAllBoards,
+  [ASYNC_FETCH_PERSONAL_BOARDS]: fetchPersonalBoards,
   [ASYNC_FETCH_BOARD_BG_IMAGES]: fetchBoardBgImagesSaga,
   [ASYNC_FETCH_CURRENT_BOARD]: fetchCurrentBoardSaga,
 });
@@ -82,7 +112,7 @@ export function* watchBoardSagas() {
   yield takeEvery(
     [
       ASYNC_CREATE_BOARD,
-      ASYNC_FETCH_ALL_BOARDS,
+      ASYNC_FETCH_PERSONAL_BOARDS,
       ASYNC_FETCH_BOARD_BG_IMAGES,
       ASYNC_FETCH_CURRENT_BOARD,
     ],

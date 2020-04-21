@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import React from 'react';
-import { getBoardImageURL } from '../../api/board';
 import { IBoard } from '../../api/types';
+import { getSmallUrl } from '../../api/unsplash';
 
 import styles from '../../styles/BoardCard.module.scss';
 
@@ -11,7 +11,7 @@ interface IBoardCardProps {
 
 const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
   const { board } = props;
-  const { color, image, path, title } = board;
+  const { color, image, title } = board;
   return (
     <Card
       className={styles.wrapper}
@@ -23,8 +23,7 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
       <div
         className={styles.background}
         style={{
-          backgroundImage:
-            path && image ? `url(${getBoardImageURL(board)})` : undefined,
+          backgroundImage: image ? `url(${getSmallUrl(image)})` : undefined,
         }}
       />
       <div className={styles.frontground}>

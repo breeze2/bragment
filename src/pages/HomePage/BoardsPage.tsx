@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
-import { asyncFetchAllBoards } from '../../redux/actions';
+import { asyncFetchPersonalBoards } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
 import styles from '../../styles/HomePage.module.scss';
@@ -23,7 +23,7 @@ const BoardsPage: React.FC = React.memo(() => {
   );
 
   React.useEffect(() => {
-    dispatch(asyncFetchAllBoards());
+    dispatch(asyncFetchPersonalBoards());
   }, [dispatch]);
 
   return (

@@ -1,9 +1,4 @@
-import {
-  EFragmentType,
-  IBoard,
-  IFragment,
-  IFragmentColumn,
-} from '../../api/types';
+import { IFragmentCard, IFragmentColumn, IPartial } from '../../api/types';
 import { IReduxAction } from '../types';
 
 export enum EFragmentActionError {
@@ -13,33 +8,42 @@ export enum EFragmentActionError {
   UNKNOWN,
 }
 
-export const ASYNC_CREATE_FRAGMENT = 'ASYNC_CREATE_FRAGMENT';
-export const ASYNC_MOVE_FRAGMENT = 'ASYNC_MOVE_FRAGMENT';
+export const ASYNC_CREATE_FRAGMENT_CARD = 'ASYNC_CREATE_FRAGMENT_CARD';
 export const ASYNC_CREATE_FRAGMENT_COLUMN = 'ASYNC_CREATE_FRAGMENT_COLUMN';
+export const ASYNC_MOVE_FRAGMENT_CARD = 'ASYNC_MOVE_FRAGMENT_CARD';
+export const ASYNC_MOVE_FRAGMENT_COLUMN = 'ASYNC_MOVE_FRAGMENT_COLUMN';
 export const ASYNC_RENAME_FRAGMENT_COLUMN = 'ASYNC_RENAME_FRAGMENT_COLUMN';
-export const ASYNC_SAVE_FRAGMENT_COLUMNS_DATA =
-  'ASYNC_SAVE_FRAGMENT_COLUMNS_DATA';
-export const SET_FRAGMENT_COLUMNS = 'SET_FRAGMENT_COLUMNS';
 export const SET_CURRENT_FRAGMENT = 'SET_CURRENT_FRAGMENT';
-export const PUSH_FRAGMENT = 'PUSH_FRAGMENT';
+export const SET_FRAGMENT_CARD_MAP = 'SET_FRAGMENT_CARD_MAP';
+export const SET_FRAGMENT_COLUMN_MAP = 'SET_FRAGMENT_COLUMN_MAP';
+export const PUSH_FRAGMENT_CARD = 'PUSH_FRAGMENT_CARD';
 export const PUSH_FRAGMENT_COLUMN = 'PUSH_FRAGMENT_COLUMN';
-export const MOVE_FRAGMENT = 'MOVE_FRAGMENT';
+export const MOVE_FRAGMENT_CARD = 'MOVE_FRAGMENT_CARD';
 export const MOVE_FRAGMENT_COLUMN = 'MOVE_FRAGMENT_COLUMN';
 export const RENAME_FRAGMENT_COLUMN = 'RENAME_FRAGMENT_COLUMN';
 
-export type ISetFragmentColumnsAction = IReduxAction<
-  typeof SET_FRAGMENT_COLUMNS,
-  { columns: IFragmentColumn[] }
+export type ISetFragmentCardMapAction = IReduxAction<
+  typeof SET_FRAGMENT_CARD_MAP,
+  {
+    cardMap: Map<string, IFragmentCard>;
+  }
+>;
+
+export type ISetFragmentColumnMapAction = IReduxAction<
+  typeof SET_FRAGMENT_COLUMN_MAP,
+  {
+    columnMap: Map<string, IFragmentColumn>;
+  }
 >;
 
 export type ISetCurrentFragmentAction = IReduxAction<
   typeof SET_CURRENT_FRAGMENT,
-  { current: IFragment | null }
+  { current: IFragmentCard | null }
 >;
 
-export type IPushFragmentAction = IReduxAction<
-  typeof PUSH_FRAGMENT,
-  { columnID: string; fragment: IFragment }
+export type IPushFragmentCardAction = IReduxAction<
+  typeof PUSH_FRAGMENT_CARD,
+  { columnId: string; card: IFragmentCard }
 >;
 
 export type IPushFragmentColumnAction = IReduxAction<
@@ -55,14 +59,13 @@ export type IMoveFragmentColumnAction = IReduxAction<
   }
 >;
 
-export type IMoveFragmentAction = IReduxAction<
-  typeof MOVE_FRAGMENT,
+export type IMoveFragmentCardAction = IReduxAction<
+  typeof MOVE_FRAGMENT_CARD,
   {
-    fromColumnID: string;
-    fromIndex: number;
-    toColumnID: string;
-    toIndex: number;
-    newID?: string;
+    fromColumnId: string;
+    fromId: string;
+    toColumnId: string;
+    toId?: string;
   }
 >;
 
@@ -74,30 +77,29 @@ export type IRenameFragmentColumnAction = IReduxAction<
   }
 >;
 
-export type IAsyncCreateFragmentAction = IReduxAction<
-  typeof ASYNC_CREATE_FRAGMENT,
+export type IAsyncCreateFragmentCardAction = IReduxAction<
+  typeof ASYNC_CREATE_FRAGMENT_CARD,
   {
-    board: IBoard;
-    columnID: string;
+    boardId: string;
+    columnId: string;
     title: string;
-    tags?: string[];
-    type: EFragmentType;
+    others?: IPartial<IFragmentCard>;
   }
 >;
 
-export type IAsyncMoveFragmentAction = IReduxAction<
-  typeof ASYNC_MOVE_FRAGMENT,
+export type IAsyncMoveFragmentCardAction = IReduxAction<
+  typeof ASYNC_MOVE_FRAGMENT_CARD,
   {
-    fromColumnID: string;
-    fromIndex: number;
-    toColumnID: string;
-    toIndex: number;
+    fromColumnId: string;
+    fromId: string;
+    toColumnId: string;
+    toId?: string;
   }
 >;
 
 export type IAsyncCreateFragmentColumnAction = IReduxAction<
   typeof ASYNC_CREATE_FRAGMENT_COLUMN,
-  { board: IBoard; title: string }
+  { boardId: string; title: string }
 >;
 
 export type IAsyncRenameFragmentColumnAction = IReduxAction<
@@ -105,50 +107,51 @@ export type IAsyncRenameFragmentColumnAction = IReduxAction<
   { id: string; title: string }
 >;
 
-export type IAsyncSaveFragmentColumnsDataAction = IReduxAction<
-  typeof ASYNC_SAVE_FRAGMENT_COLUMNS_DATA,
-  void
+export type IAsyncMoveFragmentColumnAction = IReduxAction<
+  typeof ASYNC_MOVE_FRAGMENT_COLUMN,
+  { fromId: string; toId?: string }
 >;
 
 export type IFragmentAction =
-  | IAsyncCreateFragmentAction
+  | IAsyncCreateFragmentCardAction
   | IAsyncCreateFragmentColumnAction
-  | IAsyncMoveFragmentAction
+  | IAsyncMoveFragmentCardAction
+  | IAsyncMoveFragmentColumnAction
   | IAsyncRenameFragmentColumnAction
-  | IPushFragmentAction
-  | IMoveFragmentAction
+  | IPushFragmentCardAction
+  | IMoveFragmentCardAction
   | IPushFragmentColumnAction
   | IMoveFragmentColumnAction
   | IRenameFragmentColumnAction
   | ISetCurrentFragmentAction
-  | ISetFragmentColumnsAction;
+  | ISetFragmentCardMapAction
+  | ISetFragmentColumnMapAction;
 
 export const asyncCreateFragment = (
-  board: IBoard,
-  columnID: string,
+  boardId: string,
+  columnId: string,
   title: string,
-  type: EFragmentType,
-  tags?: string[]
-): IAsyncCreateFragmentAction => ({
-  payload: { board, columnID, title, tags, type },
-  type: ASYNC_CREATE_FRAGMENT,
+  others?: IPartial<IFragmentCard>
+): IAsyncCreateFragmentCardAction => ({
+  payload: { boardId, columnId, title, others },
+  type: ASYNC_CREATE_FRAGMENT_CARD,
 });
 
-export const asyncMoveFragment = (
-  fromColumnID: string,
-  fromIndex: number,
-  toColumnID: string,
-  toIndex: number
-): IAsyncMoveFragmentAction => ({
-  payload: { fromColumnID, fromIndex, toColumnID, toIndex },
-  type: ASYNC_MOVE_FRAGMENT,
+export const asyncMoveFragmentCard = (
+  fromColumnId: string,
+  fromId: string,
+  toColumnId: string,
+  toId?: string
+): IAsyncMoveFragmentCardAction => ({
+  payload: { fromColumnId, fromId, toColumnId, toId },
+  type: ASYNC_MOVE_FRAGMENT_CARD,
 });
 
 export const asyncCreateFragmentColumn = (
-  board: IBoard,
+  boardId: string,
   title: string
 ): IAsyncCreateFragmentColumnAction => ({
-  payload: { board, title },
+  payload: { boardId, title },
   type: ASYNC_CREATE_FRAGMENT_COLUMN,
 });
 
@@ -160,31 +163,41 @@ export const asyncRenameFragmentColumn = (
   type: ASYNC_RENAME_FRAGMENT_COLUMN,
 });
 
-export const asyncSaveFragmentColumnsData = (): IAsyncSaveFragmentColumnsDataAction => ({
-  payload: undefined,
-  type: ASYNC_SAVE_FRAGMENT_COLUMNS_DATA,
+export const asyncMoveFragmentColumn = (
+  fromId: string,
+  toId: string
+): IAsyncMoveFragmentColumnAction => ({
+  payload: { fromId, toId },
+  type: ASYNC_MOVE_FRAGMENT_COLUMN,
 });
 
 export const setCurrentFragment = (
-  current: IFragment | null
+  current: IFragmentCard | null
 ): ISetCurrentFragmentAction => ({
   payload: { current },
   type: SET_CURRENT_FRAGMENT,
 });
 
-export const setFragmentColumns = (
-  columns: IFragmentColumn[]
-): ISetFragmentColumnsAction => ({
-  payload: { columns },
-  type: SET_FRAGMENT_COLUMNS,
+export const setFragmentCardMap = (
+  cardMap: Map<string, IFragmentCard>
+): ISetFragmentCardMapAction => ({
+  payload: { cardMap },
+  type: SET_FRAGMENT_CARD_MAP,
 });
 
-export const pushFragment = (
-  columnID: string,
-  fragment: IFragment
-): IPushFragmentAction => ({
-  payload: { columnID, fragment },
-  type: PUSH_FRAGMENT,
+export const setFragmentColumnMap = (
+  columnMap: Map<string, IFragmentColumn>
+): ISetFragmentColumnMapAction => ({
+  payload: { columnMap },
+  type: SET_FRAGMENT_COLUMN_MAP,
+});
+
+export const pushFragmentCard = (
+  columnId: string,
+  card: IFragmentCard
+): IPushFragmentCardAction => ({
+  payload: { columnId, card },
+  type: PUSH_FRAGMENT_CARD,
 });
 
 export const pushFragmentColumn = (
@@ -194,15 +207,14 @@ export const pushFragmentColumn = (
   type: PUSH_FRAGMENT_COLUMN,
 });
 
-export const moveFragment = (
-  fromColumnID: string,
-  fromIndex: number,
-  toColumnID: string,
-  toIndex: number,
-  newID?: string
-): IMoveFragmentAction => ({
-  payload: { fromColumnID, fromIndex, toColumnID, toIndex, newID },
-  type: MOVE_FRAGMENT,
+export const moveFragmentCard = (
+  fromColumnId: string,
+  fromId: string,
+  toColumnId: string,
+  toId?: string
+): IMoveFragmentCardAction => ({
+  payload: { fromColumnId, fromId, toColumnId, toId },
+  type: MOVE_FRAGMENT_CARD,
 });
 
 export const moveFragmentColumn = (

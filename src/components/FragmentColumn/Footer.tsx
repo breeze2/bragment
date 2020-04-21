@@ -3,7 +3,7 @@ import { Button, Input } from 'antd';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { EFragmentType } from '../../api/types';
+import { IFragmentColumn } from '../../api/types';
 import { asyncCreateFragment, asyncDispatch } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
@@ -15,13 +15,13 @@ export enum EMode {
 }
 
 interface IFragmentColumnFooterProps {
-  id: string;
+  data: IFragmentColumn;
   onModeChange?: (mode: EMode) => void;
 }
 
 const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
   (props) => {
-    const { id, onModeChange } = props;
+    const { data, onModeChange } = props;
     const { formatMessage: f } = useIntl();
     const dispatch = useDispatch();
     const [mode, setMode] = React.useState(EMode.LABEL);
@@ -35,13 +35,13 @@ const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
     const setLabelMode = () => setMode(EMode.LABEL);
     const handleSubmit = () => {
       const title = inputRef.current?.state.value;
-      if (!currentBoard || !title) {
+      if (!data.id || !currentBoard || !currentBoard.id || !title) {
         return;
       }
       setSubmitting(true);
       asyncDispatch(
         dispatch,
-        asyncCreateFragment(currentBoard, id, title, EFragmentType.GIST, [])
+        asyncCreateFragment(currentBoard.id, data.id, title)
       )
         .catch(() => {
           // EXCEPTION:
