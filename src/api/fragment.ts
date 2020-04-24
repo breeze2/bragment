@@ -1,93 +1,99 @@
-import shortid from 'shortid';
-import { asyncCreateDirectory, asyncCreateFile, joinPaths } from '../utils';
-import { getBoardJsonDBPath } from './board';
-import JsonDB from './JsonDB';
+import { v4 as uuidv4 } from 'uuid';
+import { arrayUnion, batchUpdate, firestore } from './firebase';
 import {
-  DefaultBragmentDB,
   EFragmentType,
-  IBoard,
-  IBragmentDB,
-  IFragment,
+  IFieldValueMap,
+  IFragmentCard,
   IFragmentColumn,
+  IPartial,
+  IUpdateDataGroup,
 } from './types';
 
-function getFragmentExtensionByType(type: EFragmentType) {
-  switch (type) {
-    case EFragmentType.GIST:
-      return '.gist.json';
-    default:
-      return '.md';
-  }
-}
-
-export function generateFragmentID() {
-  return shortid.generate();
-}
-
-export function getFragmentPath(
-  board: IBoard,
-  columnID: string,
-  fragment: IFragment
-) {
-  return joinPaths(
-    board.path,
-    columnID,
-    `${fragment.id}${getFragmentExtensionByType(fragment.type)}`
-  );
-}
-
-export async function asyncBuildFragment(
-  board: IBoard,
-  columnID: string,
-  title: string,
-  type: EFragmentType,
-  tags?: string[]
-) {
-  const id = generateFragmentID();
-  const fragment: IFragment = {
-    id,
-    archived: false,
-    title,
-    type,
-    tags: tags || [],
-  };
-  const pathname = getFragmentPath(board, columnID, fragment);
-  await asyncCreateFile(pathname);
-  return fragment;
-}
-
-export async function asyncBuildFragmentColumn(
-  board: IBoard,
-  id: string,
-  title: string
-) {
-  const dir = joinPaths(board.path, title);
-  await asyncCreateDirectory(dir);
-  const column: IFragmentColumn = {
-    archived: false,
-    fragments: [],
-    id,
-    title,
-  };
-  return column;
-}
-
-// JsonDB
-export async function asyncGetFragmentColumnsLocally(board: IBoard) {
-  const file = getBoardJsonDBPath(board);
-  const jsonDB = new JsonDB<IBragmentDB>(file, DefaultBragmentDB);
-  const idata = await jsonDB.fetch();
-  return idata.get('columns');
-}
-
-export async function asyncSaveFragmentColumnsLocally(
-  board: IBoard,
-  columns: IFragmentColumn[]
-) {
-  const file = getBoardJsonDBPath(board);
-  const jsonDB = new JsonDB<IBragmentDB>(file, DefaultBragmentDB);
-  await jsonDB.update((idata) => {
-    return idata.set('columns', columns);
+export async function asyncFetchFragmentCardMap(boardId: string) {
+  const querySnapshot = await firestore()
+    .collection('cards')
+    .where('boardId', '==', boardId)
+    .get();
+  const cardMap = new Map<string, IFragmentCard>();
+  querySnapshot.forEach((doc) => {
+    if (doc.exists) {
+      const card = doc.data({ serverTimestamps: 'estimate' }) as IFragmentCard;
+      cardMap.set(doc.id, card);
+    }
   });
-  await jsonDB.save();
+  return cardMap;
+}
+
+export async function asyncFetchFragmentColumnMap(boardId: string) {
+  const querySnapshot = await firestore()
+    .collection('columns')
+    .where('boardId', '==', boardId)
+    .get();
+  const columnMap = new Map<string, IFragmentColumn>();
+  querySnapshot.forEach((doc) => {
+    if (doc.exists) {
+      const column = doc.data({
+        serverTimestamps: 'estimate',
+      }) as IFragmentColumn;
+      columnMap.set(doc.id, column);
+    }
+  });
+  return columnMap;
+}
+
+export async function asyncInsertFragmentColumn(
+  boardId: string,
+  title: string
+): Promise<IFragmentColumn | undefined> {
+  const data: IFragmentColumn = {
+    id: uuidv4(),
+    boardId,
+    title,
+    cardOrder: [],
+    archived: false,
+  };
+  await firestore().collection('columns').doc(data.id).set(data);
+  return data;
+}
+
+export async function asyncInsertFragmentCard(
+  boardId: string,
+  columnId: string,
+  title: string,
+  others?: IPartial<IFragmentCard>
+) {
+  const data: IFragmentCard = {
+    id: uuidv4(),
+    boardId,
+    columnId,
+    title,
+    tags: [],
+    type: EFragmentType.GIST,
+    archived: false,
+    ...others,
+  };
+  await firestore().collection('cards').doc(data.id).set(data);
+  return data;
+}
+
+export async function asyncUpdateFragmentColumn(
+  columnId: string,
+  data: IPartial<IFragmentColumn> | IFieldValueMap
+) {
+  await firestore().collection('columns').doc(columnId).update(data);
+}
+
+export async function asyncPushFragmentColumnCardOrder(
+  columnId: string,
+  cardId: string
+) {
+  await asyncUpdateFragmentColumn(columnId, {
+    cardOrder: arrayUnion(cardId),
+  });
+}
+
+export async function asyncBatchUpdateFragmentColumns(
+  group: IUpdateDataGroup<IFragmentColumn>
+) {
+  await batchUpdate('columns', group);
 }

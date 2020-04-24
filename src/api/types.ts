@@ -1,24 +1,27 @@
+import { firestore } from 'firebase/index';
+
 export type IPartial<T> = {
   [P in keyof T]?: T[P];
 };
 
+export type IFieldValueMap = {
+  [key: string]: firestore.FieldValue;
+};
+
+export type IUpdateDataGroup<T> = {
+  id: string;
+  data: IPartial<T> | IFieldValueMap;
+}[];
+
 export enum EBoardType {
-  COMPANY = 'COMPANY',
   GROUP = 'GROUP',
-  PERSON = 'PERSON',
+  PERSONAL = 'PERSONAL',
 }
 
-export interface IBoard {
-  id?: number;
-  path: string;
-  title: string;
-  color: string;
-  image: string;
-  archived: boolean;
-  type: EBoardType;
-  checked_at: number;
-  created_at: number;
-  updated_at: number;
+export enum EBoardPolicy {
+  PRIVATE = 'PRIVATE',
+  PROTECTED = 'PROTECTED',
+  PUBLIC = 'PUBLIC',
 }
 
 export enum EFragmentType {
@@ -28,9 +31,29 @@ export enum EFragmentType {
   TODO = 'TODO',
 }
 
-export interface IFragment {
+export interface IBoard {
   id: string;
   title: string;
+  userId: string;
+  groupId?: string;
+  color?: string;
+  image?: string;
+  columnOrder: string[];
+  archived: boolean;
+  type: EBoardType;
+  policy: EBoardPolicy;
+  checkedAt: firestore.Timestamp | firestore.FieldValue;
+  createdAt: firestore.Timestamp | firestore.FieldValue;
+  updatedAt: firestore.Timestamp | firestore.FieldValue;
+}
+
+export interface IFragmentCard {
+  id: string;
+  boardId: string;
+  columnId: string;
+  title: string;
+  image?: string;
+  link?: string;
   archived: boolean;
   tags: string[];
   type: EFragmentType;
@@ -38,8 +61,9 @@ export interface IFragment {
 
 export interface IFragmentColumn {
   id: string;
+  boardId: string;
   title: string;
-  fragments: IFragment[];
+  cardOrder: string[];
   archived: boolean;
 }
 
@@ -50,31 +74,10 @@ export interface IUnsplashPhoto {
     download: string;
   };
   urls: {
+    raw: string;
     full: string;
     small: string;
     thumb: string;
     regular: string;
   };
 }
-
-export interface IBragmentDB {
-  version: '1.0.0';
-  board: IBoard;
-  columns: IFragmentColumn[];
-}
-
-export const DefaultBragmentDB: IBragmentDB = {
-  version: '1.0.0',
-  board: {
-    path: '',
-    title: '',
-    color: '',
-    image: '',
-    archived: false,
-    type: EBoardType.PERSON,
-    checked_at: 0,
-    created_at: 0,
-    updated_at: 0,
-  },
-  columns: [],
-};

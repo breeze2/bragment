@@ -4,6 +4,7 @@ import React from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { IFragmentColumn } from '../../api/types';
 import {
   asyncDispatch,
   asyncRenameFragmentColumn,
@@ -13,8 +14,7 @@ import {
 import styles from '../../styles/FragmentColumn.module.scss';
 
 interface IFragmentColumnHeaderProps {
-  id: string;
-  title: string;
+  data: IFragmentColumn;
   dragHandle?: DraggableProvidedDragHandleProps;
 }
 
@@ -25,7 +25,7 @@ enum EMode {
 
 const FragmentColumnHeader: React.FC<IFragmentColumnHeaderProps> = React.memo(
   (props) => {
-    const { id, title, dragHandle } = props;
+    const { data, dragHandle } = props;
     const inputRef = React.useRef<Input>(null);
     const [mode, setMode] = React.useState(EMode.TEXT);
     const { formatMessage: f } = useIntl();
@@ -34,28 +34,29 @@ const FragmentColumnHeader: React.FC<IFragmentColumnHeaderProps> = React.memo(
     const setTextMode = () => setMode(EMode.TEXT);
 
     const handleTitleBlur = () => {
-      inputRef.current?.setValue(title);
+      inputRef.current?.setValue(data.title);
       setTextMode();
     };
 
     const handleTitleSubmit = () => {
       const newTitle = inputRef.current?.state.value;
-      if (!newTitle || newTitle === title) {
+      if (!data.id || !newTitle || newTitle === data.title) {
         return;
       }
-      asyncDispatch(dispatch, asyncRenameFragmentColumn(id, newTitle)).catch(
-        (error: EFragmentActionError) => {
-          switch (error) {
-            case EFragmentActionError.EXISTED_ARCHIVE:
-            case EFragmentActionError.EXISTED_DIRECTORY:
-            case EFragmentActionError.EXISTED_FILE:
-              message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
-              break;
-            default:
-              break;
-          }
+      asyncDispatch(
+        dispatch,
+        asyncRenameFragmentColumn(data.id, String.prototype.trim.call(newTitle))
+      ).catch((error: EFragmentActionError) => {
+        switch (error) {
+          case EFragmentActionError.EXISTED_ARCHIVE:
+          case EFragmentActionError.EXISTED_DIRECTORY:
+          case EFragmentActionError.EXISTED_FILE:
+            message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
+            break;
+          default:
+            break;
         }
-      );
+      });
     };
     React.useLayoutEffect(() => {
       if (mode === EMode.INPUT) {
@@ -70,12 +71,12 @@ const FragmentColumnHeader: React.FC<IFragmentColumnHeaderProps> = React.memo(
             mode === EMode.INPUT ? styles.inputMode : styles.textMode
           }`}>
           <div className={styles.text} onClick={setInputMode}>
-            {title}
+            {data.title}
           </div>
           <Input
             ref={inputRef}
             className={styles.input}
-            defaultValue={title}
+            defaultValue={data.title}
             onBlur={handleTitleBlur}
             onPressEnter={handleTitleSubmit}
           />

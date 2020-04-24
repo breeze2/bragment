@@ -1,0 +1,107 @@
+.wrapper {
+  .body {
+    position: relative;
+    padding: 36px 56px 36px 24px;
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .field {
+    margin-top: 16px;
+    &:first-child {
+      margin-top: 0px;
+    }
+    input {
+      cursor: text;
+    }
+  }
+
+  .action {
+    position: absolute;
+    right: 24px;
+    bottom: 36px;
+  }
+
+  .bgSelect {
+    margin: -5px -11px;
+    width: 36px;
+    height: 32px;
+    line-height: 32px;
+  }
+
+  :global {
+    .ant-modal-close-x {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+    }
+    .ant-modal-close {
+      top: 12px;
+      right: 12px;
+    }
+    .ant-modal-body {
+      padding: 0;
+      border-radius: 2px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .ant-input,
+    .ant-select-single .ant-select-selector {
+      border: none;
+      background-color: rgba(25, 25, 25, 0.5);
+      font-weight: bold;
+      color: var(--white);
+      height: 32px;
+      &:hover {
+        background-color: rgba(25, 25, 25, 0.55);
+        box-shadow: none;
+      }
+      &:focus {
+        background-color: rgba(25, 25, 25, 0.6);
+        box-shadow: none;
+      }
+    }
+    .ant-input-group-addon {
+      cursor: pointer;
+      border: none;
+      background-color: rgba(25, 25, 25, 0.5);
+      &:hover {
+        background-color: rgba(25, 25, 25, 0.55);
+      }
+    }
+    .ant-select-selector {
+      box-shadow: none !important;
+      .anticon {
+        padding-right: 6px;
+      }
+      .ant-select-selection-item {
+        padding-right: 24px;
+      }
+    }
+    .ant-select-arrow,
+    .ant-input-group-addon {
+      color: rgba(25, 25, 25, 0.65);
+    }
+    .anticon-lock {
+      color: var(--red);
+    }
+    .anticon-global {
+      color: var(--green);
+    }
+  }
+}
+
+.dropdown {
+  :global {
+    .anticon {
+      padding-right: 6px;
+    }
+    .anticon-lock {
+      color: var(--red);
+    }
+    .anticon-global {
+      color: var(--green);
+    }
+  }
+}

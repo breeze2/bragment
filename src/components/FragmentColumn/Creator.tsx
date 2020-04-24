@@ -3,50 +3,59 @@ import { Button, Input } from 'antd';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { useMultipleState } from '../../components/hooks';
 import { asyncCreateFragmentColumn, asyncDispatch } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
 import styles from '../../styles/FragmentColumn.module.scss';
-
-export interface IFragmentColumnCreatorProps {}
 
 enum EMode {
   FIELD,
   LABEL,
 }
 
+export interface IFragmentColumnCreatorProps {}
+export interface IFragmentColumnCreatorState {
+  mode: EMode;
+  isCreating: boolean;
+}
+
 const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
   (props) => {
     const { formatMessage: f } = useIntl();
     const dispatch = useDispatch();
-    const [mode, setMode] = React.useState(EMode.LABEL);
-    const [submitting, setSubmitting] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<Input>(null);
-    const currentBoard = useSelector((state: IReduxState) =>
-      state.board.get('current')
+    const defaultState: IFragmentColumnCreatorState = {
+      mode: EMode.LABEL,
+      isCreating: false,
+    };
+    const [state, setState] = useMultipleState<IFragmentColumnCreatorState>(
+      defaultState
     );
-    const setFieldMode = () => setMode(EMode.FIELD);
-    const setLabelMode = () => setMode(EMode.LABEL);
-    const handleSubmit = () => {
+    const currentBoard = useSelector((reduxState: IReduxState) =>
+      reduxState.board.get('current')
+    );
+    const setFieldMode = () => setState({ mode: EMode.FIELD });
+    const setLabelMode = () => setState({ mode: EMode.LABEL });
+    const handleCreate = () => {
       const title = inputRef.current?.state.value;
-      if (!currentBoard || !title) {
+      if (!currentBoard || !currentBoard.id || !title) {
         return;
       }
-      setSubmitting(true);
-      asyncDispatch(dispatch, asyncCreateFragmentColumn(currentBoard, title))
+      setState({ isCreating: true });
+      asyncDispatch(dispatch, asyncCreateFragmentColumn(currentBoard.id, title))
         .catch(() => {
           // EXCEPTION:
         })
         .finally(() => {
           inputRef.current?.setValue('');
-          setLabelMode();
-          setSubmitting(false);
+          setState(defaultState);
         });
     };
 
     React.useLayoutEffect(() => {
-      if (mode === EMode.FIELD) {
+      if (state.mode === EMode.FIELD) {
         inputRef.current?.focus();
         const handleBodyMouseUp = (event: MouseEvent) => {
           if (
@@ -55,20 +64,20 @@ const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
           ) {
             return;
           }
-          setLabelMode();
+          setState({ mode: EMode.LABEL });
         };
         document.body.addEventListener('mouseup', handleBodyMouseUp);
         return () => {
           document.body.removeEventListener('mouseup', handleBodyMouseUp);
         };
       }
-    }, [mode]);
+    }, [state.mode, setState]);
     console.info('FragmentColumnCreator rendering...');
     return (
       <div
         ref={selfRef}
         className={`${styles.creator} ${
-          mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
+          state.mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
         }`}>
         <div className={styles.label} onClick={setFieldMode}>
           <PlusOutlined /> {f({ id: 'addAnotherColumn' })}
@@ -77,14 +86,17 @@ const FragmentColumnCreator: React.FC<IFragmentColumnCreatorProps> = React.memo(
           <Input
             ref={inputRef}
             placeholder={f({ id: 'inputColumnTitle' })}
-            onPressEnter={handleSubmit}
+            onPressEnter={handleCreate}
           />
           <div className={styles.actions}>
-            <Button type="primary" loading={submitting} onClick={handleSubmit}>
+            <Button
+              type="primary"
+              loading={state.isCreating}
+              onClick={handleCreate}>
               {f({ id: 'addColumn' })}
             </Button>
             <CloseOutlined
-              style={{ display: submitting ? 'none' : undefined }}
+              style={{ display: state.isCreating ? 'none' : undefined }}
               className={styles.close}
               onClick={setLabelMode}
             />

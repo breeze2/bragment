@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 import {
   IBoard,
-  IFragment,
+  IFragmentCard,
   IFragmentColumn,
   IUnsplashPhoto,
 } from '../api/types';
@@ -19,22 +19,24 @@ export enum EAppTheme {
 export interface ICommonState {
   language: string;
   onLine: boolean;
+  signInDialogVisible: boolean;
   theme: EAppTheme;
 }
 
 export interface IBoardState {
-  all: Immutable.List<IBoard>;
   createDialogVisible: boolean;
   current: IBoard | null;
-  recentList: Immutable.List<IBoard>;
+  groupList: Immutable.List<IBoard>;
   personalList: Immutable.List<IBoard>;
+  recentList: Immutable.List<IBoard>;
   standbyBgColors: Immutable.List<string>;
   standbyBgImages: Immutable.List<IUnsplashPhoto>;
 }
 
 export interface IFragmentState {
-  columns: Immutable.List<IFragmentColumn>;
-  current: IFragment | null;
+  current: IFragmentCard | null;
+  cardMap: Immutable.Map<string, IFragmentCard>;
+  columnMap: Immutable.Map<string, IFragmentColumn>;
 }
 
 export type IICommonState = Immutable.Record<ICommonState> &

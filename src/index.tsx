@@ -2,11 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { HashRouter as Router } from 'react-router-dom';
+import { initFirebase } from './api/firebase';
 import App from './App';
-import './index.css';
 import { store } from './redux';
 import * as serviceWorker from './serviceWorker';
-(window as any).store = store;
+
+import './index.css';
+
+initFirebase();
 
 ReactDOM.render(
   <Provider store={store}>

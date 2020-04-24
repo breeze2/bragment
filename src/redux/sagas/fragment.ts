@@ -1,172 +1,144 @@
 import Immutable from 'immutable';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { asyncPushBoardColumnOrder, asyncUpdateBoard } from '../../api/board';
 import {
-  asyncBuildFragment,
-  asyncBuildFragmentColumn,
-  asyncSaveFragmentColumnsLocally,
-  generateFragmentID,
-  getFragmentPath,
+  asyncBatchUpdateFragmentColumns,
+  asyncInsertFragmentCard,
+  asyncInsertFragmentColumn,
+  asyncPushFragmentColumnCardOrder,
+  asyncUpdateFragmentColumn,
 } from '../../api/fragment';
-import { IBoard, IFragmentColumn } from '../../api/types';
+import { IBoard, IFragmentColumn, IUpdateDataGroup } from '../../api/types';
 import {
-  // asyncMoveFile,
-  asyncRenameFile,
-  checkFileExisted,
-  joinPaths,
-  moveFile,
-} from '../../utils';
-import {
-  ASYNC_CREATE_FRAGMENT,
+  ASYNC_CREATE_FRAGMENT_CARD,
   ASYNC_CREATE_FRAGMENT_COLUMN,
-  ASYNC_MOVE_FRAGMENT,
+  ASYNC_MOVE_FRAGMENT_CARD,
+  ASYNC_MOVE_FRAGMENT_COLUMN,
   ASYNC_RENAME_FRAGMENT_COLUMN,
-  ASYNC_SAVE_FRAGMENT_COLUMNS_DATA,
-  EFragmentActionError,
-  IAsyncCreateFragmentAction,
+  IAsyncCreateFragmentCardAction,
   IAsyncCreateFragmentColumnAction,
-  IAsyncMoveFragmentAction,
+  IAsyncMoveFragmentCardAction,
+  IAsyncMoveFragmentColumnAction,
   IAsyncRenameFragmentColumnAction,
-  moveFragment,
-  pushFragment,
+  moveFragmentCard,
+  pushFragmentCard,
   pushFragmentColumn,
   renameFragmentColumn,
+  setCurrentBoard,
 } from '../actions';
 import { makeSagaWorkerDispatcher } from './helpers';
-import { getCurrentBoard, getFragmentColumns } from './selectors';
+import { getCurrentBoard, getFragmentColumnMap } from './selectors';
 
-function* createFragmentSaga(action: IAsyncCreateFragmentAction) {
-  const currentBoard: IBoard | null = yield select(getCurrentBoard);
-  const { board, columnID, title, tags, type } = action.payload;
-  const fragment = yield call(
-    asyncBuildFragment,
-    board,
-    columnID,
+function* createFragmentCardSaga(action: IAsyncCreateFragmentCardAction) {
+  const { boardId, columnId, title, others } = action.payload;
+  const card = yield call(
+    asyncInsertFragmentCard,
+    boardId,
+    columnId,
     title,
-    type,
-    tags
+    others
   );
-  if (currentBoard && board === currentBoard) {
-    yield put(pushFragment(columnID, fragment));
+  const currentBoard: IBoard | null = yield select(getCurrentBoard);
+  if (card && card.id && currentBoard && currentBoard.id === boardId) {
+    yield put(pushFragmentCard(columnId, card));
+    // yield call(asyncPushBoardColumnOrder, boardId, column.id);
+    // NOTE: not wait
+    asyncPushFragmentColumnCardOrder(columnId, card.id);
   } else {
     // TODO: update fragment columns data locally
   }
-  return fragment;
+  return card;
 }
 
 function* createFragmentColumnSaga(action: IAsyncCreateFragmentColumnAction) {
+  const { boardId, title } = action.payload;
+  const column: IFragmentColumn | undefined = yield call(
+    asyncInsertFragmentColumn,
+    boardId,
+    title
+  );
   const currentBoard: IBoard | null = yield select(getCurrentBoard);
-  const { board, title } = action.payload;
-  // TODO: generate id
-  const id = title;
-  const column = yield call(asyncBuildFragmentColumn, board, id, title);
-  if (currentBoard && currentBoard === board) {
+  if (column && column.id && currentBoard && currentBoard.id === boardId) {
     yield put(pushFragmentColumn(column));
-  } else {
-    // TODO: update fragment columns data locally
+    // yield call(asyncPushBoardColumnOrder, boardId, column.id);
+    // NOTE: not wait
+    asyncPushBoardColumnOrder(boardId, column.id);
   }
   return column;
 }
 
-function* moveFragmentSaga(action: IAsyncMoveFragmentAction) {
-  const board: IBoard | null = yield select(getCurrentBoard);
-  const fragmentColumns: Immutable.List<IFragmentColumn> = yield select(
-    getFragmentColumns
-  );
-  const { fromColumnID, fromIndex, toColumnID, toIndex } = action.payload;
-  if (
-    !board ||
-    !fragmentColumns ||
-    (fromColumnID === toColumnID && fromIndex === toIndex)
-  ) {
-    return;
+function* moveFragmentCardSaga(action: IAsyncMoveFragmentCardAction) {
+  // const board: IBoard | null = yield select(getCurrentBoard);
+  // const fragmentColumns: Immutable.List<IFragmentColumn> = yield select(
+  //   getFragmentColumns
+  // );
+  const { fromColumnId, fromId, toColumnId, toId } = action.payload;
+  yield put(moveFragmentCard(fromColumnId, fromId, toColumnId, toId));
+  const columnMap:
+    | Immutable.Map<string, IFragmentColumn>
+    | undefined = yield select(getFragmentColumnMap);
+  const fromColumn = columnMap?.get(fromColumnId);
+  const toColumn = columnMap?.get(toColumnId);
+  const group: IUpdateDataGroup<IFragmentColumn> = [];
+  if (fromColumn) {
+    group.push({
+      id: fromColumn.id,
+      data: { cardOrder: fromColumn.cardOrder },
+    });
   }
-  const fromColumn = fragmentColumns.find(
-    (column) => column.id === fromColumnID
-  );
-  const toColumn = fragmentColumns.find((column) => column.id === toColumnID);
-  const fromFragment = fromColumn?.fragments[fromIndex];
-  if (!fromColumn || !toColumn || !fromFragment) {
-    return;
+  if (toColumn) {
+    group.push({
+      id: toColumn.id,
+      data: { cardOrder: toColumn.cardOrder },
+    });
   }
-  let newID: string | undefined;
-  if (fromColumnID !== toColumnID) {
-    const oldPath = getFragmentPath(board, fromColumnID, fromFragment);
-    let newPath = getFragmentPath(board, toColumnID, fromFragment);
-    // TODO: should check destination existed
-    if (
-      checkFileExisted(newPath) ||
-      toColumn.fragments.some((fragment) => fragment.id === fromFragment.id)
-    ) {
-      newID = generateFragmentID();
-      newPath = getFragmentPath(board, toColumnID, {
-        ...fromFragment,
-        id: newID,
-      });
-    }
-    // NOTE: move file synchronously to block dom updating
-    // yield call(asyncMoveFile, oldPath, newPath);
-    moveFile(oldPath, newPath);
+  if (group.length > 0) {
+    // yield call(asyncBatchUpdateFragmentColumns, group);
+    // NOTE: not wait
+    asyncBatchUpdateFragmentColumns(group);
   }
-  yield put(moveFragment(fromColumnID, fromIndex, toColumnID, toIndex, newID));
-  return;
 }
 
 function* renameFragmentColumnSaga(action: IAsyncRenameFragmentColumnAction) {
-  const board: IBoard | null = yield select(getCurrentBoard);
-  const fragmentColumns: Immutable.List<IFragmentColumn> = yield select(
-    getFragmentColumns
-  );
-  if (!board || !fragmentColumns) {
-    return;
-  }
   const { id, title } = action.payload;
-  const oldPath = joinPaths(board.path, id);
-  const newPath = joinPaths(board.path, title);
-  const existedColumn = fragmentColumns.find(
-    (column) => column.title === title
-  );
-  if (existedColumn) {
-    throw existedColumn.archived
-      ? EFragmentActionError.EXISTED_ARCHIVE
-      : EFragmentActionError.EXISTED_DIRECTORY;
-  }
-  if (checkFileExisted(newPath)) {
-    throw EFragmentActionError.EXISTED_FILE;
-  }
-  yield call(asyncRenameFile, oldPath, newPath);
   yield put(renameFragmentColumn(id, title));
+  // yield call(asyncUpdateFragmentColumn, id, {title});
+  // NOTE: not wait
+  asyncUpdateFragmentColumn(id, { title });
 }
 
-function* saveFragmentColumnsDataSaga() {
-  const board: IBoard | null = yield select(getCurrentBoard);
-  const fragmentColumns: Immutable.List<IFragmentColumn> = yield select(
-    getFragmentColumns
-  );
-  if (board) {
-    yield call(
-      asyncSaveFragmentColumnsLocally,
-      board,
-      fragmentColumns.toArray()
-    );
+function* moveFragmentColumnSaga(action: IAsyncMoveFragmentColumnAction) {
+  const { fromId, toId } = action.payload;
+  const currentBoard: IBoard | null = yield select(getCurrentBoard);
+  const columnOrder = currentBoard?.columnOrder;
+  if (currentBoard && columnOrder) {
+    const fromIndex = columnOrder.findIndex((id) => fromId === id);
+    const toIndex = columnOrder.findIndex((id) => toId === id);
+    if (fromIndex > -1 && toIndex > -1 && fromIndex !== toIndex) {
+      columnOrder.splice(fromIndex, 1);
+      columnOrder.splice(toIndex, 0, fromId);
+      yield put(setCurrentBoard({ ...currentBoard, columnOrder }));
+      yield call(asyncUpdateBoard, currentBoard.id, { columnOrder });
+    }
   }
 }
 
 const dispatcher = makeSagaWorkerDispatcher({
-  [ASYNC_CREATE_FRAGMENT]: createFragmentSaga,
+  [ASYNC_CREATE_FRAGMENT_CARD]: createFragmentCardSaga,
   [ASYNC_CREATE_FRAGMENT_COLUMN]: createFragmentColumnSaga,
-  [ASYNC_MOVE_FRAGMENT]: moveFragmentSaga,
+  [ASYNC_MOVE_FRAGMENT_CARD]: moveFragmentCardSaga,
+  [ASYNC_MOVE_FRAGMENT_COLUMN]: moveFragmentColumnSaga,
   [ASYNC_RENAME_FRAGMENT_COLUMN]: renameFragmentColumnSaga,
-  [ASYNC_SAVE_FRAGMENT_COLUMNS_DATA]: saveFragmentColumnsDataSaga,
 });
 
 export function* watchFragmentSagas() {
   yield takeEvery(
     [
-      ASYNC_CREATE_FRAGMENT,
+      ASYNC_CREATE_FRAGMENT_CARD,
       ASYNC_CREATE_FRAGMENT_COLUMN,
-      ASYNC_MOVE_FRAGMENT,
+      ASYNC_MOVE_FRAGMENT_CARD,
+      ASYNC_MOVE_FRAGMENT_COLUMN,
       ASYNC_RENAME_FRAGMENT_COLUMN,
-      ASYNC_SAVE_FRAGMENT_COLUMNS_DATA,
     ],
     dispatcher
   );

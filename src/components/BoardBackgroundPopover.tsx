@@ -39,7 +39,7 @@ const BoardBackgroundPopover: React.FC<IBoardBackgroundPopoverProps> = React.mem
         return;
       }
       const index = icon.dataset.index;
-      const value: ISelectedBackground = {};
+      const value: ISelectedBackground = { image: undefined, color: undefined };
       if (icon.dataset.type === 'color') {
         const color = colors.get(parseInt(index, 10));
         if (color && color !== selectedValue.color) {

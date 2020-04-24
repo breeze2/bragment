@@ -6,23 +6,23 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { useDispatch } from 'react-redux';
-import { IFragment } from '../../api/types';
+import { IFragmentCard } from '../../api/types';
 import { setCurrentFragment } from '../../redux/actions';
 
 import styles from '../../styles/FragmentCard.module.scss';
 
 interface IFragmentCardProps {
-  fragment: IFragment;
+  data: IFragmentCard;
   index: number;
 }
 
 const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
-  const { fragment, index } = props;
+  const { data, index } = props;
   const dispatch = useDispatch();
-  const handleClick = () => dispatch(setCurrentFragment(fragment));
+  const handleClick = () => dispatch(setCurrentFragment(data));
 
   return (
-    <Draggable draggableId={fragment.id} index={index}>
+    <Draggable draggableId={data.id} index={index}>
       {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
         <div
           ref={provided.innerRef}
@@ -30,7 +30,7 @@ const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <Card hoverable bordered={false} onClick={handleClick}>
-            <p className={styles.title}>{fragment.title}</p>
+            <p className={styles.title}>{data.title}</p>
           </Card>
         </div>
       )}

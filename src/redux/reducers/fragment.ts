@@ -1,84 +1,61 @@
 import Immutable from 'immutable';
-import { IFragmentColumn } from '../../api/types';
-import { deleteArrayItem, insertArrayItem } from '../../utils';
+import { IFragmentCard, IFragmentColumn } from '../../api/types';
 import {
   IFragmentAction,
-  IMoveFragmentAction,
-  IMoveFragmentColumnAction,
-  IPushFragmentAction,
+  IMoveFragmentCardAction,
+  IPushFragmentCardAction,
   IPushFragmentColumnAction,
   IRenameFragmentColumnAction,
-  MOVE_FRAGMENT,
-  MOVE_FRAGMENT_COLUMN,
-  PUSH_FRAGMENT,
+  ISetFragmentCardMapAction,
+  ISetFragmentColumnMapAction,
+  MOVE_FRAGMENT_CARD,
+  PUSH_FRAGMENT_CARD,
   PUSH_FRAGMENT_COLUMN,
   RENAME_FRAGMENT_COLUMN,
-  SET_FRAGMENT_COLUMNS,
   SET_CURRENT_FRAGMENT,
+  SET_FRAGMENT_CARD_MAP,
+  SET_FRAGMENT_COLUMN_MAP,
 } from '../actions';
 import { IFragmentState, IIFragmentState } from '../types';
 
 const initialFragmentState = Immutable.Record<IFragmentState>({
-  columns: Immutable.List<IFragmentColumn>([]),
+  cardMap: Immutable.Map<IFragmentCard>({}),
+  columnMap: Immutable.Map<IFragmentColumn>({}),
   current: null,
 })();
 
-function handleMoveFragment(
+function handleMoveFragmentCard(
   state: IIFragmentState,
-  action: IMoveFragmentAction
+  action: IMoveFragmentCardAction
 ) {
-  const {
-    fromColumnID,
-    fromIndex,
-    toColumnID,
-    toIndex,
-    newID,
-  } = action.payload;
-  const columns = state.get('columns');
-  const fromColumnIndex = columns.findIndex(
-    (column) => column.id === fromColumnID
-  );
-  const toColumnIndex = columns.findIndex((column) => column.id === toColumnID);
-  const fromColumn = columns.get(fromColumnIndex);
-  const toColumn = columns.get(toColumnIndex);
-  if (fromColumnIndex > -1 && toColumnIndex > -1 && fromColumn && toColumn) {
-    const fromFragment = fromColumn.fragments[fromIndex];
-    if (fromFragment) {
-      if (newID) {
-        fromFragment.id = newID;
-      }
-      return state.update('columns', (list) =>
-        list
-          .update(fromColumnIndex, (column) => ({
-            ...column,
-            fragments: deleteArrayItem(column.fragments, fromIndex),
-          }))
-          .update(toColumnIndex, (column) => ({
-            ...column,
-            fragments: insertArrayItem(column.fragments, fromFragment, toIndex),
-          }))
+  const { fromColumnId, fromId, toColumnId, toId } = action.payload;
+  const columnMap = state.get('columnMap');
+  const fromColumn = columnMap.get(fromColumnId);
+  const toColumn = columnMap.get(toColumnId);
+  const fromCardOrder = fromColumn?.cardOrder;
+  const toCardOrder = toColumn?.cardOrder;
+  if (fromCardOrder && toCardOrder) {
+    const fromIndex = fromCardOrder.findIndex((id) => id === fromId);
+    const toIndex = toCardOrder.findIndex((id) => id === toId);
+    if (fromIndex > -1) {
+      fromCardOrder.splice(fromIndex, 1);
+      toCardOrder.splice(toIndex > 0 ? toIndex : 0, 0, fromId);
+      return state.update('columnMap', (map) =>
+        map
+          .update(fromColumnId, (column) => ({ ...column, fromCardOrder }))
+          .update(toColumnId, (column) => ({ ...column, toCardOrder }))
       );
     }
   }
   return state;
 }
 
-function handlePushFragment(
+function handlePushFragmentCard(
   state: IIFragmentState,
-  action: IPushFragmentAction
+  action: IPushFragmentCardAction
 ) {
-  const { columnID, fragment } = action.payload;
-  const columns = state.get('columns');
-  const index = columns.findIndex((el) => el.id === columnID);
-  if (index !== -1) {
-    return state.update('columns', (list) =>
-      list.update(index, (column) => ({
-        ...column,
-        fragments: [...column.fragments, fragment],
-      }))
-    );
-  }
-  return state;
+  const { card } = action.payload;
+  return state.update('cardMap', (cardMap) => cardMap.set(card.id, card));
 }
 
 function handlePushFragmentColumn(
@@ -86,25 +63,9 @@ function handlePushFragmentColumn(
   action: IPushFragmentColumnAction
 ) {
   const { column } = action.payload;
-  const columns = state.get('columns');
-  if (columns.findIndex((el) => el.title === column.title) === -1) {
-    return state.update('columns', (list) => list.push(column));
-  }
-  return state;
-}
-
-function handleMoveFragmentColumn(
-  state: IIFragmentState,
-  action: IMoveFragmentColumnAction
-) {
-  const { from, to } = action.payload;
-  const column = state.columns.get(from);
-  if (from !== to && column) {
-    return state.update('columns', (columns) =>
-      columns.splice(from, 1).splice(to, 0, column)
-    );
-  }
-  return state;
+  return state.update('columnMap', (columnMap) =>
+    columnMap.set(column.id, column)
+  );
 }
 
 function handleRenameFragmentColumn(
@@ -112,13 +73,10 @@ function handleRenameFragmentColumn(
   action: IRenameFragmentColumnAction
 ) {
   const { id, title } = action.payload;
-  const index = state.columns.findIndex((column) => column.id === id);
-  if (index > -1) {
-    return state.update('columns', (columns) =>
-      columns.update(index, (column) => ({
+  if (state.columnMap.has(id)) {
+    return state.update('columnMap', (columnMap) =>
+      columnMap.update(id, (column) => ({
         ...column,
-        // TODO: generate id
-        id: title,
         title,
       }))
     );
@@ -126,26 +84,39 @@ function handleRenameFragmentColumn(
   return state;
 }
 
+function handleSetFragmentCardMap(
+  state: IIFragmentState,
+  action: ISetFragmentCardMapAction
+) {
+  const { cardMap } = action.payload;
+  return state.set('cardMap', Immutable.Map(cardMap));
+}
+
+function handleSetFragmentColumnMap(
+  state: IIFragmentState,
+  action: ISetFragmentColumnMapAction
+) {
+  const { columnMap } = action.payload;
+  return state.set('columnMap', Immutable.Map(columnMap));
+}
+
 const fragmentReducer = (
   state = initialFragmentState,
   action: IFragmentAction
 ) => {
   switch (action.type) {
-    case SET_FRAGMENT_COLUMNS:
-      return state.set(
-        'columns',
-        Immutable.List<IFragmentColumn>(action.payload.columns)
-      );
+    case SET_FRAGMENT_CARD_MAP:
+      return handleSetFragmentCardMap(state, action);
+    case SET_FRAGMENT_COLUMN_MAP:
+      return handleSetFragmentColumnMap(state, action);
     case SET_CURRENT_FRAGMENT:
       return state.set('current', action.payload.current);
-    case MOVE_FRAGMENT:
-      return handleMoveFragment(state, action);
-    case PUSH_FRAGMENT:
-      return handlePushFragment(state, action);
+    case MOVE_FRAGMENT_CARD:
+      return handleMoveFragmentCard(state, action);
+    case PUSH_FRAGMENT_CARD:
+      return handlePushFragmentCard(state, action);
     case PUSH_FRAGMENT_COLUMN:
       return handlePushFragmentColumn(state, action);
-    case MOVE_FRAGMENT_COLUMN:
-      return handleMoveFragmentColumn(state, action);
     case RENAME_FRAGMENT_COLUMN:
       return handleRenameFragmentColumn(state, action);
     default:

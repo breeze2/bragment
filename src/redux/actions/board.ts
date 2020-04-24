@@ -1,30 +1,24 @@
-import { IBoard, IUnsplashPhoto } from '../../api/types';
+import { IBoard, IPartial, IUnsplashPhoto } from '../../api/types';
 import { IReduxAction } from '../types';
-export const ASYNC_INSERT_RECENT_BOARD = 'ASYNC_INSERT_RECENT_BOARD';
+
 export const ASYNC_CREATE_BOARD = 'ASYNC_CREATE_BOARD';
-export const ASYNC_FETCH_ALL_BOARDS = 'ASYNC_FETCH_ALL_BOARDS';
-export const ASYNC_FETCH_BOARD_BG_IMAGES = 'ASYNC_FETCH_BOARD_BG_IMAGES';
 export const ASYNC_FETCH_CURRENT_BOARD = 'ASYNC_FETCH_CURRENT_BOARD';
+export const ASYNC_FETCH_BOARD_BG_IMAGES = 'ASYNC_FETCH_BOARD_BG_IMAGES';
+export const ASYNC_FETCH_PERSONAL_BOARDS = 'ASYNC_FETCH_PERSONAL_BOARDS';
 export const INSERT_BOARD = 'INSERT_BOARD';
-export const UPDATE_BOARD = 'UPDATE_BOARD';
 export const SET_CREATE_BOARD_DIALOG_VISIBLE =
   'SET_CREATE_BOARD_DIALOG_VISIBLE';
-export const SET_ALL_BOARD_LIST = 'SET_ALL_BOARD_LIST';
 export const SET_CURRENT_BOARD = 'SET_CURRENT_BOARD';
+export const SET_PERSONAL_BOARD_LIST = 'SET_PERSONAL_BOARD_LIST';
 export const SET_STANDBY_BOARD_BG_IMAGES = 'SET_STANDBY_BOARD_BG_IMAGES';
-
-export type IAsyncInsertRecentBoardAction = IReduxAction<
-  typeof ASYNC_INSERT_RECENT_BOARD,
-  { board: IBoard }
->;
 
 export type IAsyncCreateBoardAction = IReduxAction<
   typeof ASYNC_CREATE_BOARD,
-  { board: IBoard }
+  { board: IPartial<IBoard> }
 >;
 
-export type IAsyncFetchAllBoardsAction = IReduxAction<
-  typeof ASYNC_FETCH_ALL_BOARDS,
+export type IAsyncFetchPersonalBoardsAction = IReduxAction<
+  typeof ASYNC_FETCH_PERSONAL_BOARDS,
   void
 >;
 
@@ -35,16 +29,11 @@ export type IAsyncFetchBoardBgImagesAction = IReduxAction<
 
 export type IAsyncFetchCurrentBoardAction = IReduxAction<
   typeof ASYNC_FETCH_CURRENT_BOARD,
-  { boardID: number }
+  { id: string }
 >;
 
 export type IInsertBoardAction = IReduxAction<
   typeof INSERT_BOARD,
-  { index: number; board: IBoard }
->;
-
-export type IUpdateBoardAction = IReduxAction<
-  typeof UPDATE_BOARD,
   { index: number; board: IBoard }
 >;
 
@@ -53,8 +42,8 @@ export type ISetCreateBoardVisibleAction = IReduxAction<
   { visible: boolean }
 >;
 
-export type ISetAllBoardListAction = IReduxAction<
-  typeof SET_ALL_BOARD_LIST,
+export type ISetPersonalBoardListAction = IReduxAction<
+  typeof SET_PERSONAL_BOARD_LIST,
   { boards: IBoard[] }
 >;
 
@@ -69,45 +58,38 @@ export type ISetCurrentBoardAction = IReduxAction<
 >;
 
 export type IBoardAction =
-  | IAsyncInsertRecentBoardAction
   | IAsyncCreateBoardAction
-  | IAsyncFetchAllBoardsAction
+  | IAsyncFetchPersonalBoardsAction
   | IAsyncFetchBoardBgImagesAction
   | IAsyncFetchCurrentBoardAction
   | IInsertBoardAction
   | ISetCreateBoardVisibleAction
   | ISetCurrentBoardAction
-  | ISetAllBoardListAction
-  | ISetStandbyBoardBgImagesAction
-  | IUpdateBoardAction;
+  | ISetPersonalBoardListAction
+  | ISetStandbyBoardBgImagesAction;
 
-export const asyncAddRecentBoard = (
-  board: IBoard
-): IAsyncInsertRecentBoardAction => ({
-  payload: { board },
-  type: ASYNC_INSERT_RECENT_BOARD,
-});
-
-export const asyncCreateBoard = (board: IBoard): IAsyncCreateBoardAction => ({
+export const asyncCreateBoard = (
+  board: IPartial<IBoard>
+): IAsyncCreateBoardAction => ({
   payload: { board },
   type: ASYNC_CREATE_BOARD,
 });
 
-export const asyncFetchAllBoards = (): IAsyncFetchAllBoardsAction => ({
+export const asyncFetchPersonalBoards = (): IAsyncFetchPersonalBoardsAction => ({
   payload: undefined,
-  type: ASYNC_FETCH_ALL_BOARDS,
+  type: ASYNC_FETCH_PERSONAL_BOARDS,
+});
+
+export const asyncFetchCurrentBoard = (
+  id: string
+): IAsyncFetchCurrentBoardAction => ({
+  payload: { id },
+  type: ASYNC_FETCH_CURRENT_BOARD,
 });
 
 export const asyncFetchBoardBgImages = (): IAsyncFetchBoardBgImagesAction => ({
   payload: undefined,
   type: ASYNC_FETCH_BOARD_BG_IMAGES,
-});
-
-export const asyncFetchCurrentBoard = (
-  boardID: number
-): IAsyncFetchCurrentBoardAction => ({
-  payload: { boardID },
-  type: ASYNC_FETCH_CURRENT_BOARD,
 });
 
 export const insertBoard = (
@@ -118,24 +100,16 @@ export const insertBoard = (
   type: INSERT_BOARD,
 });
 
-export const updateBoard = (
-  index: number,
-  board: IBoard
-): IUpdateBoardAction => ({
-  payload: { index, board },
-  type: UPDATE_BOARD,
+export const setCurrentBoard = (board: IBoard): ISetCurrentBoardAction => ({
+  payload: { board },
+  type: SET_CURRENT_BOARD,
 });
 
-export const setCreateBoardDialogVisible = (
-  visible: boolean
-): ISetCreateBoardVisibleAction => ({
-  payload: { visible },
-  type: SET_CREATE_BOARD_DIALOG_VISIBLE,
-});
-
-export const setAllBoardList = (boards: IBoard[]): ISetAllBoardListAction => ({
+export const setPersonalBoardList = (
+  boards: IBoard[]
+): ISetPersonalBoardListAction => ({
   payload: { boards },
-  type: SET_ALL_BOARD_LIST,
+  type: SET_PERSONAL_BOARD_LIST,
 });
 
 export const setStandbyBoardBgImages = (
@@ -145,7 +119,9 @@ export const setStandbyBoardBgImages = (
   type: SET_STANDBY_BOARD_BG_IMAGES,
 });
 
-export const setCurrentBoard = (board: IBoard): ISetCurrentBoardAction => ({
-  payload: { board },
-  type: SET_CURRENT_BOARD,
+export const setCreateBoardDialogVisible = (
+  visible: boolean
+): ISetCreateBoardVisibleAction => ({
+  payload: { visible },
+  type: SET_CREATE_BOARD_DIALOG_VISIBLE,
 });

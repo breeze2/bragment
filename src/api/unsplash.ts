@@ -20,3 +20,15 @@ export async function getRandomPhoto(count: number = 4) {
     return [];
   }
 }
+
+export function getThumbUrl(rawUrl: string) {
+  return rawUrl + '&fm=jpg&w=200&fit=max';
+}
+
+export function getSmallUrl(rawUrl: string) {
+  return rawUrl + '&fm=jpg&w=400&fit=max';
+}
+
+export function getRegularUrl(rawUrl: string) {
+  return rawUrl + '&fm=jpg&fit=crop&w=1080&q=80&fit=max';
+}

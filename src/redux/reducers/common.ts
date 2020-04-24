@@ -4,6 +4,7 @@ import {
   SET_APP_LANGUAGE,
   SET_APP_ON_LINE,
   SET_APP_THEME,
+  SET_SIGN_IN_DIALOG_VISIBLE,
 } from '../actions';
 import { EAppTheme, ICommonState } from '../types';
 
@@ -16,6 +17,7 @@ const initialCommonState = Immutable.Record<ICommonState>({
   language: defaultLanguage,
   onLine: navigator.onLine,
   theme: defaultTheme,
+  signInDialogVisible: false,
 })();
 
 const commonReducer = (state = initialCommonState, action: ICommonAction) => {
@@ -26,6 +28,8 @@ const commonReducer = (state = initialCommonState, action: ICommonAction) => {
       return state.set('onLine', action.payload.onLine);
     case SET_APP_THEME:
       return state.set('theme', action.payload.theme);
+    case SET_SIGN_IN_DIALOG_VISIBLE:
+      return state.set('signInDialogVisible', action.payload.visible);
     default:
       return state;
   }
