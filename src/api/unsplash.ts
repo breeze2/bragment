@@ -6,7 +6,7 @@ const unsplash = new Unsplash({
   secret: process.env.UNSPLASH_SECRET || '',
 });
 
-export async function getRandomPhoto(count: number = 4) {
+export async function getRandomPhoto(count = 4) {
   try {
     const response = await unsplash.photos.getRandomPhoto({
       count,
