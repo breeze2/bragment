@@ -30,13 +30,13 @@ import { preloadImage } from '../utils';
 
 import styles from '../styles/CreateBoardDialog.module.scss';
 
-export interface CreateBoardDialogProps {
+export interface ICreateBoardDialogProps {
   defaultPolicy?: EBoardPolicy;
   defaultType?: EBoardType;
   defaultGroup?: string;
 }
 
-interface CreateBoardDialogState {
+interface ICreateBoardDialogState {
   image?: IUnsplashPhoto;
   color?: string;
   type: string;
@@ -47,7 +47,7 @@ interface CreateBoardDialogState {
 
 const { Option } = Select;
 
-const CreateBoardDialog: React.FC<CreateBoardDialogProps> = React.memo(
+const CreateBoardDialog: React.FC<ICreateBoardDialogProps> = React.memo(
   (props) => {
     const { formatMessage: f } = useIntl();
     const dispatch = useDispatch();
@@ -84,7 +84,7 @@ const CreateBoardDialog: React.FC<CreateBoardDialogProps> = React.memo(
       isCreating: false,
       canCreate: false,
     };
-    const [state, setState] = useMultipleState<CreateBoardDialogState>(
+    const [state, setState] = useMultipleState<ICreateBoardDialogState>(
       defaultState
     );
     const style: React.CSSProperties = {};
