@@ -68,10 +68,6 @@ function* createFragmentColumnSaga(action: IAsyncCreateFragmentColumnAction) {
 }
 
 function* moveFragmentCardSaga(action: IAsyncMoveFragmentCardAction) {
-  // const board: IBoard | null = yield select(getCurrentBoard);
-  // const fragmentColumns: Immutable.List<IFragmentColumn> = yield select(
-  //   getFragmentColumns
-  // );
   const { fromColumnId, fromId, toColumnId, toId } = action.payload;
   yield put(moveFragmentCard(fromColumnId, fromId, toColumnId, toId));
   const columnMap:

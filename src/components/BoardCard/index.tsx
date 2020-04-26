@@ -1,7 +1,8 @@
 import { Card } from 'antd';
 import React from 'react';
+import ProgressiveImage from 'react-progressive-image';
 import { IBoard } from '../../api/types';
-import { getSmallUrl } from '../../api/unsplash';
+import { getSmallUrl, getThumbUrl } from '../../api/unsplash';
 
 import styles from '../../styles/BoardCard.module.scss';
 
@@ -12,6 +13,36 @@ interface IBoardCardProps {
 const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
   const { board } = props;
   const { color, image, title } = board;
+  let progressiveImage;
+  if (image) {
+    const smallImage = getSmallUrl(image);
+    const thumbImage = getThumbUrl(image);
+    const placeholder = (
+      <div
+        className={styles.background}
+        style={{
+          filter: 'blur(10px)',
+          backgroundImage: thumbImage ? `url(${thumbImage})` : undefined,
+        }}
+      />
+    );
+    progressiveImage = (
+      <ProgressiveImage src={smallImage} placeholder={thumbImage}>
+        {(src: string, loading: boolean) =>
+          loading ? (
+            placeholder
+          ) : (
+            <div
+              className={styles.background}
+              style={{
+                backgroundImage: src ? `url(${src})` : undefined,
+              }}
+            />
+          )
+        }
+      </ProgressiveImage>
+    );
+  }
   return (
     <Card
       className={styles.wrapper}
@@ -20,12 +51,7 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
       style={{
         backgroundColor: color,
       }}>
-      <div
-        className={styles.background}
-        style={{
-          backgroundImage: image ? `url(${getSmallUrl(image)})` : undefined,
-        }}
-      />
+      {progressiveImage}
       <div className={styles.frontground}>
         <p className={styles.title}>{title}</p>
       </div>

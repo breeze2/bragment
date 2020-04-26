@@ -30,11 +30,11 @@ const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
   const cardMap = useSelector(
     (reduxState: IReduxState) => reduxState.fragment.cardMap
   );
-  const handleFooterModeChange = (mode: EFooterMode) => {
+  const handleFooterModeChange = (mode: EFooterMode, clientHeight?: number) => {
     if (mode === EFooterMode.LABEL) {
-      setScrollbarMaxHeight('calc(100vh - 192px)');
+      setScrollbarMaxHeight('calc(100vh - 144px - 48px)');
     } else {
-      setScrollbarMaxHeight('calc(100vh - 232px)');
+      setScrollbarMaxHeight(`calc(100vh - 144px - ${clientHeight || 88}px)`);
     }
   };
   return (

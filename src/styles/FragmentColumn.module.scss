@@ -19,6 +19,9 @@
 .container {
   position: relative;
   min-height: 6px;
+  // HACK: chrome's bug, there is one extra square after drag
+  // left: 1px;
+  // overflow-x: hidden;
 }
 
 .empty .container {
@@ -135,6 +138,9 @@
   flex: 0 0 auto;
   display: block;
   position: relative;
+  textarea {
+    resize: none;
+  }
   &::before {
     content: '';
     position: absolute;
@@ -165,5 +171,8 @@
   }
   .creator {
     width: 100%;
+    &.fieldMode {
+      height: auto;
+    }
   }
 }

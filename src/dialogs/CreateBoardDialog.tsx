@@ -134,11 +134,11 @@ const CreateBoardDialog: React.FC<ICreateBoardDialogProps> = React.memo(
 
     // NOTE: preload images
     React.useEffect(() => {
-      images.forEach((image) => {
+      const image = images.get(0);
+      if (image) {
         preloadImage(image.urls.small);
-        preloadImage(image.urls.thumb);
-      });
-      setState({ image: images.get(0) });
+      }
+      setState({ image });
     }, [images, setState]);
 
     return (
