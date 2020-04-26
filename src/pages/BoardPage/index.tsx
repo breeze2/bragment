@@ -10,20 +10,19 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
+import ProgressiveImage from 'react-progressive-image';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { IFragmentColumn } from '../../api/types';
-import { getRegularUrl } from '../../api/unsplash';
+import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
 import FragmentColumn from '../../components/FragmentColumn';
 import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
 import Header from '../../components/Header';
-// import { usePrevious } from '../../components/hooks';
 import GistFormDialog from '../../dialogs/GistFormDialog';
 import {
   asyncDispatch,
   asyncFetchCurrentBoard,
   asyncMoveFragmentCard,
-  // moveFragmentColumn,
   asyncMoveFragmentColumn,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
@@ -52,7 +51,6 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
   const fragmentColumnMap = useSelector(
     (state: IReduxState) => state.fragment.columnMap
   );
-  // const prevProps = usePrevious({ boardId, fragmentColumns });
   const dispatch = useDispatch();
 
   const handleDragEnd = (result: DropResult) => {
@@ -135,30 +133,45 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
       dispatch(asyncFetchCurrentBoard(boardId));
     }
   }, [boardId, dispatch]);
-  // React.useEffect(() => {
-  //   if (
-  //     prevProps &&
-  //     fragmentColumns &&
-  //     prevProps.fragmentColumns &&
-  //     boardId &&
-  //     boardId === prevProps.boardId &&
-  //     fragmentColumns !== prevProps.fragmentColumns
-  //   ) {
-  //     dispatch(asyncSaveFragmentColumnsData());
-  //   }
-  // }, [boardId, dispatch, fragmentColumns, prevProps]);
+
+  let progressiveImage;
+  if (currentBoard && currentBoard.image) {
+    const { color, image } = currentBoard;
+    const regularImage = getRegularUrl(image);
+    const thumbImage = getThumbUrl(image);
+    const placeholder = (
+      <div
+        className={styles.background}
+        style={{
+          filter: 'blur(10px)',
+          backgroundColor: color || undefined,
+          backgroundImage: thumbImage ? `url(${thumbImage})` : undefined,
+        }}
+      />
+    );
+    progressiveImage = (
+      <ProgressiveImage src={regularImage} placeholder={thumbImage}>
+        {(src: string, loading: boolean) =>
+          loading ? (
+            placeholder
+          ) : (
+            <div
+              className={styles.background}
+              style={{
+                backgroundColor: color || undefined,
+                backgroundImage: src ? `url(${src})` : undefined,
+              }}
+            />
+          )
+        }
+      </ProgressiveImage>
+    );
+  }
 
   console.info('BoardPage rendering...');
   return (
-    <Layout
-      className={styles.layout}
-      style={{
-        backgroundColor: currentBoard ? currentBoard.color : undefined,
-        backgroundImage:
-          currentBoard && currentBoard.image
-            ? `url(${getRegularUrl(currentBoard.image)})`
-            : undefined,
-      }}>
+    <Layout className={styles.layout}>
+      {progressiveImage}
       <Header />
       <Layout.Content>
         <Scrollbars autoHide>

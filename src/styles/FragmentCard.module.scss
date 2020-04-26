@@ -1,4 +1,6 @@
 .wrapper {
+  // HACK: chrome's bug, there is one extra square after drag
+  // margin: 0px 8px 8px 7px;
   margin: 0px 8px 8px 8px;
   padding: 0;
   .title {

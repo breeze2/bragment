@@ -1,5 +1,6 @@
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Button } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +17,7 @@ export enum EMode {
 
 interface IFragmentColumnFooterProps {
   data: IFragmentColumn;
-  onModeChange?: (mode: EMode) => void;
+  onModeChange?: (mode: EMode, clientHeight?: number) => void;
 }
 
 const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
@@ -27,12 +28,19 @@ const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
     const [mode, setMode] = React.useState(EMode.LABEL);
     const [submitting, setSubmitting] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<Input>(null);
+    const inputRef = React.useRef<TextArea>(null);
     const currentBoard = useSelector((state: IReduxState) =>
       state.board.get('current')
     );
     const setFieldMode = () => setMode(EMode.FIELD);
     const setLabelMode = () => setMode(EMode.LABEL);
+    const handlePressEnter = () => {
+      setImmediate(() => {
+        if (onModeChange) {
+          onModeChange(mode, selfRef.current?.clientHeight);
+        }
+      });
+    };
     const handleSubmit = () => {
       const title = inputRef.current?.state.value;
       if (!data.id || !currentBoard || !currentBoard.id || !title) {
@@ -54,7 +62,7 @@ const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
     };
     React.useLayoutEffect(() => {
       if (onModeChange) {
-        onModeChange(mode);
+        onModeChange(mode, selfRef.current?.clientHeight);
       }
       if (mode === EMode.FIELD) {
         inputRef.current?.focus();
@@ -73,6 +81,7 @@ const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
         };
       }
     }, [mode, onModeChange]);
+
     console.info('FragmentColumnFooter rendering...');
     return (
       <div ref={selfRef} className={styles.footer}>
@@ -84,10 +93,11 @@ const FragmentColumnFooter: React.FC<IFragmentColumnFooterProps> = React.memo(
             <PlusOutlined /> {f({ id: 'addAnotherCard' })}
           </div>
           <div className={styles.field}>
-            <Input
+            <TextArea
               ref={inputRef}
               placeholder={f({ id: 'inputCardTitle' })}
-              onPressEnter={handleSubmit}
+              autoSize={{ minRows: 1, maxRows: 6 }}
+              onPressEnter={handlePressEnter}
             />
             <div className={styles.actions}>
               <Button

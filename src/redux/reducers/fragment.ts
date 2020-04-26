@@ -54,8 +54,17 @@ function handlePushFragmentCard(
   state: IIFragmentState,
   action: IPushFragmentCardAction
 ) {
-  const { card } = action.payload;
-  return state.update('cardMap', (cardMap) => cardMap.set(card.id, card));
+  const { columnId, card } = action.payload;
+  return state
+    .update('cardMap', (cardMap) => cardMap.set(card.id, card))
+    .update('columnMap', (columnMap) =>
+      columnMap.update(columnId, (column) => ({
+        ...column,
+        cardOrder: column.cardOrder
+          ? column.cardOrder.concat(card.id)
+          : [card.id],
+      }))
+    );
 }
 
 function handlePushFragmentColumn(
