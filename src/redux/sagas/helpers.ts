@@ -1,3 +1,4 @@
+import { call } from 'redux-saga/effects';
 import { IReduxAction, IReduxAsyncAction } from '../types';
 
 export function* neverThrowWrapper(
@@ -5,7 +6,7 @@ export function* neverThrowWrapper(
   action: IReduxAction
 ) {
   try {
-    yield worker(action);
+    yield call(worker, action);
   } catch (e) {
     // TODO: send to sentry
     console.error(e);
@@ -17,8 +18,9 @@ export function* handlePromiseWrapper(
   action: IReduxAsyncAction
 ) {
   try {
-    const result = yield worker(action);
-    return action.resolve(result);
+    const result = yield call(worker, action);
+    action.resolve(result);
+    return result;
   } catch (e) {
     return action.reject(e);
   }
@@ -27,13 +29,18 @@ export function* handlePromiseWrapper(
 export function makeSagaWorkerDispatcher(workersMap: {
   [key: string]: (action: IReduxAction) => Generator<any>;
 }) {
-  return function*(action: IReduxAction) {
+  return function* (action: IReduxAction) {
     const worker = workersMap[action.type];
     if (worker) {
       if ('reject' in action && 'resolve' in action) {
-        yield handlePromiseWrapper(worker, action as IReduxAsyncAction);
+        const result = yield call(
+          handlePromiseWrapper,
+          worker,
+          action as IReduxAsyncAction
+        );
+        return result;
       } else {
-        yield neverThrowWrapper(worker, action);
+        yield call(neverThrowWrapper, worker, action);
       }
     }
   };

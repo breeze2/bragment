@@ -38,7 +38,7 @@ const initialBoardState = Immutable.Record<IBoardState>({
 function handleInsertBoard(state: IIBoardState, action: IInsertBoardAction) {
   const { index, board } = action.payload;
   if (board.type === EBoardType.PERSONAL) {
-    return state.update('personalList', (list) => list.splice(index, 0, board));
+    return state.update('personalList', (list) => list.insert(index, board));
   }
   return state;
 }
@@ -68,7 +68,7 @@ function handleSetCurrentBoard(
     state = state.update('recentList', (list) =>
       list
         .filter((el) => el.id !== current.id)
-        .splice(0, 0, current)
+        .unshift(current)
         .slice(0, RECENT_LIST_LENGTH)
     );
   }

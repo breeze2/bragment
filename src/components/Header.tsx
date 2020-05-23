@@ -1,8 +1,7 @@
 import { Layout } from 'antd';
 import React from 'react';
-import UserAvatar from './UserAvatar';
-
 import styles from '../styles/Header.module.scss';
+import UserAvatar from './UserAvatar';
 
 const Header: React.FC = React.memo(() => {
   return (

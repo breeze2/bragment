@@ -59,7 +59,10 @@ function* createFragmentColumnSaga(action: IAsyncCreateFragmentColumnAction) {
   );
   const currentBoard: IBoard | null = yield select(getCurrentBoard);
   if (column && column.id && currentBoard && currentBoard.id === boardId) {
+    const columnOrder = currentBoard.columnOrder;
+    columnOrder.push(column.id);
     yield put(pushFragmentColumn(column));
+    // yield put(setCurrentBoard({...currentBoard, columnOrder}));
     // yield call(asyncPushBoardColumnOrder, boardId, column.id);
     // NOTE: not wait
     asyncPushBoardColumnOrder(boardId, column.id);

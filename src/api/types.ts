@@ -27,6 +27,7 @@ export enum EBoardPolicy {
 export enum EFragmentType {
   GIST = 'GIST',
   LINK = 'LINK',
+  NOTE = 'NOTE',
   POST = 'POST',
   TODO = 'TODO',
 }
