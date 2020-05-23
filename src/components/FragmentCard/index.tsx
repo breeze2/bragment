@@ -6,20 +6,29 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { useDispatch } from 'react-redux';
-import { IFragmentCard } from '../../api/types';
+import { EFragmentType, IFragmentCard } from '../../api/types';
 import { setCurrentFragment } from '../../redux/actions';
-
 import styles from '../../styles/FragmentCard.module.scss';
+import NoteFragment from './NoteFragment';
 
 interface IFragmentCardProps {
   data: IFragmentCard;
   index: number;
 }
 
+function renderContent(data: IFragmentCard) {
+  if (data.type === EFragmentType.NOTE) {
+    return <NoteFragment content={data.title} />;
+  }
+  return <>{data.title}</>;
+}
+
 const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
   const { data, index } = props;
   const dispatch = useDispatch();
   const handleClick = () => dispatch(setCurrentFragment(data));
+
+  const content = renderContent(data);
 
   return (
     <Draggable draggableId={data.id} index={index}>
@@ -30,7 +39,7 @@ const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <Card hoverable bordered={false} onClick={handleClick}>
-            <p className={styles.title}>{data.title}</p>
+            <div className={styles.content}>{content}</div>
           </Card>
         </div>
       )}

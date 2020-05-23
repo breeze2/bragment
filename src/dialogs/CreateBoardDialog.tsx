@@ -26,9 +26,8 @@ import {
   setCreateBoardDialogVisible,
 } from '../redux/actions';
 import { IReduxState } from '../redux/types';
-import { preloadImage } from '../utils';
-
 import styles from '../styles/CreateBoardDialog.module.scss';
+import { preloadImage } from '../utils';
 
 export interface ICreateBoardDialogProps {
   defaultPolicy?: EBoardPolicy;

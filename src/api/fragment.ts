@@ -68,7 +68,7 @@ export async function asyncInsertFragmentCard(
     columnId,
     title,
     tags: [],
-    type: EFragmentType.GIST,
+    type: EFragmentType.NOTE,
     archived: false,
     ...others,
   };

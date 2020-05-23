@@ -1,5 +1,5 @@
-import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import { app, BrowserWindow } from 'electron';
 
 let mainWindow: BrowserWindow | null = null;
 const isWindows = process.platform === 'win32';

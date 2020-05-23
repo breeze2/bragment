@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "react"
+    "react",
+    "import"
   ],
   "extends": [
     "eslint:recommended",
@@ -13,6 +14,15 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
     "prettier/prettier": "warn",
     "no-duplicate-imports": "warn",
     "no-console": [
@@ -33,6 +43,7 @@
         "ignoreDeclarationSort": true
       }
     ],
+    "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/interface-name-prefix": [
       "warn",
