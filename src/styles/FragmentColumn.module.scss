@@ -18,7 +18,7 @@
   // HACK: chrome's bug, there is one extra square after drag
   // left: 1px;
   flex: 0 1 auto;
-  background-color: var(--fregment-background-color);
+  background-color: var(--fragment-background-color);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -50,7 +50,7 @@
   padding: 8px;
   font-size: 14px;
   line-height: 32px;
-  background-color: var(--fregment-background-color);
+  background-color: var(--fragment-background-color);
   .title {
     display: inline-block;
     width: calc(100% - 32px);
@@ -95,6 +95,11 @@
     height: 32px;
     line-height: 32px;
     color: var(--light-font-color);
+    :global {
+      .anticon {
+        margin-right: 4px;
+      }
+    }
   }
   &.labelMode {
     height: 48px;
@@ -116,7 +121,7 @@
   }
   &.fieldMode {
     height: 88px;
-    background-color: var(--fregment-background-color);
+    background-color: var(--fragment-background-color);
     .label {
       display: none;
     }
@@ -151,7 +156,7 @@
       circle at 100% 100%,
       rgba(0, 0, 0, 0) 0,
       rgba(0, 0, 0, 0) 70.71%,
-      var(--fregment-background-color) 70.71%
+      var(--fragment-background-color) 70.71%
     );
   }
   &::after {
@@ -165,7 +170,7 @@
       circle at 0% 100%,
       rgba(0, 0, 0, 0) 0,
       rgba(0, 0, 0, 0) 70.71%,
-      var(--fregment-background-color) 70.71%
+      var(--fragment-background-color) 70.71%
     );
   }
   .creator {

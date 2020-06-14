@@ -4,7 +4,7 @@ import styles from '../../styles/BoardPage.module.scss';
 import FragmentCardStyles from '../../styles/FragmentCard.module.scss';
 import FragmentColumnStyles from '../../styles/FragmentColumn.module.scss';
 
-export function getColumnPlacehodler() {
+export function getColumnPlaceholder() {
   return document.querySelector<HTMLDivElement>(`.${styles.columnPlaceholder}`);
 }
 
@@ -69,7 +69,7 @@ export function getColumnHeight(column: HTMLDivElement) {
   return (height || column.offsetHeight || 0) as number;
 }
 
-export function makeColumnPlacehodlerStyle(
+export function makeColumnPlaceholderStyle(
   from: DraggableLocation,
   to: DraggableLocation
 ) {

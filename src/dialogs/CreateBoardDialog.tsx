@@ -95,7 +95,7 @@ const CreateBoardDialog: React.FC<ICreateBoardDialogProps> = React.memo(
     }
 
     const handleClose = () => dispatch(setCreateBoardDialogVisible(false));
-    const hanleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
       setState({ canCreate: !!event.target.value.trim() });
     const handleTypeChange = (value: string) => setState({ type: value });
     const handlePolicyChange = (value: string) =>
@@ -153,7 +153,7 @@ const CreateBoardDialog: React.FC<ICreateBoardDialogProps> = React.memo(
             <Input
               ref={titleRef}
               defaultValue={defaultTitle}
-              onChange={hanleTitleChange}
+              onChange={handleTitleChange}
               placeholder={f({ id: 'addBoardTitle' })}
               addonAfter={
                 <BoardBackgroundPopover

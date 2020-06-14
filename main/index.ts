@@ -18,7 +18,7 @@ function createWindow() {
     minHeight: 600,
     minWidth: 960,
 
-    icon: path.join(__dirname, './icons/png/256x256.png'),
+    // icon: path.join(__dirname, './icons/png/256x256.png'),
     show: false,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'dark',

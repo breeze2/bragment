@@ -14,7 +14,9 @@
 
 .boardListLabel {
   display: block;
-  span {
-    margin-right: 4px;
+  :global {
+    .anticon {
+      margin-right: 4px;
+    }
   }
 }

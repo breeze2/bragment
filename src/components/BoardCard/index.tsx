@@ -52,7 +52,7 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
         backgroundColor: color,
       }}>
       {progressiveImage}
-      <div className={styles.frontground}>
+      <div className={styles.foreground}>
         <p className={styles.title}>{title}</p>
       </div>
     </Card>

@@ -1,18 +1,18 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Layout, Row } from 'antd';
-import React from 'react';
+import React, { memo, useLayoutEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
-import { asyncFetchPersonalBoards } from '../../redux/actions';
+import { asyncDispatch, asyncFetchPersonalBoards } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
 import styles from '../../styles/HomePage.module.scss';
 
-const BoardsPage: React.FC = React.memo(() => {
+function BoardsPage() {
   const dispatch = useDispatch();
   const { formatMessage: f } = useIntl();
   const personalList = useSelector(
@@ -21,9 +21,13 @@ const BoardsPage: React.FC = React.memo(() => {
   const recentList = useSelector(
     (state: IReduxState) => state.board.recentList
   );
+  const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
-    dispatch(asyncFetchPersonalBoards());
+  useLayoutEffect(() => {
+    setIsLoading(true);
+    asyncDispatch(dispatch, asyncFetchPersonalBoards()).finally(() => {
+      setIsLoading(false);
+    });
   }, [dispatch]);
 
   return (
@@ -59,13 +63,13 @@ const BoardsPage: React.FC = React.memo(() => {
             </Col>
           ))}
           <Col lg={6} md={8} sm={12} xs={24}>
-            <BoardCardCreator />
+            <BoardCardCreator isLoading={isLoading} />
           </Col>
         </Row>
       </div>
       <CreateBoardDialog />
     </Layout.Content>
   );
-});
+}
 
-export default BoardsPage;
+export default memo(BoardsPage);
