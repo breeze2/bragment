@@ -16,7 +16,7 @@
     background-position: center;
     transition: transform 0.4s;
   }
-  .frontground {
+  .foreground {
     position: absolute;
     top: 0;
     left: 0;
@@ -61,6 +61,9 @@
     .ant-card-body {
       height: 100%;
       padding: 37px 8px;
+    }
+    .anticon {
+      margin-right: 4px;
     }
   }
 }

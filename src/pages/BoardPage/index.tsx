@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React from 'react';
+import React, { memo, useLayoutEffect, useState } from 'react';
 import {
   DragDropContext,
   DragStart,
@@ -26,18 +26,17 @@ import {
   asyncMoveFragmentColumn,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
+import styles from '../../styles/BoardPage.module.scss';
 import { debounce } from '../../utils';
 import {
   getAllCardPlaceholders,
   getCardPlaceholder,
   getCardWrapperId,
-  getColumnPlacehodler,
+  getColumnPlaceholder,
   getColumnWrapperId,
   makeCardPlaceholderStyle,
-  makeColumnPlacehodlerStyle,
+  makeColumnPlaceholderStyle,
 } from './helpers';
-
-import styles from '../../styles/BoardPage.module.scss';
 
 interface IBoardPageRouteParams {
   id?: string;
@@ -45,20 +44,21 @@ interface IBoardPageRouteParams {
 
 interface IBoardPageProps extends RouteComponentProps<IBoardPageRouteParams> {}
 
-const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
+function BoardPage(props: IBoardPageProps) {
   const boardId = props.match.params.id;
   const currentBoard = useSelector((state: IReduxState) => state.board.current);
   const fragmentColumnMap = useSelector(
     (state: IReduxState) => state.fragment.columnMap
   );
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
     if (type === 'COLUMN' && destination) {
       const fromId = getColumnWrapperId(source.index);
       const toId = getColumnWrapperId(destination.index);
-      getColumnPlacehodler()?.removeAttribute('style');
+      getColumnPlaceholder()?.removeAttribute('style');
       if (fromId && toId) {
         asyncDispatch(dispatch, asyncMoveFragmentColumn(fromId, toId));
       }
@@ -91,20 +91,20 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
         );
       }
     } else if (type === 'COLUMN') {
-      const style = makeColumnPlacehodlerStyle(initial.source, initial.source);
+      const style = makeColumnPlaceholderStyle(initial.source, initial.source);
       if (style) {
-        getColumnPlacehodler()?.setAttribute('style', style);
+        getColumnPlaceholder()?.setAttribute('style', style);
       }
     }
   };
   const handleDragUpdate = debounce((initial: DragUpdate) => {
     if (initial.destination) {
       if (initial.type === 'COLUMN') {
-        const style = makeColumnPlacehodlerStyle(
+        const style = makeColumnPlaceholderStyle(
           initial.source,
           initial.destination
         );
-        const placeholder = getColumnPlacehodler();
+        const placeholder = getColumnPlaceholder();
         if (style) {
           placeholder?.setAttribute('style', style);
         } else {
@@ -128,9 +128,12 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
       }
     }
   }, 20);
-  React.useEffect(() => {
+  useLayoutEffect(() => {
+    setIsLoading(true);
     if (boardId) {
-      dispatch(asyncFetchCurrentBoard(boardId));
+      asyncDispatch(dispatch, asyncFetchCurrentBoard(boardId)).finally(() => {
+        setIsLoading(false);
+      });
     }
   }, [boardId, dispatch]);
 
@@ -204,7 +207,7 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
                     ))}
                   {provided.placeholder}
                   <div className={styles.actions}>
-                    <FragmentColumnCreator />
+                    <FragmentColumnCreator isLoading={isLoading} />
                   </div>
                 </div>
               )}
@@ -215,6 +218,6 @@ const BoardPage: React.FC<IBoardPageProps> = React.memo((props) => {
       </Layout.Content>
     </Layout>
   );
-});
+}
 
-export default BoardPage;
+export default memo(BoardPage);

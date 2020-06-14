@@ -12,6 +12,7 @@ export default {
   group: 'Group',
   inputCardTitle: 'Input the card title...',
   inputColumnTitle: 'Input the column title...',
+  loading: 'Loading...',
   noGroups: 'No groups...',
   personal: 'Personal',
   private: 'Private',

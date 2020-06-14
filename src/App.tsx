@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useEffect } from 'react';
 import { IntlProvider } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
@@ -9,10 +9,10 @@ import HomePage from './pages/HomePage';
 import { asyncFetchBoardBgImages } from './redux/actions';
 import { IReduxState } from './redux/types';
 
-const App: React.FC = () => {
+function App() {
   const language = useSelector((state: IReduxState) => state.common.language);
   const dispatch = useDispatch();
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(asyncFetchBoardBgImages());
   }, [dispatch]);
   return (
@@ -26,6 +26,6 @@ const App: React.FC = () => {
       <SignInDialog />
     </IntlProvider>
   );
-};
+}
 
-export default App;
+export default memo(App);

@@ -11,6 +11,7 @@ export default {
   group: '团队',
   inputCardTitle: '输入卡片标题...',
   inputColumnTitle: '输入列表标题...',
+  loading: '正在加载...',
   noGroups: '暂无团队',
   personal: '个人',
   private: '私有的',
