@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import {
   Draggable,
   DraggableProvided,
@@ -10,18 +10,17 @@ import {
 import { useSelector } from 'react-redux';
 import { IFragmentCard, IFragmentColumn } from '../../api/types';
 import { IReduxState } from '../../redux/types';
+import styles from '../../styles/FragmentColumn.module.scss';
 import FragmentCard from '../FragmentCard';
 import Footer, { EMode as EFooterMode } from './Footer';
 import Header from './Header';
-
-import styles from '../../styles/FragmentColumn.module.scss';
 
 interface IFragmentColumnProps {
   data: IFragmentColumn;
   index: number;
 }
 
-const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
+function FragmentColumn(props: IFragmentColumnProps) {
   const { data, index } = props;
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = React.useState(
     'calc(100vh - 192px)'
@@ -29,13 +28,16 @@ const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
   const cardMap = useSelector(
     (reduxState: IReduxState) => reduxState.fragment.cardMap
   );
-  const handleFooterModeChange = (mode: EFooterMode, clientHeight?: number) => {
-    if (mode === EFooterMode.LABEL) {
-      setScrollbarMaxHeight('calc(100vh - 144px - 48px)');
-    } else {
-      setScrollbarMaxHeight(`calc(100vh - 144px - ${clientHeight || 88}px)`);
-    }
-  };
+  const handleFooterModeChange = useCallback(
+    (mode: EFooterMode, clientHeight?: number) => {
+      if (mode === EFooterMode.LABEL) {
+        setScrollbarMaxHeight('calc(100vh - 144px - 48px)');
+      } else {
+        setScrollbarMaxHeight(`calc(100vh - 144px - ${clientHeight || 88}px)`);
+      }
+    },
+    []
+  );
   return (
     <Draggable draggableId={data.id} index={index}>
       {(
@@ -80,6 +82,6 @@ const FragmentColumn: React.FC<IFragmentColumnProps> = React.memo((props) => {
       )}
     </Draggable>
   );
-});
+}
 
-export default FragmentColumn;
+export default memo(FragmentColumn);

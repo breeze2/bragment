@@ -15,6 +15,7 @@ import {
   SET_CURRENT_FRAGMENT,
   SET_FRAGMENT_CARD_MAP,
   SET_FRAGMENT_COLUMN_MAP,
+  SET_IS_LOADING_FRAGMENTS,
 } from '../actions';
 import { IFragmentState, IIFragmentState } from '../types';
 
@@ -22,6 +23,7 @@ const initialFragmentState = Immutable.Record<IFragmentState>({
   cardMap: Immutable.Map<IFragmentCard>({}),
   columnMap: Immutable.Map<IFragmentColumn>({}),
   current: null,
+  isLoading: false,
 })();
 
 function handleMoveFragmentCard(
@@ -120,6 +122,8 @@ const fragmentReducer = (
       return handleSetFragmentColumnMap(state, action);
     case SET_CURRENT_FRAGMENT:
       return state.set('current', action.payload.current);
+    case SET_IS_LOADING_FRAGMENTS:
+      return state.set('isLoading', action.payload.isLoading);
     case MOVE_FRAGMENT_CARD:
       return handleMoveFragmentCard(state, action);
     case PUSH_FRAGMENT_CARD:

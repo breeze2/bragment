@@ -152,7 +152,7 @@ const monacoEditorPlugin = new MonacoEditorWebpackPlugin({
     'snippets',
     'suggest',
     '!toggleHighContrast',
-    'toggleTabFocusMode',
+    '!toggleTabFocusMode',
     'transpose',
     'wordHighlighter',
     'wordOperations',

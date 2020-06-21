@@ -18,16 +18,13 @@ enum EMode {
   LABEL,
 }
 
-export interface IFragmentColumnCreatorProps {
-  isLoading: boolean;
-}
+export interface IFragmentColumnCreatorProps {}
 export interface IFragmentColumnCreatorState {
   mode: EMode;
   isCreating: boolean;
 }
 
 function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
-  const { isLoading } = props;
   const { formatMessage: f } = useIntl();
   const dispatch = useDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
@@ -41,6 +38,9 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   );
   const currentBoard = useSelector((reduxState: IReduxState) =>
     reduxState.board.get('current')
+  );
+  const isLoading = useSelector((reduxState: IReduxState) =>
+    reduxState.fragment.get('isLoading')
   );
   const setFieldMode = () => setState({ mode: EMode.FIELD });
   const setLabelMode = () => setState({ mode: EMode.LABEL });

@@ -43,6 +43,10 @@ export async function asyncUpdateBoard(
   await firestore().collection('boards').doc(boardId).update(data);
 }
 
+export async function asyncCheckBoard(boardId: string) {
+  await asyncUpdateBoard(boardId, { checkedAt: serverTimestamp() });
+}
+
 export async function asyncPushBoardColumnOrder(
   boardId: string,
   columnId: string

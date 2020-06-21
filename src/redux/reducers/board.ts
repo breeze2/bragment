@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import { boardComparatorByCheckedAt } from '../../api/board';
 import { EBoardType } from '../../api/types';
 import {
   IBoardAction,
@@ -8,11 +9,11 @@ import {
   ISetPersonalBoardListAction,
   SET_CREATE_BOARD_DIALOG_VISIBLE,
   SET_CURRENT_BOARD,
+  SET_IS_LOADING_BOARDS,
   SET_PERSONAL_BOARD_LIST,
   SET_STANDBY_BOARD_BG_IMAGES,
 } from '../actions';
 import { IBoardState, IIBoardState } from '../types';
-import { boardComparatorByCheckedAt } from '../../api/board';
 
 const RECENT_LIST_LENGTH = 4;
 
@@ -20,6 +21,7 @@ const initialBoardState = Immutable.Record<IBoardState>({
   createDialogVisible: false,
   current: null,
   groupList: Immutable.List([]),
+  isLoading: false,
   personalList: Immutable.List([]),
   recentList: Immutable.List([]),
   standbyBgColors: Immutable.List([
@@ -83,6 +85,8 @@ const boardReducer = (state = initialBoardState, action: IBoardAction) => {
       return state.set('createDialogVisible', action.payload.visible);
     case SET_CURRENT_BOARD:
       return handleSetCurrentBoard(state, action);
+    case SET_IS_LOADING_BOARDS:
+      return state.set('isLoading', action.payload.isLoading);
     case SET_PERSONAL_BOARD_LIST:
       return handleSetPersonalBoardList(state, action);
     case SET_STANDBY_BOARD_BG_IMAGES:

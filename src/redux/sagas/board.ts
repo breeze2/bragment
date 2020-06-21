@@ -1,9 +1,14 @@
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import {
+  asyncCheckBoard,
   asyncFetchBoard,
   asyncInsertBoard,
   asyncSelectPersonalBoards,
 } from '../../api/board';
+import {
+  asyncFetchFragmentCardMap,
+  asyncFetchFragmentColumnMap,
+} from '../../api/fragment';
 import {
   IBoard,
   IFragmentCard,
@@ -26,10 +31,6 @@ import {
   setStandbyBoardBgImages,
 } from '../actions';
 
-import {
-  asyncFetchFragmentCardMap,
-  asyncFetchFragmentColumnMap,
-} from '../../api/fragment';
 import { makeSagaWorkerDispatcher } from './helpers';
 
 function* fetchBoardBgImagesSaga() {
@@ -88,6 +89,9 @@ function* fetchCurrentBoardSaga(action: IAsyncFetchCurrentBoardAction) {
     cardMap: call(fetchBoardCardMapSaga, id),
     columnMap: call(fetchBoardColumnMapSaga, id),
   });
+  if (board.id) {
+    asyncCheckBoard(board.id);
+  }
   if (board.columnOrder.length < columnMap.size) {
     // TODO: do something
   }

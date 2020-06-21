@@ -9,6 +9,7 @@ export const INSERT_BOARD = 'INSERT_BOARD';
 export const SET_CREATE_BOARD_DIALOG_VISIBLE =
   'SET_CREATE_BOARD_DIALOG_VISIBLE';
 export const SET_CURRENT_BOARD = 'SET_CURRENT_BOARD';
+export const SET_IS_LOADING_BOARDS = 'SET_IS_LOADING_BOARDS';
 export const SET_PERSONAL_BOARD_LIST = 'SET_PERSONAL_BOARD_LIST';
 export const SET_STANDBY_BOARD_BG_IMAGES = 'SET_STANDBY_BOARD_BG_IMAGES';
 
@@ -57,6 +58,11 @@ export type ISetCurrentBoardAction = IReduxAction<
   { board: IBoard }
 >;
 
+export type ISetIsLoadingBoardsAction = IReduxAction<
+  typeof SET_IS_LOADING_BOARDS,
+  { isLoading: boolean }
+>;
+
 export type IBoardAction =
   | IAsyncCreateBoardAction
   | IAsyncFetchPersonalBoardsAction
@@ -65,6 +71,7 @@ export type IBoardAction =
   | IInsertBoardAction
   | ISetCreateBoardVisibleAction
   | ISetCurrentBoardAction
+  | ISetIsLoadingBoardsAction
   | ISetPersonalBoardListAction
   | ISetStandbyBoardBgImagesAction;
 
@@ -103,6 +110,13 @@ export const insertBoard = (
 export const setCurrentBoard = (board: IBoard): ISetCurrentBoardAction => ({
   payload: { board },
   type: SET_CURRENT_BOARD,
+});
+
+export const setIsLoadingBoards = (
+  isLoading: boolean
+): ISetIsLoadingBoardsAction => ({
+  payload: { isLoading },
+  type: SET_IS_LOADING_BOARDS,
 });
 
 export const setPersonalBoardList = (

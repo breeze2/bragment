@@ -1,13 +1,17 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Layout, Row } from 'antd';
-import React, { memo, useLayoutEffect, useState } from 'react';
+import React, { memo, useLayoutEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
-import { asyncDispatch, asyncFetchPersonalBoards } from '../../redux/actions';
+import {
+  asyncDispatch,
+  asyncFetchPersonalBoards,
+  setIsLoadingBoards,
+} from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
 import styles from '../../styles/HomePage.module.scss';
@@ -21,14 +25,14 @@ function BoardsPage() {
   const recentList = useSelector(
     (state: IReduxState) => state.board.recentList
   );
-  const [isLoading, setIsLoading] = useState(false);
 
   useLayoutEffect(() => {
-    setIsLoading(true);
+    dispatch(setIsLoadingBoards(true));
     asyncDispatch(dispatch, asyncFetchPersonalBoards()).finally(() => {
-      setIsLoading(false);
+      dispatch(setIsLoadingBoards(false));
     });
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Layout.Content className={styles.content}>
@@ -63,7 +67,7 @@ function BoardsPage() {
             </Col>
           ))}
           <Col lg={6} md={8} sm={12} xs={24}>
-            <BoardCardCreator isLoading={isLoading} />
+            <BoardCardCreator />
           </Col>
         </Row>
       </div>
