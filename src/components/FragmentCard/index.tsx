@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Draggable,
   DraggableProvided,
@@ -26,7 +26,10 @@ function renderContent(data: IFragmentCard) {
 const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
   const { data, index } = props;
   const dispatch = useDispatch();
-  const handleClick = () => dispatch(setCurrentFragment(data));
+  const handleClick = useCallback(() => dispatch(setCurrentFragment(data)), [
+    data,
+    dispatch,
+  ]);
 
   const content = renderContent(data);
 

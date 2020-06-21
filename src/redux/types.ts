@@ -27,6 +27,7 @@ export interface IBoardState {
   createDialogVisible: boolean;
   current: IBoard | null;
   groupList: Immutable.List<IBoard>;
+  isLoading: boolean;
   personalList: Immutable.List<IBoard>;
   recentList: Immutable.List<IBoard>;
   standbyBgColors: Immutable.List<string>;
@@ -37,6 +38,7 @@ export interface IFragmentState {
   current: IFragmentCard | null;
   cardMap: Immutable.Map<string, IFragmentCard>;
   columnMap: Immutable.Map<string, IFragmentColumn>;
+  isLoading: boolean;
 }
 
 export type IICommonState = Immutable.Record<ICommonState> &

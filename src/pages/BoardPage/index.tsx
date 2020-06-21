@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { memo, useLayoutEffect, useState } from 'react';
+import React, { memo, useCallback, useLayoutEffect } from 'react';
 import {
   DragDropContext,
   DragStart,
@@ -24,6 +24,7 @@ import {
   asyncFetchCurrentBoard,
   asyncMoveFragmentCard,
   asyncMoveFragmentColumn,
+  setIsLoadingFragments,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 import styles from '../../styles/BoardPage.module.scss';
@@ -51,36 +52,41 @@ function BoardPage(props: IBoardPageProps) {
     (state: IReduxState) => state.fragment.columnMap
   );
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDragEnd = (result: DropResult) => {
-    const { destination, source, type } = result;
-    if (type === 'COLUMN' && destination) {
-      const fromId = getColumnWrapperId(source.index);
-      const toId = getColumnWrapperId(destination.index);
-      getColumnPlaceholder()?.removeAttribute('style');
-      if (fromId && toId) {
-        asyncDispatch(dispatch, asyncMoveFragmentColumn(fromId, toId));
+  const handleDragEnd = useCallback(
+    (result: DropResult) => {
+      const { destination, source, type } = result;
+      if (type === 'COLUMN' && destination) {
+        const fromId = getColumnWrapperId(source.index);
+        const toId = getColumnWrapperId(destination.index);
+        getColumnPlaceholder()?.removeAttribute('style');
+        if (fromId && toId) {
+          asyncDispatch(dispatch, asyncMoveFragmentColumn(fromId, toId));
+        }
       }
-    }
-    if (type === 'CARD' && destination) {
-      getAllCardPlaceholders().forEach((el) => el.removeAttribute('style'));
-      const fromId = getCardWrapperId(source.droppableId, source.index);
-      const toId = getCardWrapperId(destination.droppableId, destination.index);
-      if (fromId) {
-        asyncDispatch(
-          dispatch,
-          asyncMoveFragmentCard(
-            source.droppableId,
-            fromId,
-            destination.droppableId,
-            toId
-          )
+      if (type === 'CARD' && destination) {
+        getAllCardPlaceholders().forEach((el) => el.removeAttribute('style'));
+        const fromId = getCardWrapperId(source.droppableId, source.index);
+        const toId = getCardWrapperId(
+          destination.droppableId,
+          destination.index
         );
+        if (fromId) {
+          asyncDispatch(
+            dispatch,
+            asyncMoveFragmentCard(
+              source.droppableId,
+              fromId,
+              destination.droppableId,
+              toId
+            )
+          );
+        }
       }
-    }
-  };
-  const handleDragStart = (initial: DragStart) => {
+    },
+    [dispatch]
+  );
+  const handleDragStart = useCallback((initial: DragStart) => {
     const { type } = initial;
     if (type === 'CARD') {
       const style = makeCardPlaceholderStyle(initial.source, initial.source);
@@ -96,43 +102,46 @@ function BoardPage(props: IBoardPageProps) {
         getColumnPlaceholder()?.setAttribute('style', style);
       }
     }
-  };
-  const handleDragUpdate = debounce((initial: DragUpdate) => {
-    if (initial.destination) {
-      if (initial.type === 'COLUMN') {
-        const style = makeColumnPlaceholderStyle(
-          initial.source,
-          initial.destination
-        );
-        const placeholder = getColumnPlaceholder();
-        if (style) {
-          placeholder?.setAttribute('style', style);
-        } else {
-          placeholder?.removeAttribute('style');
-        }
-      }
-    }
-    if (initial.type === 'CARD') {
-      getAllCardPlaceholders().forEach((el) => el.removeAttribute('style'));
+  }, []);
+  const handleDragUpdate = useCallback(
+    debounce((initial: DragUpdate) => {
       if (initial.destination) {
-        const style = makeCardPlaceholderStyle(
-          initial.source,
-          initial.destination
-        );
-        if (style) {
-          getCardPlaceholder(initial.destination.droppableId)?.setAttribute(
-            'style',
-            style
+        if (initial.type === 'COLUMN') {
+          const style = makeColumnPlaceholderStyle(
+            initial.source,
+            initial.destination
           );
+          const placeholder = getColumnPlaceholder();
+          if (style) {
+            placeholder?.setAttribute('style', style);
+          } else {
+            placeholder?.removeAttribute('style');
+          }
         }
       }
-    }
-  }, 20);
+      if (initial.type === 'CARD') {
+        getAllCardPlaceholders().forEach((el) => el.removeAttribute('style'));
+        if (initial.destination) {
+          const style = makeCardPlaceholderStyle(
+            initial.source,
+            initial.destination
+          );
+          if (style) {
+            getCardPlaceholder(initial.destination.droppableId)?.setAttribute(
+              'style',
+              style
+            );
+          }
+        }
+      }
+    }, 20),
+    []
+  );
   useLayoutEffect(() => {
-    setIsLoading(true);
     if (boardId) {
+      dispatch(setIsLoadingFragments(true));
       asyncDispatch(dispatch, asyncFetchCurrentBoard(boardId)).finally(() => {
-        setIsLoading(false);
+        dispatch(setIsLoadingFragments(false));
       });
     }
   }, [boardId, dispatch]);
@@ -207,7 +216,7 @@ function BoardPage(props: IBoardPageProps) {
                     ))}
                   {provided.placeholder}
                   <div className={styles.actions}>
-                    <FragmentColumnCreator isLoading={isLoading} />
+                    <FragmentColumnCreator />
                   </div>
                 </div>
               )}

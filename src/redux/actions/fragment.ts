@@ -16,6 +16,7 @@ export const ASYNC_RENAME_FRAGMENT_COLUMN = 'ASYNC_RENAME_FRAGMENT_COLUMN';
 export const SET_CURRENT_FRAGMENT = 'SET_CURRENT_FRAGMENT';
 export const SET_FRAGMENT_CARD_MAP = 'SET_FRAGMENT_CARD_MAP';
 export const SET_FRAGMENT_COLUMN_MAP = 'SET_FRAGMENT_COLUMN_MAP';
+export const SET_IS_LOADING_FRAGMENTS = 'SET_IS_LOADING_FRAGMENTS';
 export const PUSH_FRAGMENT_CARD = 'PUSH_FRAGMENT_CARD';
 export const PUSH_FRAGMENT_COLUMN = 'PUSH_FRAGMENT_COLUMN';
 export const MOVE_FRAGMENT_CARD = 'MOVE_FRAGMENT_CARD';
@@ -39,6 +40,11 @@ export type ISetFragmentColumnMapAction = IReduxAction<
 export type ISetCurrentFragmentAction = IReduxAction<
   typeof SET_CURRENT_FRAGMENT,
   { current: IFragmentCard | null }
+>;
+
+export type ISetIsLoadingFragmentsAction = IReduxAction<
+  typeof SET_IS_LOADING_FRAGMENTS,
+  { isLoading: boolean }
 >;
 
 export type IPushFragmentCardAction = IReduxAction<
@@ -125,7 +131,8 @@ export type IFragmentAction =
   | IRenameFragmentColumnAction
   | ISetCurrentFragmentAction
   | ISetFragmentCardMapAction
-  | ISetFragmentColumnMapAction;
+  | ISetFragmentColumnMapAction
+  | ISetIsLoadingFragmentsAction;
 
 export const asyncCreateFragment = (
   boardId: string,
@@ -190,6 +197,13 @@ export const setFragmentColumnMap = (
 ): ISetFragmentColumnMapAction => ({
   payload: { columnMap },
   type: SET_FRAGMENT_COLUMN_MAP,
+});
+
+export const setIsLoadingFragments = (
+  isLoading: boolean
+): ISetIsLoadingFragmentsAction => ({
+  payload: { isLoading },
+  type: SET_IS_LOADING_FRAGMENTS,
 });
 
 export const pushFragmentCard = (
