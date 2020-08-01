@@ -14,8 +14,8 @@ import { IReduxState } from '../../redux/types';
 import styles from '../../styles/FragmentColumn.module.scss';
 
 enum EMode {
-  FIELD,
-  LABEL,
+  INPUT,
+  TEXT,
 }
 
 export interface IFragmentColumnCreatorProps {}
@@ -30,7 +30,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
   const defaultState: IFragmentColumnCreatorState = {
-    mode: EMode.LABEL,
+    mode: EMode.TEXT,
     isCreating: false,
   };
   const [state, setState] = useMultipleState<IFragmentColumnCreatorState>(
@@ -39,11 +39,11 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const currentBoard = useSelector((reduxState: IReduxState) =>
     reduxState.board.get('current')
   );
-  const isLoading = useSelector((reduxState: IReduxState) =>
-    reduxState.fragment.get('isLoading')
+  const loading = useSelector((reduxState: IReduxState) =>
+    reduxState.fragment.get('loading')
   );
-  const setFieldMode = () => setState({ mode: EMode.FIELD });
-  const setLabelMode = () => setState({ mode: EMode.LABEL });
+  const setInputMode = () => setState({ mode: EMode.INPUT });
+  const setTextMode = () => setState({ mode: EMode.TEXT });
   const handleCreate = () => {
     const title = inputRef.current?.state.value;
     if (!currentBoard || !currentBoard.id || !title) {
@@ -61,7 +61,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   };
 
   useLayoutEffect(() => {
-    if (state.mode === EMode.FIELD) {
+    if (state.mode === EMode.INPUT) {
       inputRef.current?.focus();
       const handleBodyMouseUp = (event: MouseEvent) => {
         if (
@@ -70,7 +70,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
         ) {
           return;
         }
-        setState({ mode: EMode.LABEL });
+        setState({ mode: EMode.TEXT });
       };
       document.body.addEventListener('mouseup', handleBodyMouseUp);
       return () => {
@@ -83,12 +83,12 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
     <div
       ref={selfRef}
       className={`${styles.creator} ${
-        state.mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
+        state.mode === EMode.INPUT ? styles.inputMode : styles.textMode
       }`}>
       <div
-        className={styles.label}
-        onClick={isLoading === true ? undefined : setFieldMode}>
-        {isLoading === true ? (
+        className={styles.text}
+        onClick={loading === true ? undefined : setInputMode}>
+        {loading === true ? (
           <>
             <LoadingOutlined />
             {f({ id: 'loading' })}
@@ -100,7 +100,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
           </>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={styles.input}>
         <Input
           ref={inputRef}
           placeholder={f({ id: 'inputColumnTitle' })}
@@ -116,7 +116,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
           <CloseOutlined
             style={{ display: state.isCreating ? 'none' : undefined }}
             className={styles.close}
-            onClick={setLabelMode}
+            onClick={setTextMode}
           />
         </div>
       </div>

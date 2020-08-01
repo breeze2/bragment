@@ -10,7 +10,7 @@ import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
   asyncDispatch,
   asyncFetchPersonalBoards,
-  setIsLoadingBoards,
+  setBoardLoading,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 
@@ -27,9 +27,9 @@ function BoardsPage() {
   );
 
   useLayoutEffect(() => {
-    dispatch(setIsLoadingBoards(true));
+    dispatch(setBoardLoading(true));
     asyncDispatch(dispatch, asyncFetchPersonalBoards()).finally(() => {
-      dispatch(setIsLoadingBoards(false));
+      dispatch(setBoardLoading(false));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

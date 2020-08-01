@@ -1,5 +1,6 @@
 import Immutable from 'immutable';
 import {
+  EFragmentType,
   IBoard,
   IFragmentCard,
   IFragmentColumn,
@@ -27,7 +28,7 @@ export interface IBoardState {
   createDialogVisible: boolean;
   current: IBoard | null;
   groupList: Immutable.List<IBoard>;
-  isLoading: boolean;
+  loading: boolean;
   personalList: Immutable.List<IBoard>;
   recentList: Immutable.List<IBoard>;
   standbyBgColors: Immutable.List<string>;
@@ -35,10 +36,13 @@ export interface IBoardState {
 }
 
 export interface IFragmentState {
-  current: IFragmentCard | null;
   cardMap: Immutable.Map<string, IFragmentCard>;
   columnMap: Immutable.Map<string, IFragmentColumn>;
-  isLoading: boolean;
+  createDialogVisible: boolean;
+  createType: EFragmentType;
+  current: IFragmentCard | null;
+  currentColumnId: string;
+  loading: boolean;
 }
 
 export type IICommonState = Immutable.Record<ICommonState> &

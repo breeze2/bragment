@@ -1,18 +1,25 @@
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import {
+  CloseOutlined,
+  EllipsisOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { Button, Dropdown, Menu } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import React, { memo, useLayoutEffect, useRef, useState } from 'react';
+import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { IFragmentColumn } from '../../api/types';
-import { asyncCreateFragment, asyncDispatch } from '../../redux/actions';
+import { EFragmentType, IFragmentColumn } from '../../api/types';
+import {
+  asyncCreateFragment,
+  asyncDispatch,
+  showCreateFragmentDialog,
+} from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
-
 import styles from '../../styles/FragmentColumn.module.scss';
 
 export enum EMode {
-  FIELD,
-  LABEL,
+  INPUT,
+  TEXT,
 }
 
 interface IFragmentColumnFooterProps {
@@ -24,15 +31,15 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const { data, onModeChange } = props;
   const { formatMessage: f } = useIntl();
   const dispatch = useDispatch();
-  const [mode, setMode] = useState(EMode.LABEL);
+  const [mode, setMode] = useState(EMode.TEXT);
   const [submitting, setSubmitting] = useState(false);
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<TextArea>(null);
   const currentBoard = useSelector((state: IReduxState) =>
     state.board.get('current')
   );
-  const setFieldMode = () => setMode(EMode.FIELD);
-  const setLabelMode = () => setMode(EMode.LABEL);
+  const setInputMode = () => setMode(EMode.INPUT);
+  const setTextMode = () => setMode(EMode.TEXT);
   const handlePressEnter = () => {
     setImmediate(() => {
       if (onModeChange) {
@@ -56,14 +63,33 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
       .finally(() => {
         inputRef.current?.setValue('');
         setSubmitting(false);
-        setLabelMode();
+        setTextMode();
       });
   };
+  const handleAddonClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const menu = useMemo(
+    () => (
+      <Menu>
+        <Menu.Item
+          onClick={() => {
+            dispatch(showCreateFragmentDialog(data.id, EFragmentType.GIST));
+          }}>
+          {f({ id: 'addGistCard' })}
+        </Menu.Item>
+      </Menu>
+    ),
+    [data.id, dispatch, f]
+  );
+
   useLayoutEffect(() => {
     if (onModeChange) {
       onModeChange(mode, selfRef.current?.clientHeight);
     }
-    if (mode === EMode.FIELD) {
+    if (mode === EMode.INPUT) {
       inputRef.current?.focus();
       const handleBodyMouseUp = (event: MouseEvent) => {
         if (
@@ -72,7 +98,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
         ) {
           return;
         }
-        setLabelMode();
+        setTextMode();
       };
       document.body.addEventListener('mouseup', handleBodyMouseUp);
       return () => {
@@ -86,13 +112,18 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     <div ref={selfRef} className={styles.footer}>
       <div
         className={`${styles.creator} ${
-          mode === EMode.FIELD ? styles.fieldMode : styles.labelMode
+          mode === EMode.INPUT ? styles.inputMode : styles.textMode
         }`}>
-        <div className={styles.label} onClick={setFieldMode}>
+        <div className={styles.text} onClick={setInputMode}>
           <PlusOutlined />
           {f({ id: 'addAnotherCard' })}
+          <div className={styles.addon} onClick={handleAddonClick}>
+            <Dropdown trigger={['click']} overlay={menu}>
+              <EllipsisOutlined />
+            </Dropdown>
+          </div>
         </div>
-        <div className={styles.field}>
+        <div className={styles.input}>
           <TextArea
             ref={inputRef}
             placeholder={f({ id: 'inputCardTitle' })}
@@ -106,7 +137,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
             <CloseOutlined
               style={{ display: submitting ? 'none' : undefined }}
               className={styles.close}
-              onClick={setLabelMode}
+              onClick={setTextMode}
             />
           </div>
         </div>

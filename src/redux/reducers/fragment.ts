@@ -1,6 +1,7 @@
 import Immutable from 'immutable';
-import { IFragmentCard, IFragmentColumn } from '../../api/types';
+import { EFragmentType, IFragmentCard, IFragmentColumn } from '../../api/types';
 import {
+  HIDE_CREATE_FRAGMENT_DIALOG,
   IFragmentAction,
   IMoveFragmentCardAction,
   IPushFragmentCardAction,
@@ -15,15 +16,19 @@ import {
   SET_CURRENT_FRAGMENT,
   SET_FRAGMENT_CARD_MAP,
   SET_FRAGMENT_COLUMN_MAP,
-  SET_IS_LOADING_FRAGMENTS,
+  SET_FRAGMENT_LOADING,
+  SHOW_CREATE_FRAGMENT_DIALOG,
 } from '../actions';
 import { IFragmentState, IIFragmentState } from '../types';
 
 const initialFragmentState = Immutable.Record<IFragmentState>({
+  currentColumnId: '',
+  createDialogVisible: false,
+  createType: EFragmentType.GIST,
   cardMap: Immutable.Map<IFragmentCard>({}),
   columnMap: Immutable.Map<IFragmentColumn>({}),
   current: null,
-  isLoading: false,
+  loading: false,
 })();
 
 function handleMoveFragmentCard(
@@ -120,10 +125,17 @@ const fragmentReducer = (
       return handleSetFragmentCardMap(state, action);
     case SET_FRAGMENT_COLUMN_MAP:
       return handleSetFragmentColumnMap(state, action);
+    case SHOW_CREATE_FRAGMENT_DIALOG:
+      return state
+        .set('createDialogVisible', true)
+        .set('currentColumnId', action.payload.columnId)
+        .set('createType', action.payload.type);
+    case HIDE_CREATE_FRAGMENT_DIALOG:
+      return state.set('createDialogVisible', false);
     case SET_CURRENT_FRAGMENT:
       return state.set('current', action.payload.current);
-    case SET_IS_LOADING_FRAGMENTS:
-      return state.set('isLoading', action.payload.isLoading);
+    case SET_FRAGMENT_LOADING:
+      return state.set('loading', action.payload.loading);
     case MOVE_FRAGMENT_CARD:
       return handleMoveFragmentCard(state, action);
     case PUSH_FRAGMENT_CARD:

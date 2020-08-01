@@ -18,13 +18,14 @@ import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
 import FragmentColumn from '../../components/FragmentColumn';
 import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
 import Header from '../../components/Header';
+import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
 import GistFormDialog from '../../dialogs/GistFormDialog';
 import {
   asyncDispatch,
   asyncFetchCurrentBoard,
   asyncMoveFragmentCard,
   asyncMoveFragmentColumn,
-  setIsLoadingFragments,
+  setFragmentLoading,
 } from '../../redux/actions';
 import { IReduxState } from '../../redux/types';
 import styles from '../../styles/BoardPage.module.scss';
@@ -139,9 +140,9 @@ function BoardPage(props: IBoardPageProps) {
   );
   useLayoutEffect(() => {
     if (boardId) {
-      dispatch(setIsLoadingFragments(true));
+      dispatch(setFragmentLoading(true));
       asyncDispatch(dispatch, asyncFetchCurrentBoard(boardId)).finally(() => {
-        dispatch(setIsLoadingFragments(false));
+        dispatch(setFragmentLoading(false));
       });
     }
   }, [boardId, dispatch]);
@@ -225,6 +226,7 @@ function BoardPage(props: IBoardPageProps) {
         </Scrollbars>
         <GistFormDialog />
       </Layout.Content>
+      <CreateFragmentDialog />
     </Layout>
   );
 }

@@ -1,0 +1,26 @@
+.wrapper {
+  display: block;
+  :global {
+    .ant-modal-header {
+      padding-left: 56px;
+      padding-right: 56px;
+    }
+  }
+}
+
+.header {
+  .label {
+    position: absolute;
+    left: 0;
+    width: 48px;
+    text-align: center;
+    border-radius: 2px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 1px solid;
+    border-left: none;
+  }
+  .title {
+    margin: 0;
+  }
+}
