@@ -1,5 +1,6 @@
 export default {
   addAnotherCard: '添加另一张卡片',
+  addGistCard: '添加一张 gist 卡片',
   addAnotherColumn: '添加另一个列表',
   addBoardTitle: '添加看板标题',
   addCard: '添加卡片',

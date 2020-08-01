@@ -1,5 +1,6 @@
 export default {
   addAnotherCard: 'Add another card.',
+  addGistCard: 'Add a gist card',
   addAnotherColumn: 'Add another column.',
   addBoardTitle: 'Add board title.',
   addCard: 'Add Card',

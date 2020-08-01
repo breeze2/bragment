@@ -32,6 +32,10 @@ export enum EFragmentType {
   TODO = 'TODO',
 }
 
+export enum EFragmentTypeColor {
+  GIST = '#722ed1',
+}
+
 export interface IBoard {
   id: string;
   title: string;

@@ -1,4 +1,9 @@
-import { IFragmentCard, IFragmentColumn, IPartial } from '../../api/types';
+import {
+  EFragmentType,
+  IFragmentCard,
+  IFragmentColumn,
+  IPartial,
+} from '../../api/types';
 import { IReduxAction } from '../types';
 
 export enum EFragmentActionError {
@@ -13,10 +18,12 @@ export const ASYNC_CREATE_FRAGMENT_COLUMN = 'ASYNC_CREATE_FRAGMENT_COLUMN';
 export const ASYNC_MOVE_FRAGMENT_CARD = 'ASYNC_MOVE_FRAGMENT_CARD';
 export const ASYNC_MOVE_FRAGMENT_COLUMN = 'ASYNC_MOVE_FRAGMENT_COLUMN';
 export const ASYNC_RENAME_FRAGMENT_COLUMN = 'ASYNC_RENAME_FRAGMENT_COLUMN';
+export const HIDE_CREATE_FRAGMENT_DIALOG = 'HIDE_CREATE_FRAGMENT_DIALOG';
+export const SHOW_CREATE_FRAGMENT_DIALOG = 'SHOW_CREATE_FRAGMENT_DIALOG';
 export const SET_CURRENT_FRAGMENT = 'SET_CURRENT_FRAGMENT';
 export const SET_FRAGMENT_CARD_MAP = 'SET_FRAGMENT_CARD_MAP';
 export const SET_FRAGMENT_COLUMN_MAP = 'SET_FRAGMENT_COLUMN_MAP';
-export const SET_IS_LOADING_FRAGMENTS = 'SET_IS_LOADING_FRAGMENTS';
+export const SET_FRAGMENT_LOADING = 'SET_FRAGMENT_LOADING';
 export const PUSH_FRAGMENT_CARD = 'PUSH_FRAGMENT_CARD';
 export const PUSH_FRAGMENT_COLUMN = 'PUSH_FRAGMENT_COLUMN';
 export const MOVE_FRAGMENT_CARD = 'MOVE_FRAGMENT_CARD';
@@ -37,14 +44,24 @@ export type ISetFragmentColumnMapAction = IReduxAction<
   }
 >;
 
+export type IShowCreateFragmentDialogAction = IReduxAction<
+  typeof SHOW_CREATE_FRAGMENT_DIALOG,
+  { columnId: string; type: EFragmentType }
+>;
+
+export type IHideCreateFragmentDialogAction = IReduxAction<
+  typeof HIDE_CREATE_FRAGMENT_DIALOG,
+  void
+>;
+
 export type ISetCurrentFragmentAction = IReduxAction<
   typeof SET_CURRENT_FRAGMENT,
   { current: IFragmentCard | null }
 >;
 
-export type ISetIsLoadingFragmentsAction = IReduxAction<
-  typeof SET_IS_LOADING_FRAGMENTS,
-  { isLoading: boolean }
+export type ISetFragmentLoadingAction = IReduxAction<
+  typeof SET_FRAGMENT_LOADING,
+  { loading: boolean }
 >;
 
 export type IPushFragmentCardAction = IReduxAction<
@@ -129,10 +146,12 @@ export type IFragmentAction =
   | IPushFragmentColumnAction
   | IMoveFragmentColumnAction
   | IRenameFragmentColumnAction
+  | IShowCreateFragmentDialogAction
+  | IHideCreateFragmentDialogAction
   | ISetCurrentFragmentAction
   | ISetFragmentCardMapAction
   | ISetFragmentColumnMapAction
-  | ISetIsLoadingFragmentsAction;
+  | ISetFragmentLoadingAction;
 
 export const asyncCreateFragment = (
   boardId: string,
@@ -178,6 +197,19 @@ export const asyncMoveFragmentColumn = (
   type: ASYNC_MOVE_FRAGMENT_COLUMN,
 });
 
+export const showCreateFragmentDialog = (
+  columnId: string,
+  type: EFragmentType
+): IShowCreateFragmentDialogAction => ({
+  payload: { columnId, type },
+  type: SHOW_CREATE_FRAGMENT_DIALOG,
+});
+
+export const hideCreateFragmentDialog = (): IHideCreateFragmentDialogAction => ({
+  payload: undefined,
+  type: HIDE_CREATE_FRAGMENT_DIALOG,
+});
+
 export const setCurrentFragment = (
   current: IFragmentCard | null
 ): ISetCurrentFragmentAction => ({
@@ -199,11 +231,11 @@ export const setFragmentColumnMap = (
   type: SET_FRAGMENT_COLUMN_MAP,
 });
 
-export const setIsLoadingFragments = (
-  isLoading: boolean
-): ISetIsLoadingFragmentsAction => ({
-  payload: { isLoading },
-  type: SET_IS_LOADING_FRAGMENTS,
+export const setFragmentLoading = (
+  loading: boolean
+): ISetFragmentLoadingAction => ({
+  payload: { loading },
+  type: SET_FRAGMENT_LOADING,
 });
 
 export const pushFragmentCard = (

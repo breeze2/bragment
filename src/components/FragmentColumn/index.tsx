@@ -30,7 +30,7 @@ function FragmentColumn(props: IFragmentColumnProps) {
   );
   const handleFooterModeChange = useCallback(
     (mode: EFooterMode, clientHeight?: number) => {
-      if (mode === EFooterMode.LABEL) {
+      if (mode === EFooterMode.TEXT) {
         setScrollbarMaxHeight('calc(100vh - 144px - 48px)');
       } else {
         setScrollbarMaxHeight(`calc(100vh - 144px - ${clientHeight || 88}px)`);

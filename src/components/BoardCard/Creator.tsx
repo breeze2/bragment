@@ -13,17 +13,17 @@ interface ICreateBoardCardProps {}
 function CreateBoardCard(props: ICreateBoardCardProps) {
   const { formatMessage: f } = useIntl();
   const dispatch = useDispatch();
-  const isLoading = useSelector((reduxState: IReduxState) =>
-    reduxState.board.get('isLoading')
+  const loading = useSelector((reduxState: IReduxState) =>
+    reduxState.board.get('loading')
   );
   const handleClick = () => dispatch(setCreateBoardDialogVisible(true));
   return (
     <Card
       className={styles.creator}
       hoverable
-      onClick={isLoading === true ? undefined : handleClick}>
+      onClick={loading === true ? undefined : handleClick}>
       <p className={styles.title}>
-        {isLoading === true ? (
+        {loading === true ? (
           <>
             <LoadingOutlined />
             {f({ id: 'loading' })}
