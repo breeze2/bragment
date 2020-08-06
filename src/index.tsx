@@ -7,7 +7,7 @@ import App from './App';
 import { store } from './redux';
 import * as serviceWorker from './serviceWorker';
 
-import './index.css';
+import './styles/index.scss';
 
 initFirebase();
 

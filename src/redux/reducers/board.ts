@@ -64,12 +64,41 @@ function handleSetCurrentBoard(
   state: IIBoardState,
   action: ISetCurrentBoardAction
 ) {
-  const personalList = state.personalList;
   const current = action.payload.board;
+  if (!current) {
+    return state.set('current', null);
+  }
+  const personalList = state.personalList;
   if (personalList.size > 0) {
+    let index = state.personalList.findIndex(
+      (board) => board.id === current.id
+    );
+    if (index > -1) {
+      state = state
+        .update('personalList', (list) =>
+          list.update(index, (board) => ({
+            ...board,
+            lastCheckedAt: Date.now(),
+          }))
+        )
+        .update('personalList', (list) =>
+          list.sort(boardComparatorByCheckedAt)
+        );
+    }
+    index = state.groupList.findIndex((board) => board.id === current.id);
+    if (index > -1) {
+      state = state
+        .update('groupList', (list) =>
+          list.update(index, (board) => ({
+            ...board,
+            lastCheckedAt: Date.now(),
+          }))
+        )
+        .update('groupList', (list) => list.sort(boardComparatorByCheckedAt));
+    }
     state = state.update('recentList', (list) =>
       list
-        .filter((el) => el.id !== current.id)
+        .filter((board) => board.id !== current.id)
         .unshift(current)
         .slice(0, RECENT_LIST_LENGTH)
     );

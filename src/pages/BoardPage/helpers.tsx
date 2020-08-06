@@ -100,12 +100,16 @@ export function makeCardPlaceholderStyle(
       from.index
     );
     if (fromCard) {
-      const top = Array.prototype.slice.call(toCards, 0, to.index).reduce(
+      let top = Array.prototype.slice.call(toCards, 0, to.index).reduce(
         (value, card) => {
           return value + card.offsetHeight + 8;
         },
         toCards.length === 0 ? 6 : 0
       );
+      if (to.droppableId === from.droppableId && to.index > from.index) {
+        top -= toCards[from.index].offsetHeight + 8;
+        top += toCards[to.index].offsetHeight + 8;
+      }
       const style = `display: block; height: ${fromCard.offsetHeight}px; position: absolute; top: ${top}px; left: 8px`;
       return style;
     }

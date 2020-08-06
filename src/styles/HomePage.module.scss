@@ -10,6 +10,14 @@
 .boardList {
   display: block;
   margin-bottom: 20px;
+  :global {
+    .ant-row {
+      margin: -6px -6px 6px;
+    }
+    .ant-col {
+      padding: 6px;
+    }
+  }
 }
 
 .boardListLabel {

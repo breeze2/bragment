@@ -50,6 +50,7 @@ export interface IBoard {
   checkedAt: firestore.Timestamp | firestore.FieldValue;
   createdAt: firestore.Timestamp | firestore.FieldValue;
   updatedAt: firestore.Timestamp | firestore.FieldValue;
+  lastCheckedAt?: number;
 }
 
 export interface IFragmentCard {
