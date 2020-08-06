@@ -4,6 +4,7 @@ import React, { memo, useLayoutEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
@@ -36,41 +37,61 @@ function BoardsPage() {
 
   return (
     <Layout.Content className={styles.content}>
+      <div className={styles.boardList}>
+        <Row gutter={[12, 12]}>
+          <Col lg={6} md={8} sm={12} xs={24}>
+            <BoardCardCreator />
+          </Col>
+        </Row>
+      </div>
       {recentList.size > 0 && (
         <div className={styles.boardList}>
           <p className={styles.boardListLabel}>
             <ClockCircleOutlined />
             {f({ id: 'recent' })}
           </p>
-          <Row gutter={[12, 12]}>
+          <TransitionGroup className="ant-row">
             {recentList.map((board) => (
-              <Col key={board.id} lg={6} md={8} sm={12} xs={24}>
-                <Link to={`/board/${board.id}`}>
-                  <BoardCard board={board} />
-                </Link>
-              </Col>
+              <CSSTransition
+                key={board.id}
+                in={true}
+                appear={true}
+                classNames="fade-right"
+                timeout={500}>
+                <Col lg={6} md={8} sm={12} xs={24}>
+                  <Link to={`/board/${board.id}`}>
+                    <BoardCard board={board} />
+                  </Link>
+                </Col>
+              </CSSTransition>
             ))}
-          </Row>
+          </TransitionGroup>
         </div>
       )}
-      <div className={styles.boardList}>
-        <p className={styles.boardListLabel}>
-          <UserOutlined />
-          {f({ id: 'personal' })}
-        </p>
-        <Row gutter={[12, 12]}>
-          {personalList.map((board) => (
-            <Col key={board.id} lg={6} md={8} sm={12} xs={24}>
-              <Link to={`/board/${board.id}`}>
-                <BoardCard board={board} />
-              </Link>
-            </Col>
-          ))}
-          <Col lg={6} md={8} sm={12} xs={24}>
-            <BoardCardCreator />
-          </Col>
-        </Row>
-      </div>
+      {personalList.size > 0 && (
+        <div className={styles.boardList}>
+          <p className={styles.boardListLabel}>
+            <UserOutlined />
+            {f({ id: 'personal' })}
+          </p>
+          <TransitionGroup className="ant-row">
+            {personalList.map((board) => (
+              <CSSTransition
+                key={board.id}
+                in={true}
+                appear={true}
+                classNames="fade-right"
+                timeout={500}>
+                <Col lg={6} md={8} sm={12} xs={24}>
+                  <Link to={`/board/${board.id}`}>
+                    <BoardCard board={board} />
+                  </Link>
+                </Col>
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
+        </div>
+      )}
       <CreateBoardDialog />
     </Layout.Content>
   );

@@ -12,15 +12,16 @@
   }
 }
 
+.content {
+  flex: 0 1 auto;
+  background-color: var(--fragment-background-color);
+}
+
 .container {
   position: relative;
   min-height: 6px;
   // HACK: chrome's bug, there is one extra square after drag
   // left: 1px;
-  flex: 0 1 auto;
-  background-color: var(--fragment-background-color);
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .empty .container {

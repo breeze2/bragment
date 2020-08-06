@@ -7,6 +7,7 @@ import {
   DroppableProvided,
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { useSelector } from 'react-redux';
 import { IFragmentCard, IFragmentColumn } from '../../api/types';
 import { IReduxState } from '../../redux/types';
@@ -51,32 +52,37 @@ function FragmentColumn(props: IFragmentColumnProps) {
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}>
           <Header data={data} dragHandle={dragProvided.dragHandleProps} />
-          <Droppable droppableId={data.id} type="CARD">
-            {(
-              dropProvided: DroppableProvided,
-              dropSnapshot: DroppableStateSnapshot
-            ) => (
-              <div
-                ref={dropProvided.innerRef}
-                style={{ maxHeight: scrollbarMaxHeight }}
-                className={`${styles.container} ${
-                  dropSnapshot.isDraggingOver ? styles.draggingOver : ''
-                }`}
-                {...dropProvided.droppableProps}>
-                <div className={styles.cardPlaceholder} />
-                {data.cardOrder
-                  .filter((cardId) => cardMap.has(cardId))
-                  .map((cardId, cardIndex) => (
-                    <FragmentCard
-                      data={cardMap.get(cardId) as IFragmentCard}
-                      index={cardIndex}
-                      key={cardId}
-                    />
-                  ))}
-                {dropProvided.placeholder}
-              </div>
-            )}
-          </Droppable>
+          <Scrollbars
+            className={styles.content}
+            autoHeightMax={scrollbarMaxHeight}
+            autoHeight
+            autoHide>
+            <Droppable droppableId={data.id} type="CARD">
+              {(
+                dropProvided: DroppableProvided,
+                dropSnapshot: DroppableStateSnapshot
+              ) => (
+                <div
+                  ref={dropProvided.innerRef}
+                  className={`${styles.container} ${
+                    dropSnapshot.isDraggingOver ? styles.draggingOver : ''
+                  }`}
+                  {...dropProvided.droppableProps}>
+                  <div className={styles.cardPlaceholder} />
+                  {data.cardOrder
+                    .filter((cardId) => cardMap.has(cardId))
+                    .map((cardId, cardIndex) => (
+                      <FragmentCard
+                        data={cardMap.get(cardId) as IFragmentCard}
+                        index={cardIndex}
+                        key={cardId}
+                      />
+                    ))}
+                  {dropProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </Scrollbars>
           <Footer data={data} onModeChange={handleFooterModeChange} />
         </div>
       )}

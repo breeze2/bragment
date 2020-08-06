@@ -3,10 +3,9 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Header from '../../components/Header';
 import Navigator from '../../components/Navigator';
+import styles from '../../styles/HomePage.module.scss';
 import BoardsPage from './BoardsPage';
 import SettingsPage from './SettingsPage';
-
-import styles from '../../styles/HomePage.module.scss';
 
 const HomePage: React.FC = React.memo(() => {
   return (

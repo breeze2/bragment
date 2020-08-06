@@ -55,7 +55,7 @@ export type ISetStandbyBoardBgImagesAction = IReduxAction<
 
 export type ISetCurrentBoardAction = IReduxAction<
   typeof SET_CURRENT_BOARD,
-  { board: IBoard }
+  { board: IBoard | null }
 >;
 
 export type ISetBoardLoadingAction = IReduxAction<
@@ -107,7 +107,9 @@ export const insertBoard = (
   type: INSERT_BOARD,
 });
 
-export const setCurrentBoard = (board: IBoard): ISetCurrentBoardAction => ({
+export const setCurrentBoard = (
+  board: IBoard | null
+): ISetCurrentBoardAction => ({
   payload: { board },
   type: SET_CURRENT_BOARD,
 });

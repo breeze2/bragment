@@ -8,6 +8,15 @@ import {
 import { EBoardType, IBoard, IFieldValueMap, IPartial } from './types';
 
 export function boardComparatorByCheckedAt(a: IBoard, b: IBoard) {
+  if (a.lastCheckedAt && b.lastCheckedAt) {
+    return b.lastCheckedAt - a.lastCheckedAt;
+  }
+  if (a.lastCheckedAt) {
+    return -1;
+  }
+  if (b.lastCheckedAt) {
+    return 1;
+  }
   if ('seconds' in a.checkedAt && 'seconds' in b.checkedAt) {
     return b.checkedAt.seconds - a.checkedAt.seconds;
   }
