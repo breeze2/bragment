@@ -5,8 +5,8 @@ const {
 } = require('customize-cra');
 const dotenv = require('dotenv');
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
-const webpack = require('webpack');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const webpack = require('webpack');
 
 dotenv.config();
 

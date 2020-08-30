@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { EFragmentType, IFragmentCard } from '../../api/types';
 import { setCurrentFragment } from '../../redux/actions';
 import styles from '../../styles/FragmentCard.module.scss';
-import NoteFragment from './NoteFragment';
+import NoteFragmentCard from './NoteFragmentCard';
 
 interface IFragmentCardProps {
   data: IFragmentCard;
@@ -18,7 +18,7 @@ interface IFragmentCardProps {
 
 function renderContent(data: IFragmentCard) {
   if (data.type === EFragmentType.NOTE) {
-    return <NoteFragment content={data.title} />;
+    return <NoteFragmentCard content={data.title} />;
   }
   return <>{data.title}</>;
 }
