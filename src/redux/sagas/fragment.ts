@@ -15,6 +15,7 @@ import {
   ASYNC_MOVE_FRAGMENT_CARD,
   ASYNC_MOVE_FRAGMENT_COLUMN,
   ASYNC_RENAME_FRAGMENT_COLUMN,
+  EFragmentActionErrorMessage,
   IAsyncCreateFragmentCardAction,
   IAsyncCreateFragmentColumnAction,
   IAsyncMoveFragmentCardAction,
@@ -100,10 +101,18 @@ function* moveFragmentCardSaga(action: IAsyncMoveFragmentCardAction) {
 
 function* renameFragmentColumnSaga(action: IAsyncRenameFragmentColumnAction) {
   const { id, title } = action.payload;
-  yield put(renameFragmentColumn(id, title));
-  // yield call(asyncUpdateFragmentColumn, id, {title});
-  // NOTE: not wait
-  asyncUpdateFragmentColumn(id, { title });
+  const columnMap:
+    | Immutable.Map<string, IFragmentColumn>
+    | undefined = yield select(getFragmentColumnMap);
+  if (columnMap) {
+    if (columnMap.some((value) => value.title === title && value.id !== id)) {
+      throw new Error(EFragmentActionErrorMessage.EXISTED_COLUMN);
+    }
+    yield put(renameFragmentColumn(id, title));
+    // yield call(asyncUpdateFragmentColumn, id, {title});
+    // NOTE: not wait
+    asyncUpdateFragmentColumn(id, { title });
+  }
 }
 
 function* moveFragmentColumnSaga(action: IAsyncMoveFragmentColumnAction) {

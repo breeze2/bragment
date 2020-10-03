@@ -1,13 +1,13 @@
-import { v4 as uuidv4 } from 'uuid';
+import { IPartial } from '../types';
 import { arrayUnion, batchUpdate, firestore } from './firebase';
 import {
   EFragmentType,
   IFieldValueMap,
   IFragmentCard,
   IFragmentColumn,
-  IPartial,
   IUpdateDataGroup,
 } from './types';
+import { generateUUID } from './utils';
 
 export async function asyncFetchFragmentCardMap(boardId: string) {
   const querySnapshot = await firestore()
@@ -46,7 +46,7 @@ export async function asyncInsertFragmentColumn(
   title: string
 ): Promise<IFragmentColumn | undefined> {
   const data: IFragmentColumn = {
-    id: uuidv4(),
+    id: generateUUID(),
     boardId,
     title,
     cardOrder: [],
@@ -63,7 +63,7 @@ export async function asyncInsertFragmentCard(
   others?: IPartial<IFragmentCard>
 ) {
   const data: IFragmentCard = {
-    id: uuidv4(),
+    id: generateUUID(),
     boardId,
     columnId,
     title,

@@ -1,26 +1,84 @@
 .wrapper {
   display: block;
+  .body {
+    padding: 0;
+  }
   :global {
-    .ant-modal-header {
-      padding-left: 56px;
-      padding-right: 56px;
+    .ant-modal-close-x {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+    }
+    .ant-modal-close {
+      top: 12px;
+      right: 12px;
+    }
+    .ant-modal-body {
+      padding: 0;
     }
   }
 }
 
-.header {
-  .label {
-    position: absolute;
-    left: 0;
-    width: 48px;
-    text-align: center;
-    border-radius: 2px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border: 1px solid;
-    border-left: none;
-  }
+.form {
   .title {
-    margin: 0;
+    height: 56px;
+    padding: 9px 45px 9px 11px;
+    input {
+      font-weight: bold;
+    }
   }
+  .content {
+    padding: 0 22px 36px 22px;
+  }
+  .actions {
+    position: relative;
+  }
+  .submit {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  :global {
+    .ant-form-item {
+      margin: 0;
+    }
+  }
+}
+
+.gistFileField {
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  margin-bottom: 22px;
+  .fileNameInput {
+    padding-right: 0;
+  }
+  :global {
+    .ant-card-head-title,
+    .ant-card-body {
+      padding: 0;
+    }
+    .ant-card-extra {
+      padding: 2px 2px;
+      width: 36px;
+    }
+    .ant-card-head {
+      min-height: 36px;
+      padding: 0;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 0;
+    }
+    .ant-input-prefix {
+      width: 16px;
+      display: inline-block;
+      text-align: center;
+      margin-right: 11px;
+    }
+  }
+  .fileIcon::before {
+    font-size: 16px !important;
+  }
+}
+
+.gistCodeEditor {
+  height: 320px;
 }

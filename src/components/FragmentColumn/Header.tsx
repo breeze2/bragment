@@ -8,7 +8,7 @@ import { IFragmentColumn } from '../../api/types';
 import {
   asyncDispatch,
   asyncRenameFragmentColumn,
-  EFragmentActionError,
+  EFragmentActionErrorMessage,
 } from '../../redux/actions';
 
 import styles from '../../styles/FragmentColumn.module.scss';
@@ -40,22 +40,28 @@ function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
   const handleTitleSubmit = () => {
     const newTitle = inputRef.current?.state.value;
     if (!data.id || !newTitle || newTitle === data.title) {
+      setTextMode();
       return;
     }
     asyncDispatch(
       dispatch,
       asyncRenameFragmentColumn(data.id, String.prototype.trim.call(newTitle))
-    ).catch((error: EFragmentActionError) => {
-      switch (error) {
-        case EFragmentActionError.EXISTED_ARCHIVE:
-        case EFragmentActionError.EXISTED_DIRECTORY:
-        case EFragmentActionError.EXISTED_FILE:
-          message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
-          break;
-        default:
-          break;
-      }
-    });
+    )
+      .catch((error) => {
+        switch (error.message) {
+          case EFragmentActionErrorMessage.EXISTED_ARCHIVE:
+          case EFragmentActionErrorMessage.EXISTED_COLUMN:
+          case EFragmentActionErrorMessage.EXISTED_DIRECTORY:
+          case EFragmentActionErrorMessage.EXISTED_FILE:
+            message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
+            break;
+          default:
+            break;
+        }
+      })
+      .then(() => {
+        setTextMode();
+      });
   };
   React.useLayoutEffect(() => {
     if (mode === EMode.INPUT) {

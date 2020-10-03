@@ -1,5 +1,5 @@
 import { Reducer, useEffect, useReducer, useRef } from 'react';
-import { IPartial } from '../api/types';
+import { IPartial } from '../types';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();

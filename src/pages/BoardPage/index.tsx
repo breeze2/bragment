@@ -20,7 +20,6 @@ import FragmentColumn from '../../components/FragmentColumn';
 import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
 import Header from '../../components/Header';
 import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
-import GistFormDialog from '../../dialogs/GistFormDialog';
 import {
   asyncDispatch,
   asyncFetchCurrentBoard,
@@ -229,7 +228,6 @@ function BoardPage(props: IBoardPageProps) {
             </Droppable>
           </DragDropContext>
         </Scrollbars>
-        <GistFormDialog />
       </Layout.Content>
       <CreateFragmentDialog />
     </Layout>
