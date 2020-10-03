@@ -1,4 +1,5 @@
-import { IBoard, IPartial, IUnsplashPhoto } from '../../api/types';
+import { IBoard, IUnsplashPhoto } from '../../api/types';
+import { IPartial } from '../../types';
 import { IReduxAction } from '../types';
 
 export const ASYNC_CREATE_BOARD = 'ASYNC_CREATE_BOARD';

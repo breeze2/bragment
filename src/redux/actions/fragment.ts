@@ -1,16 +1,13 @@
-import {
-  EFragmentType,
-  IFragmentCard,
-  IFragmentColumn,
-  IPartial,
-} from '../../api/types';
+import { EFragmentType, IFragmentCard, IFragmentColumn } from '../../api/types';
+import { IPartial } from '../../types';
 import { IReduxAction } from '../types';
 
-export enum EFragmentActionError {
-  EXISTED_ARCHIVE,
-  EXISTED_DIRECTORY,
-  EXISTED_FILE,
-  UNKNOWN,
+export enum EFragmentActionErrorMessage {
+  EXISTED_ARCHIVE = 'EXISTED_ARCHIVE',
+  EXISTED_COLUMN = 'EXISTED_COLUMN',
+  EXISTED_DIRECTORY = 'EXISTED_DIRECTORY',
+  EXISTED_FILE = 'EXISTED_FILE',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export const ASYNC_CREATE_FRAGMENT_CARD = 'ASYNC_CREATE_FRAGMENT_CARD';

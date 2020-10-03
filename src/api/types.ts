@@ -1,8 +1,5 @@
 import { firestore } from 'firebase/index';
-
-export type IPartial<T> = {
-  [P in keyof T]?: T[P];
-};
+import { IPartial } from '../types';
 
 export type IFieldValueMap = {
   [key: string]: firestore.FieldValue;

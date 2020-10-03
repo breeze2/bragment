@@ -1,39 +1,69 @@
-import { editor } from 'monaco-editor';
-import TomorrowDark from './themes/TomorrowDark.json';
-import TomorrowLight from './themes/TomorrowLight.json';
+import detect from 'language-detect';
+import { editor as MonacoEditor } from 'monaco-editor';
+import languages from './languages.json';
+import TomorrowDarkJson from './themes/TomorrowDark.json';
+import TomorrowLightJson from './themes/TomorrowLight.json';
 
 export enum ETheme {
   TomorrowDark = 'TomorrowDark',
   TomorrowLight = 'TomorrowLight',
 }
 
-editor.defineTheme(
+export const DEFAULT_LANGUAGE = 'plaintext';
+
+MonacoEditor.defineTheme(
   ETheme.TomorrowDark,
-  TomorrowDark as editor.IStandaloneThemeData
+  TomorrowDarkJson as MonacoEditor.IStandaloneThemeData
 );
-editor.defineTheme(
+MonacoEditor.defineTheme(
   ETheme.TomorrowLight,
-  TomorrowLight as editor.IStandaloneThemeData
+  TomorrowLightJson as MonacoEditor.IStandaloneThemeData
 );
 
-editor.setTheme(ETheme.TomorrowLight);
+MonacoEditor.setTheme(ETheme.TomorrowLight);
 
 export function setMonacoEditorTheme(theme: ETheme) {
-  editor.setTheme(theme);
+  MonacoEditor.setTheme(theme);
 }
 export function createMonacoEditor(
   el: HTMLElement,
-  language: string,
-  value: string = ''
+  language = DEFAULT_LANGUAGE,
+  value = ''
 ) {
-  return editor.create(el, {
+  return MonacoEditor.create(el, {
     automaticLayout: true,
     fontSize: 14,
     language,
     minimap: {
       enabled: false,
     },
+    contextmenu: false,
     value,
     wordWrap: 'on',
+    scrollbar: {
+      alwaysConsumeMouseWheel: false,
+    },
   });
+}
+export function setMonacoEditorLanguage(
+  editor: MonacoEditor.IStandaloneCodeEditor,
+  language: string
+) {
+  const model = editor.getModel();
+  if (model) {
+    return MonacoEditor.setModelLanguage(model, language);
+  }
+}
+export function detectLanguageByFileName(fileName: string) {
+  const language = detect.filename(fileName)?.toLocaleLowerCase();
+  if (language && (languages as string[]).some((el) => el === language)) {
+    return language;
+  }
+}
+export function updateMonacoEditorLanguageByFileName(
+  editor: MonacoEditor.IStandaloneCodeEditor,
+  fileName: string
+) {
+  const language = detectLanguageByFileName(fileName);
+  return setMonacoEditorLanguage(editor, language || DEFAULT_LANGUAGE);
 }

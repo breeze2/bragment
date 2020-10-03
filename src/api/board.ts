@@ -1,11 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
+import { IPartial } from '../types';
 import {
   arrayUnion,
   firestore,
   getTimestamp,
   serverTimestamp,
 } from './firebase';
-import { EBoardType, IBoard, IFieldValueMap, IPartial } from './types';
+import { EBoardType, IBoard, IFieldValueMap } from './types';
+import { generateUUID } from './utils';
 
 export function boardComparatorByCheckedAt(a: IBoard, b: IBoard) {
   if (a.lastCheckedAt && b.lastCheckedAt) {
@@ -74,7 +75,7 @@ export async function asyncInsertBoard(
   const timestamp = serverTimestamp();
   const time0 = getTimestamp(0, 0);
   const data: IBoard = {
-    id: uuidv4(),
+    id: generateUUID(),
     title: board.title,
     userId: board.userId,
     color: board.color,

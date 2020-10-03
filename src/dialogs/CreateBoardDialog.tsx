@@ -9,13 +9,7 @@ import { Button, Input, Modal, Select } from 'antd';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  EBoardPolicy,
-  EBoardType,
-  IBoard,
-  IPartial,
-  IUnsplashPhoto,
-} from '../api/types';
+import { EBoardPolicy, EBoardType, IBoard, IUnsplashPhoto } from '../api/types';
 import BoardBackgroundPopover, {
   ISelectedBackground,
 } from '../components/BoardBackgroundPopover';
@@ -27,6 +21,7 @@ import {
 } from '../redux/actions';
 import { IReduxState } from '../redux/types';
 import styles from '../styles/CreateBoardDialog.module.scss';
+import { IPartial } from '../types';
 import { preloadImage } from '../utils';
 
 export interface ICreateBoardDialogProps {
