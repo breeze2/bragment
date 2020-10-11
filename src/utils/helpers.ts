@@ -2,13 +2,13 @@ export function debounce<F extends (...params: any[]) => void>(
   fn: F,
   delay: number
 ) {
-  let timeoutID: number;
+  let timer: number;
   const wrapper = function (this: any, ...args: any[]) {
     if (!this && !args.length) {
       return;
     }
-    window.clearTimeout(timeoutID);
-    timeoutID = window.setTimeout(() => fn.apply(this, args), delay);
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => fn.apply(this, args), delay);
   } as F;
   return wrapper;
 }

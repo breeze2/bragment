@@ -6,10 +6,14 @@ import {
 import { Button, Input } from 'antd';
 import React, { memo, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
 import { useMultipleState } from '../../components/hooks';
-import { asyncCreateFragmentColumn, asyncDispatch } from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+import {
+  fragmentColumnThunks,
+  selectCurrentBoard,
+  selectFragmentColumnLoading,
+  useReduxAsyncDispatch,
+  useReduxSelector,
+} from '../../redux';
 
 import styles from '../../styles/FragmentColumn.module.scss';
 
@@ -26,7 +30,7 @@ export interface IFragmentColumnCreatorState {
 
 function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const { formatMessage: f } = useIntl();
-  const dispatch = useDispatch();
+  const asyncDispatch = useReduxAsyncDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
   const defaultState: IFragmentColumnCreatorState = {
@@ -36,12 +40,8 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const [state, setState] = useMultipleState<IFragmentColumnCreatorState>(
     defaultState
   );
-  const currentBoard = useSelector((reduxState: IReduxState) =>
-    reduxState.board.get('current')
-  );
-  const loading = useSelector((reduxState: IReduxState) =>
-    reduxState.fragment.get('loading')
-  );
+  const currentBoard = useReduxSelector(selectCurrentBoard);
+  const loading = useReduxSelector(selectFragmentColumnLoading);
   const setInputMode = () => setState({ mode: EMode.INPUT });
   const setTextMode = () => setState({ mode: EMode.TEXT });
   const handleCreate = () => {
@@ -50,7 +50,9 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
       return;
     }
     setState({ isCreating: true });
-    asyncDispatch(dispatch, asyncCreateFragmentColumn(currentBoard.id, title))
+    asyncDispatch(
+      fragmentColumnThunks.create({ boardId: currentBoard.id, title })
+    )
       .catch(() => {
         // EXCEPTION:
       })

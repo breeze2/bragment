@@ -2,35 +2,32 @@ import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Layout, Row } from 'antd';
 import React, { memo, useLayoutEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import BoardCard from '../../components/BoardCard';
 import BoardCardCreator from '../../components/BoardCard/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
-  asyncDispatch,
-  asyncFetchPersonalBoards,
-  setBoardLoading,
-} from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+  boardActions,
+  boardThunks,
+  selectPersonalBoardList,
+  selectRecentlyBoardList,
+  useReduxDispatch,
+  useReduxSelector,
+} from '../../redux';
 
 import styles from '../../styles/HomePage.module.scss';
 
 function BoardsPage() {
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   const { formatMessage: f } = useIntl();
-  const personalList = useSelector(
-    (state: IReduxState) => state.board.personalList
-  );
-  const recentList = useSelector(
-    (state: IReduxState) => state.board.recentList
-  );
+  const personalList = useReduxSelector(selectPersonalBoardList);
+  const recentList = useReduxSelector(selectRecentlyBoardList);
 
   useLayoutEffect(() => {
-    dispatch(setBoardLoading(true));
-    asyncDispatch(dispatch, asyncFetchPersonalBoards()).finally(() => {
-      dispatch(setBoardLoading(false));
+    dispatch(boardActions.setLoading(true));
+    dispatch(boardThunks.fetchAll()).finally(() => {
+      dispatch(boardActions.setLoading(false));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -44,7 +41,7 @@ function BoardsPage() {
           </Col>
         </Row>
       </div>
-      {recentList.size > 0 && (
+      {recentList.length > 0 && (
         <div className={styles.boardList}>
           <p className={styles.boardListLabel}>
             <ClockCircleOutlined />
@@ -68,7 +65,7 @@ function BoardsPage() {
           </TransitionGroup>
         </div>
       )}
-      {personalList.size > 0 && (
+      {personalList.length > 0 && (
         <div className={styles.boardList}>
           <p className={styles.boardListLabel}>
             <UserOutlined />

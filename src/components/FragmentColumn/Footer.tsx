@@ -7,14 +7,15 @@ import { Button, Dropdown, Menu } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
 import { EFragmentType, IFragmentColumn } from '../../api/types';
 import {
-  asyncCreateFragment,
-  asyncDispatch,
-  showCreateFragmentDialog,
-} from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+  fragmentCardActions,
+  fragmentCardThunks,
+  selectCurrentBoard,
+  useReduxAsyncDispatch,
+  useReduxDispatch,
+  useReduxSelector,
+} from '../../redux';
 import styles from '../../styles/FragmentColumn.module.scss';
 
 export enum EMode {
@@ -30,14 +31,13 @@ interface IFragmentColumnFooterProps {
 function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const { data, onModeChange } = props;
   const { formatMessage: f } = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
+  const asyncDispatch = useReduxAsyncDispatch();
   const [mode, setMode] = useState(EMode.TEXT);
   const [submitting, setSubmitting] = useState(false);
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<TextArea>(null);
-  const currentBoard = useSelector((state: IReduxState) =>
-    state.board.get('current')
-  );
+  const currentBoard = useReduxSelector(selectCurrentBoard);
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
   const handlePressEnter = () => {
@@ -54,8 +54,11 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     }
     setSubmitting(true);
     asyncDispatch(
-      dispatch,
-      asyncCreateFragment(currentBoard.id, data.id, title)
+      fragmentCardThunks.create({
+        boardId: currentBoard.id,
+        columnId: data.id,
+        title,
+      })
     )
       .catch(() => {
         // EXCEPTION:
@@ -76,7 +79,9 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
       <Menu>
         <Menu.Item
           onClick={() => {
-            dispatch(showCreateFragmentDialog(data.id, EFragmentType.GIST));
+            dispatch(
+              fragmentCardActions.showCreateDialog(data.id, EFragmentType.GIST)
+            );
           }}>
           {f({ id: 'addGistCard' })}
         </Menu.Item>

@@ -1,14 +1,18 @@
 import Modal from 'antd/lib/modal/Modal';
 import React, { memo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { EFragmentType } from '../../api/types';
-import { hideCreateFragmentDialog } from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+import {
+  fragmentCardActions,
+  selectCreateFragmentCardAsType,
+  selectCreateFragmentCardDialogVisible,
+  useReduxDispatch,
+  useReduxSelector,
+} from '../../redux';
 import styles from '../../styles/CreateFragmentDialog.module.scss';
 import GistForm from './GistForm';
 
-function renderCreateForm(createType: EFragmentType) {
-  switch (createType) {
+function renderCreateForm(createAsType: EFragmentType) {
+  switch (createAsType) {
     case EFragmentType.GIST:
       return <GistForm />;
     default:
@@ -17,15 +21,11 @@ function renderCreateForm(createType: EFragmentType) {
 }
 
 function CreateFragmentDialog() {
-  const dispatch = useDispatch();
-  const createType = useSelector(
-    (reduxState: IReduxState) => reduxState.fragment.createType
-  );
-  const createDialogVisible = useSelector(
-    (reduxState: IReduxState) => reduxState.fragment.createDialogVisible
-  );
+  const dispatch = useReduxDispatch();
+  const createAsType = useReduxSelector(selectCreateFragmentCardAsType);
+  const visible = useReduxSelector(selectCreateFragmentCardDialogVisible);
   const handleCancel = () => {
-    dispatch(hideCreateFragmentDialog());
+    dispatch(fragmentCardActions.hideCreateDialog());
   };
 
   return (
@@ -34,9 +34,9 @@ function CreateFragmentDialog() {
       title={null}
       footer={null}
       width={720}
-      visible={createDialogVisible}
+      visible={visible}
       onCancel={handleCancel}>
-      <div className={styles.body}>{renderCreateForm(createType)}</div>
+      <div className={styles.body}>{renderCreateForm(createAsType)}</div>
     </Modal>
   );
 }

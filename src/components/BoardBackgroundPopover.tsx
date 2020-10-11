@@ -1,9 +1,12 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { Col, Popover, Row } from 'antd';
 import React, { memo } from 'react';
-import { useSelector } from 'react-redux';
 import { IUnsplashPhoto } from '../api/types';
-import { IReduxState } from '../redux/types';
+import {
+  selectStandbyBoardBgColors,
+  selectStandbyBoardBgImages,
+  useReduxSelector,
+} from '../redux';
 
 import styles from '../styles/BoardBackgroundPopover.module.scss';
 
@@ -19,12 +22,8 @@ interface IBoardBackgroundPopoverProps {
 }
 
 function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
-  const colors = useSelector(
-    (state: IReduxState) => state.board.standbyBgColors
-  );
-  const images = useSelector(
-    (state: IReduxState) => state.board.standbyBgImages
-  );
+  const colors = useReduxSelector(selectStandbyBoardBgColors);
+  const images = useReduxSelector(selectStandbyBoardBgImages);
   const [selectedValue, setSelectedValue] = React.useState<ISelectedBackground>(
     {}
   );
@@ -40,12 +39,12 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
     const index = icon.dataset.index;
     const value: ISelectedBackground = { image: undefined, color: undefined };
     if (icon.dataset.type === 'color') {
-      const color = colors.get(parseInt(index, 10));
+      const color = colors[parseInt(index, 10)];
       if (color && color !== selectedValue.color) {
         value.color = color;
       }
     } else if (icon.dataset.type === 'image') {
-      const image = images.get(parseInt(index, 10));
+      const image = images[parseInt(index, 10)];
       if (image && image !== selectedValue.image) {
         value.image = image;
       }
@@ -67,7 +66,7 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
       overlayClassName={styles.overlay}
       content={
         <div className={styles.content} onClick={handleContentClick}>
-          {images.size > 0 && (
+          {images.length > 0 && (
             <Row gutter={16}>
               {images.map((image, i) => (
                 <Col span={6} key={image.id}>

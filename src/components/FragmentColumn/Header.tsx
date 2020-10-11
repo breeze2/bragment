@@ -3,13 +3,9 @@ import { Input, message } from 'antd';
 import React, { memo } from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
 import { IFragmentColumn } from '../../api/types';
-import {
-  asyncDispatch,
-  asyncRenameFragmentColumn,
-  EFragmentActionErrorMessage,
-} from '../../redux/actions';
+import { fragmentColumnThunks, useReduxAsyncDispatch } from '../../redux';
+import { EFragmentThunkErrorMessage } from '../../redux/types';
 
 import styles from '../../styles/FragmentColumn.module.scss';
 
@@ -25,44 +21,51 @@ enum EMode {
 
 function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
   const { data, dragHandle } = props;
+  const { formatMessage: f } = useIntl();
   const inputRef = React.useRef<Input>(null);
   const [mode, setMode] = React.useState(EMode.TEXT);
-  const { formatMessage: f } = useIntl();
-  const dispatch = useDispatch();
+  const asyncDispatch = useReduxAsyncDispatch();
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
+
+  const handleTitleSubmit = () => {
+    const newTitle = (inputRef.current?.state?.value || '').trim();
+    if (!data.id || !newTitle || newTitle === data.title) {
+      setTextMode();
+      return;
+    }
+
+    //TODO: check title unique
+    asyncDispatch(
+      fragmentColumnThunks.rename({
+        id: data.id,
+        title: String.prototype.trim.call(newTitle),
+      })
+    ).catch((error) => {
+      inputRef.current?.setValue(data.title);
+      switch (error.message) {
+        case EFragmentThunkErrorMessage.EXISTED_COLUMN:
+          message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
+          break;
+        default:
+          break;
+      }
+    });
+    setTextMode();
+  };
 
   const handleTitleBlur = () => {
     inputRef.current?.setValue(data.title);
     setTextMode();
   };
 
-  const handleTitleSubmit = () => {
-    const newTitle = inputRef.current?.state.value;
-    if (!data.id || !newTitle || newTitle === data.title) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      inputRef.current?.setValue(data.title);
       setTextMode();
-      return;
     }
-    asyncDispatch(
-      dispatch,
-      asyncRenameFragmentColumn(data.id, String.prototype.trim.call(newTitle))
-    )
-      .catch((error) => {
-        switch (error.message) {
-          case EFragmentActionErrorMessage.EXISTED_ARCHIVE:
-          case EFragmentActionErrorMessage.EXISTED_COLUMN:
-          case EFragmentActionErrorMessage.EXISTED_DIRECTORY:
-          case EFragmentActionErrorMessage.EXISTED_FILE:
-            message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
-            break;
-          default:
-            break;
-        }
-      })
-      .then(() => {
-        setTextMode();
-      });
   };
+
   React.useLayoutEffect(() => {
     if (mode === EMode.INPUT) {
       inputRef.current?.focus();
@@ -84,6 +87,7 @@ function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
           defaultValue={data.title}
           onBlur={handleTitleBlur}
           onPressEnter={handleTitleSubmit}
+          onKeyDown={handleKeyDown}
         />
       </div>
       <div className={styles.addon}>

@@ -1,5 +1,13 @@
 import { firestore } from 'firebase/index';
-import { IPartial } from '../types';
+
+export enum EFirestoreErrorMessage {
+  BOARD_NOT_EXISTED = 'BOARD_NOT_EXISTED',
+  BOARD_EXPIRED_DATA = 'BOARD_EXPIRED_DATA',
+  FRAGMENT_CARD_NOT_EXISTED = 'FRAGMENT_CARD_NOT_EXISTED',
+  FRAGMENT_COLUMN_NOT_EXISTED = 'FRAGMENT_COLUMN_NOT_EXISTED',
+  FRAGMENT_COLUMN_EXPIRED_DATA = 'FRAGMENT_COLUMN_EXPIRED_DATA',
+  UNKNOWN = 'UNKNOWN',
+}
 
 export type IFieldValueMap = {
   [key: string]: firestore.FieldValue;
@@ -7,7 +15,7 @@ export type IFieldValueMap = {
 
 export type IUpdateDataGroup<T> = {
   id: string;
-  data: IPartial<T> | IFieldValueMap;
+  data: Partial<T> | IFieldValueMap;
 }[];
 
 export enum EBoardType {
@@ -44,17 +52,17 @@ export interface IBoard {
   archived: boolean;
   type: EBoardType;
   policy: EBoardPolicy;
-  checkedAt: firestore.Timestamp | firestore.FieldValue;
-  createdAt: firestore.Timestamp | firestore.FieldValue;
-  updatedAt: firestore.Timestamp | firestore.FieldValue;
-  lastCheckedAt?: number;
+  checkedAt: number | firestore.Timestamp | firestore.FieldValue;
+  createdAt: number | firestore.Timestamp | firestore.FieldValue;
+  updatedAt: number | firestore.Timestamp | firestore.FieldValue;
 }
 
 export interface IFragmentCard {
   id: string;
+  title: string;
   boardId: string;
   columnId: string;
-  title: string;
+  userId: string;
   image?: string;
   link?: string;
   archived: boolean;
@@ -64,8 +72,9 @@ export interface IFragmentCard {
 
 export interface IFragmentColumn {
   id: string;
-  boardId: string;
   title: string;
+  boardId: string;
+  userId: string;
   cardOrder: string[];
   archived: boolean;
 }
