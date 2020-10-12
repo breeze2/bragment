@@ -8,9 +8,8 @@ import {
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { useSelector } from 'react-redux';
 import { IFragmentCard, IFragmentColumn } from '../../api/types';
-import { IReduxState } from '../../redux/types';
+import { selectFragmentCardEntities, useReduxSelector } from '../../redux';
 import styles from '../../styles/FragmentColumn.module.scss';
 import FragmentCard from '../FragmentCard';
 import Footer, { EMode as EFooterMode } from './Footer';
@@ -26,9 +25,7 @@ function FragmentColumn(props: IFragmentColumnProps) {
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = React.useState(
     'calc(100vh - 192px)'
   );
-  const cardMap = useSelector(
-    (reduxState: IReduxState) => reduxState.fragment.cardMap
-  );
+  const cardEntities = useReduxSelector(selectFragmentCardEntities);
   const handleFooterModeChange = useCallback(
     (mode: EFooterMode, clientHeight?: number) => {
       if (mode === EFooterMode.TEXT) {
@@ -70,10 +67,10 @@ function FragmentColumn(props: IFragmentColumnProps) {
                   {...dropProvided.droppableProps}>
                   <div className={styles.cardPlaceholder} />
                   {data.cardOrder
-                    .filter((cardId) => cardMap.has(cardId))
+                    .filter((cardId) => cardEntities[cardId])
                     .map((cardId, cardIndex) => (
                       <FragmentCard
-                        data={cardMap.get(cardId) as IFragmentCard}
+                        data={cardEntities[cardId] as IFragmentCard}
                         index={cardIndex}
                         key={cardId}
                       />

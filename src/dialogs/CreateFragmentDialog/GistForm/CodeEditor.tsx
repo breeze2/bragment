@@ -4,7 +4,6 @@ import {
   setMonacoEditorLanguage,
 } from '../../../api/editor';
 import styles from '../../../styles/CreateFragmentDialog.module.scss';
-import { IReturn } from '../../../types';
 
 export interface IGistCodeEditor {
   language: string;
@@ -15,7 +14,7 @@ export interface IGistCodeEditor {
 const GistCodeEditor: React.FC<IGistCodeEditor> = React.memo((props) => {
   const { language, value, onChange } = props;
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const editorRef = React.useRef<IReturn<typeof createMonacoEditor> | null>(
+  const editorRef = React.useRef<ReturnType<typeof createMonacoEditor> | null>(
     null
   );
   const onChangeRef = React.useRef(onChange);

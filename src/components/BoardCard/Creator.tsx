@@ -2,9 +2,12 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Card } from 'antd';
 import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCreateBoardDialogVisible } from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+import {
+  boardActions,
+  selectBoardLoading,
+  useReduxDispatch,
+  useReduxSelector,
+} from '../../redux';
 
 import styles from '../../styles/BoardCard.module.scss';
 
@@ -12,11 +15,9 @@ interface ICreateBoardCardProps {}
 
 function CreateBoardCard(props: ICreateBoardCardProps) {
   const { formatMessage: f } = useIntl();
-  const dispatch = useDispatch();
-  const loading = useSelector((reduxState: IReduxState) =>
-    reduxState.board.get('loading')
-  );
-  const handleClick = () => dispatch(setCreateBoardDialogVisible(true));
+  const dispatch = useReduxDispatch();
+  const loading = useReduxSelector(selectBoardLoading);
+  const handleClick = () => dispatch(boardActions.setCreateDialogVisible(true));
   return (
     <Card
       className={styles.creator}

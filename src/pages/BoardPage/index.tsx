@@ -11,7 +11,6 @@ import {
 } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
 import ProgressiveImage from 'react-progressive-image';
-import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { IBoard, IFragmentColumn } from '../../api/types';
@@ -21,13 +20,17 @@ import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
 import Header from '../../components/Header';
 import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
 import {
-  asyncDispatch,
-  asyncFetchCurrentBoard,
-  asyncMoveFragmentCard,
-  asyncMoveFragmentColumn,
-  setFragmentLoading,
-} from '../../redux/actions';
-import { IReduxState } from '../../redux/types';
+  boardThunks,
+  fragmentCardThunks,
+  fragmentColumnActions,
+  fragmentColumnThunks,
+  selectCurrentBoard,
+  selectFragmentColumnEntities,
+  selectPersonalBoardList,
+  useReduxAsyncDispatch,
+  useReduxDispatch,
+  useReduxSelector,
+} from '../../redux';
 import styles from '../../styles/BoardPage.module.scss';
 import {
   getAllCardPlaceholders,
@@ -47,14 +50,11 @@ interface IBoardPageProps extends RouteComponentProps<IBoardPageRouteParams> {}
 
 function BoardPage(props: IBoardPageProps) {
   const boardId = props.match.params.id;
-  const dispatch = useDispatch();
-  const lastBoard = useSelector((state: IReduxState) => state.board.current);
-  const personalBoardList = useSelector(
-    (state: IReduxState) => state.board.personalList
-  );
-  const fragmentColumnMap = useSelector(
-    (state: IReduxState) => state.fragment.columnMap
-  );
+  const dispatch = useReduxDispatch();
+  const asyncDispatch = useReduxAsyncDispatch();
+  const lastBoard = useReduxSelector(selectCurrentBoard);
+  const personalBoardList = useReduxSelector(selectPersonalBoardList);
+  const fragmentColumnEntities = useReduxSelector(selectFragmentColumnEntities);
   let currentBoard: IBoard | undefined;
   if (lastBoard && lastBoard.id === boardId) {
     currentBoard = lastBoard;
@@ -70,7 +70,7 @@ function BoardPage(props: IBoardPageProps) {
         const toId = getColumnWrapperId(destination.index);
         getColumnPlaceholder()?.removeAttribute('style');
         if (fromId && toId) {
-          asyncDispatch(dispatch, asyncMoveFragmentColumn(fromId, toId));
+          dispatch(boardThunks.moveColumn({ fromId, toId }));
         }
       }
       if (type === 'CARD' && destination) {
@@ -81,14 +81,13 @@ function BoardPage(props: IBoardPageProps) {
           destination.index
         );
         if (fromId) {
-          asyncDispatch(
-            dispatch,
-            asyncMoveFragmentCard(
-              source.droppableId,
+          dispatch(
+            fragmentColumnThunks.moveCard({
+              fromColumnId: source.droppableId,
               fromId,
-              destination.droppableId,
-              toId
-            )
+              toColumnId: destination.droppableId,
+              toId,
+            })
           );
         }
       }
@@ -137,12 +136,16 @@ function BoardPage(props: IBoardPageProps) {
   }, []);
   useLayoutEffect(() => {
     if (boardId) {
-      dispatch(setFragmentLoading(true));
-      asyncDispatch(dispatch, asyncFetchCurrentBoard(boardId)).finally(() => {
-        dispatch(setFragmentLoading(false));
+      dispatch(fragmentColumnActions.setLoading(true));
+      Promise.all([
+        asyncDispatch(boardThunks.fetch(boardId)),
+        asyncDispatch(fragmentColumnThunks.fetchByBoard(boardId)),
+        asyncDispatch(fragmentCardThunks.fetchByBoard(boardId)),
+      ]).finally(() => {
+        dispatch(fragmentColumnActions.setLoading(false));
       });
     }
-  }, [boardId, dispatch]);
+  }, [boardId, dispatch, asyncDispatch]);
 
   let progressiveImage;
   if (currentBoard && currentBoard.image) {
@@ -203,7 +206,7 @@ function BoardPage(props: IBoardPageProps) {
                   <div className={styles.columnPlaceholder} />
                   <TransitionGroup component={null}>
                     {currentBoard?.columnOrder
-                      .filter((columnId) => fragmentColumnMap.has(columnId))
+                      .filter((columnId) => fragmentColumnEntities[columnId])
                       .map((columnId, index) => (
                         <CSSTransition
                           key={columnId}
@@ -213,7 +216,9 @@ function BoardPage(props: IBoardPageProps) {
                             key={columnId}
                             index={index}
                             data={
-                              fragmentColumnMap.get(columnId) as IFragmentColumn
+                              fragmentColumnEntities[
+                                columnId
+                              ] as IFragmentColumn
                             }
                           />
                         </CSSTransition>

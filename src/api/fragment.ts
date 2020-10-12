@@ -1,84 +1,101 @@
-import { IPartial } from '../types';
 import { arrayUnion, batchUpdate, firestore } from './firebase';
 import {
+  EFirestoreErrorMessage,
   EFragmentType,
   IFieldValueMap,
   IFragmentCard,
   IFragmentColumn,
   IUpdateDataGroup,
 } from './types';
-import { generateUUID } from './utils';
+import { checkStringArrayEqual, generateUUID } from './utils';
 
-export async function asyncFetchFragmentCardMap(boardId: string) {
+export async function asyncFetchFragmentCards(boardId: string) {
   const querySnapshot = await firestore()
     .collection('cards')
     .where('boardId', '==', boardId)
     .get();
-  const cardMap = new Map<string, IFragmentCard>();
+  const cards: IFragmentCard[] = [];
   querySnapshot.forEach((doc) => {
     if (doc.exists) {
       const card = doc.data({ serverTimestamps: 'estimate' }) as IFragmentCard;
-      cardMap.set(doc.id, card);
+      cards.push(card);
     }
   });
-  return cardMap;
+  return cards;
 }
 
-export async function asyncFetchFragmentColumnMap(boardId: string) {
+export async function asyncFetchFragmentColumns(boardId: string) {
   const querySnapshot = await firestore()
     .collection('columns')
     .where('boardId', '==', boardId)
     .get();
-  const columnMap = new Map<string, IFragmentColumn>();
+  const columns: IFragmentColumn[] = [];
   querySnapshot.forEach((doc) => {
     if (doc.exists) {
       const column = doc.data({
         serverTimestamps: 'estimate',
       }) as IFragmentColumn;
-      columnMap.set(doc.id, column);
+      columns.push(column);
     }
   });
-  return columnMap;
+  return columns;
 }
 
 export async function asyncInsertFragmentColumn(
-  boardId: string,
-  title: string
-): Promise<IFragmentColumn | undefined> {
+  options: { boardId: string; userId: string; title: string } & Partial<
+    IFragmentColumn
+  >
+) {
   const data: IFragmentColumn = {
     id: generateUUID(),
-    boardId,
-    title,
     cardOrder: [],
     archived: false,
+    ...options,
   };
-  await firestore().collection('columns').doc(data.id).set(data);
-  return data;
+  const boardRef = firestore().collection('boards').doc(data.boardId);
+  const newColumnRef = firestore().collection('columns').doc(data.id);
+  return firestore().runTransaction(async (transaction) => {
+    const boardDoc = await transaction.get(boardRef);
+    if (!boardDoc.exists) {
+      throw new Error(EFirestoreErrorMessage.BOARD_NOT_EXISTED);
+    }
+    transaction.set(newColumnRef, data);
+    transaction.update(boardRef, { columnOrder: arrayUnion(data.id) });
+    return data;
+  });
 }
 
 export async function asyncInsertFragmentCard(
-  boardId: string,
-  columnId: string,
-  title: string,
-  others?: IPartial<IFragmentCard>
+  options: {
+    userId: string;
+    boardId: string;
+    columnId: string;
+    title: string;
+  } & Partial<IFragmentCard>
 ) {
   const data: IFragmentCard = {
     id: generateUUID(),
-    boardId,
-    columnId,
-    title,
     tags: [],
     type: EFragmentType.NOTE,
     archived: false,
-    ...others,
+    ...options,
   };
-  await firestore().collection('cards').doc(data.id).set(data);
-  return data;
+  const columnRef = firestore().collection('column').doc(data.columnId);
+  const newCardRef = firestore().collection('cards').doc(data.id);
+  return firestore().runTransaction(async (transaction) => {
+    const columnDoc = await transaction.get(columnRef);
+    if (!columnDoc.exists) {
+      throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_NOT_EXISTED);
+    }
+    transaction.set(newCardRef, data);
+    transaction.update(columnRef, { cardOrder: arrayUnion(data.id) });
+    return data;
+  });
 }
 
 export async function asyncUpdateFragmentColumn(
   columnId: string,
-  data: IPartial<IFragmentColumn> | IFieldValueMap
+  data: Partial<IFragmentColumn> | IFieldValueMap
 ) {
   await firestore().collection('columns').doc(columnId).update(data);
 }
@@ -89,6 +106,52 @@ export async function asyncPushFragmentColumnCardOrder(
 ) {
   await asyncUpdateFragmentColumn(columnId, {
     cardOrder: arrayUnion(cardId),
+  });
+}
+
+export async function asyncAdjustTowFragmentColumnCardOrders(
+  id1: string,
+  cardOrder1: string[],
+  id2: string,
+  cardOrder2: string[]
+) {
+  const columnRef1 = firestore().collection('columns').doc(id1);
+  const columnRef2 = firestore().collection('columns').doc(id2);
+  return firestore().runTransaction(async (transaction) => {
+    if (id1 === id2) {
+      const columnDoc = await transaction.get(columnRef2);
+      if (!columnDoc.exists) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_NOT_EXISTED);
+      }
+      const column = columnDoc.data({
+        serverTimestamps: 'estimate',
+      }) as IFragmentColumn;
+      if (!checkStringArrayEqual(column.cardOrder, cardOrder2)) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+      }
+      transaction.update(columnRef2, { cardOrder: cardOrder2 });
+    } else {
+      const [columnDoc1, columnDoc2] = await Promise.all([
+        transaction.get(columnRef1),
+        transaction.get(columnRef2),
+      ]);
+      const column1 = columnDoc1.data({
+        serverTimestamps: 'estimate',
+      }) as IFragmentColumn;
+      const column2 = columnDoc2.data({
+        serverTimestamps: 'estimate',
+      }) as IFragmentColumn;
+      if (
+        !checkStringArrayEqual(
+          column1.cardOrder.concat(column2.cardOrder),
+          cardOrder1.concat(cardOrder2)
+        )
+      ) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+      }
+      transaction.update(columnRef1, { cardOrder: cardOrder1 });
+      transaction.update(columnRef2, { cardOrder: cardOrder2 });
+    }
   });
 }
 

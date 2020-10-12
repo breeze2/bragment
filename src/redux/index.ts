@@ -1,20 +1,42 @@
-import { applyMiddleware, createStore } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import RootReducer from './reducers';
-import RootSaga from './sagas';
+import {
+  AsyncThunkAction,
+  configureStore,
+  unwrapResult,
+} from '@reduxjs/toolkit';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { boardReducer } from './boardSlice';
+import { commonReducer } from './commonSlice';
+import { fragmentCardReducer } from './fragmentCardSlice';
+import { fragmentColumnReducer } from './fragmentColumnSlice';
+import { IReduxState } from './types';
 
-const composeEnhancers =
-  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
-  (window as any).compose;
+export const store = configureStore<IReduxState>({
+  reducer: {
+    board: boardReducer,
+    common: commonReducer,
+    fragmentCard: fragmentCardReducer,
+    fragmentColumn: fragmentColumnReducer,
+  },
+});
 
-const sagaMiddleware = createSagaMiddleware();
+export const useReduxSelector = useSelector;
+export const useReduxDispatch = () => useDispatch<typeof store.dispatch>();
+export const useReduxAsyncDispatch = () => {
+  const dispatch = useDispatch<typeof store.dispatch>();
+  return useCallback(
+    <R, A>(action: AsyncThunkAction<R, A, any>) =>
+      dispatch(action).then(unwrapResult),
+    [dispatch]
+  );
+};
 
-export const store =
-  composeEnhancers && process.env.NODE_ENV === 'development'
-    ? createStore(
-        RootReducer,
-        composeEnhancers(applyMiddleware(sagaMiddleware))
-      )
-    : createStore(RootReducer, applyMiddleware(sagaMiddleware));
+export { commonActions } from './commonSlice';
+export { boardActions, boardThunks } from './boardSlice';
+export { fragmentCardActions, fragmentCardThunks } from './fragmentCardSlice';
+export {
+  fragmentColumnActions,
+  fragmentColumnThunks,
+} from './fragmentColumnSlice';
 
-sagaMiddleware.run(RootSaga);
+export * from './selectors';

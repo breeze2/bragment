@@ -5,9 +5,8 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
-import { useDispatch } from 'react-redux';
 import { EFragmentType, IFragmentCard } from '../../api/types';
-import { setCurrentFragment } from '../../redux/actions';
+import { fragmentCardActions, useReduxDispatch } from '../../redux';
 import styles from '../../styles/FragmentCard.module.scss';
 import NoteFragmentCard from './NoteFragmentCard';
 
@@ -25,11 +24,11 @@ function renderContent(data: IFragmentCard) {
 
 const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
   const { data, index } = props;
-  const dispatch = useDispatch();
-  const handleClick = useCallback(() => dispatch(setCurrentFragment(data)), [
-    data,
-    dispatch,
-  ]);
+  const dispatch = useReduxDispatch();
+  const handleClick = useCallback(
+    () => dispatch(fragmentCardActions.setCurrentId(data.id)),
+    [data, dispatch]
+  );
 
   const content = renderContent(data);
 

@@ -43,11 +43,23 @@ export function serverTimestamp() {
   return firebase.firestore.FieldValue.serverTimestamp();
 }
 
+export function timestampToNumber(
+  ts: number | firebase.firestore.Timestamp | firebase.firestore.FieldValue
+) {
+  if (typeof ts === 'number') {
+    return ts;
+  }
+  if (ts instanceof firebase.firestore.Timestamp) {
+    return ts.toMillis();
+  }
+  return 0;
+}
+
 export function arrayUnion(item: string) {
   return firebase.firestore.FieldValue.arrayUnion(item);
 }
 
-export function getTimestamp(seconds: number, nanoseconds: number) {
+export function generateTimestamp(seconds: number, nanoseconds: number) {
   return new firebase.firestore.Timestamp(seconds, nanoseconds);
 }
 
