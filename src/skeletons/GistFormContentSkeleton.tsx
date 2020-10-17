@@ -1,8 +1,8 @@
 import { Skeleton } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import styles from '../styles/Skeletons.module.scss';
 
-const GistFormContentSkeleton: React.FC = React.memo(() => {
+function GistFormContentSkeleton() {
   return (
     <Skeleton
       className={styles.gistFormContent}
@@ -10,6 +10,6 @@ const GistFormContentSkeleton: React.FC = React.memo(() => {
       paragraph={{ rows: 11 }}
     />
   );
-});
+}
 
-export default GistFormContentSkeleton;
+export default memo(GistFormContentSkeleton);

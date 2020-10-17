@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import {
   Draggable,
   DraggableProvided,
@@ -22,7 +22,7 @@ function renderContent(data: IFragmentCard) {
   return <>{data.title}</>;
 }
 
-const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
+function FragmentCard(props: IFragmentCardProps) {
   const { data, index } = props;
   const dispatch = useReduxDispatch();
   const handleClick = useCallback(
@@ -47,6 +47,6 @@ const FragmentCard: React.FC<IFragmentCardProps> = React.memo((props) => {
       )}
     </Draggable>
   );
-});
+}
 
-export default FragmentCard;
+export default memo(FragmentCard);

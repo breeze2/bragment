@@ -1,8 +1,8 @@
 import { Layout } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 
-const SettingsPage: React.FC = () => {
+function SettingsPage() {
   return <Layout.Content>SettingsPage</Layout.Content>;
-};
+}
 
-export default SettingsPage;
+export default memo(SettingsPage);

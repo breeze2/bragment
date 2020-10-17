@@ -1,11 +1,11 @@
 import { ProjectOutlined, SettingOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { EAppPage } from '../redux/types';
 
-const Navigator: React.FC = React.memo(() => {
+function Navigator() {
   const { formatMessage: f } = useIntl();
   return (
     <Layout.Sider theme={'light'}>
@@ -25,6 +25,6 @@ const Navigator: React.FC = React.memo(() => {
       </Menu>
     </Layout.Sider>
   );
-});
+}
 
-export default Navigator;
+export default memo(Navigator);

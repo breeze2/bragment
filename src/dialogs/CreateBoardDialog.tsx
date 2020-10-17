@@ -6,7 +6,15 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { Button, Input, Modal, Select } from 'antd';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, {
+  memo,
+  ChangeEvent as ReactChangeEvent,
+  CSSProperties as ReactCSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { useIntl } from 'react-intl';
 import { EBoardPolicy, EBoardType, IBoard, IUnsplashPhoto } from '../api/types';
 import BoardBackgroundPopover, {
@@ -47,7 +55,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
   const { formatMessage: f } = useIntl();
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
-  const titleRef = React.useRef<Input>(null);
+  const titleRef = useRef<Input>(null);
   const visible = useReduxSelector(selectCreateBoardDialogVisible);
   const images = useReduxSelector(selectStandbyBoardBgImages);
   const colors = useReduxSelector(selectStandbyBoardBgColors);
@@ -80,7 +88,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
   const [state, setState] = useMultipleState<ICreateBoardDialogState>(
     defaultState
   );
-  const style: React.CSSProperties = {};
+  const style: ReactCSSProperties = {};
   if (state.image) {
     style.backgroundImage = `url(${state.image.urls.small})`;
     style.backgroundColor = state.image.color;
@@ -91,7 +99,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
   const handleClose = () =>
     dispatch(boardActions.setCreateDialogVisible(false));
   const handleTitleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
+    (event: ReactChangeEvent<HTMLInputElement>) =>
       setState({ canCreate: !!event.target.value.trim() }),
     [setState]
   );
@@ -153,7 +161,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
   );
 
   // NOTE: preload images
-  React.useEffect(() => {
+  useEffect(() => {
     const image = images[0];
     if (image) {
       preloadImage(image.urls.small);

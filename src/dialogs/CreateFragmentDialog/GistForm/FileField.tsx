@@ -3,7 +3,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input } from 'antd';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import fileIcons from 'file-icons-js';
-import React from 'react';
+import React, { memo, ChangeEvent as ReactChangeEvent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
   DEFAULT_LANGUAGE,
@@ -18,16 +18,16 @@ export interface IGistFileFieldProps {
   onDelete?: () => void;
 }
 
-const GistFileField: React.FC<IGistFileFieldProps> = React.memo((props) => {
+function GistFileField(props: IGistFileFieldProps) {
   const { deletable, field, onDelete } = props;
   const { formatMessage: f } = useIntl();
   const defaultFileIconClassName = 'default-icon dark-blue';
-  const [fileIconClassName, setFileIconClassName] = React.useState<string>(
+  const [fileIconClassName, setFileIconClassName] = useState<string>(
     defaultFileIconClassName
   );
-  const [language, setLanguage] = React.useState<string>(DEFAULT_LANGUAGE);
+  const [language, setLanguage] = useState<string>(DEFAULT_LANGUAGE);
 
-  const handleFileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileNameChange = (event: ReactChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const className = fileIcons.getClassWithColor(value);
     setFileIconClassName(className || defaultFileIconClassName);
@@ -71,6 +71,6 @@ const GistFileField: React.FC<IGistFileFieldProps> = React.memo((props) => {
       </Form.Item>
     </Card>
   );
-});
+}
 
-export default GistFileField;
+export default memo(GistFileField);

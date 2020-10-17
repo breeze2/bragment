@@ -1,10 +1,10 @@
 import { Button, Modal } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import { selectSignInDialogVisible, useReduxSelector } from '../redux';
 
 import styles from '../styles/SignInDialog.module.scss';
 
-const SignInDialog: React.FC = React.memo(() => {
+function SignInDialog() {
   const visible = useReduxSelector(selectSignInDialogVisible);
 
   return (
@@ -16,6 +16,6 @@ const SignInDialog: React.FC = React.memo(() => {
       <Button>login</Button>
     </Modal>
   );
-});
+}
 
-export default SignInDialog;
+export default memo(SignInDialog);

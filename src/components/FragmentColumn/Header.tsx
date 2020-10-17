@@ -1,6 +1,12 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
-import React, { memo } from 'react';
+import React, {
+  memo,
+  KeyboardEvent as ReactKeyboardEvent,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useIntl } from 'react-intl';
 import { IFragmentColumn } from '../../api/types';
@@ -22,8 +28,8 @@ enum EMode {
 function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
   const { data, dragHandle } = props;
   const { formatMessage: f } = useIntl();
-  const inputRef = React.useRef<Input>(null);
-  const [mode, setMode] = React.useState(EMode.TEXT);
+  const inputRef = useRef<Input>(null);
+  const [mode, setMode] = useState(EMode.TEXT);
   const asyncDispatch = useReduxAsyncDispatch();
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
@@ -59,14 +65,14 @@ function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
     setTextMode();
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       inputRef.current?.setValue(data.title);
       setTextMode();
     }
   };
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (mode === EMode.INPUT) {
       inputRef.current?.focus();
     }
