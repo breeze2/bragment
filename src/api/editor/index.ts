@@ -1,6 +1,5 @@
-import detect from 'language-detect';
 import { editor as MonacoEditor } from 'monaco-editor';
-import languages from './languages.json';
+import { extToLanguageDictionary } from './config';
 import TomorrowDarkJson from './themes/TomorrowDark.json';
 import TomorrowLightJson from './themes/TomorrowLight.json';
 
@@ -42,6 +41,8 @@ export function createMonacoEditor(
     wordWrap: 'on',
     scrollbar: {
       alwaysConsumeMouseWheel: false,
+      horizontalScrollbarSize: 8,
+      verticalScrollbarSize: 8,
     },
   });
 }
@@ -55,9 +56,13 @@ export function setMonacoEditorLanguage(
   }
 }
 export function detectLanguageByFileName(fileName: string) {
-  const language = detect.filename(fileName)?.toLocaleLowerCase();
-  if (language && (languages as string[]).some((el) => el === language)) {
-    return language;
+  const matches = fileName.match(/(\.[^.]+)/g);
+  while (matches && matches.length) {
+    const language = extToLanguageDictionary[matches.join('')];
+    if (language) {
+      return language;
+    }
+    matches.shift();
   }
 }
 export function updateMonacoEditorLanguageByFileName(

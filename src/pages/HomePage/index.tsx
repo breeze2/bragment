@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Header from '../../components/Header';
 import Navigator from '../../components/Navigator';
@@ -7,7 +7,7 @@ import styles from '../../styles/HomePage.module.scss';
 import BoardsPage from './BoardsPage';
 import SettingsPage from './SettingsPage';
 
-const HomePage: React.FC = React.memo(() => {
+function HomePage() {
   return (
     <Layout className={styles.layout}>
       <Navigator />
@@ -20,6 +20,6 @@ const HomePage: React.FC = React.memo(() => {
       </Layout>
     </Layout>
   );
-});
+}
 
-export default HomePage;
+export default memo(HomePage);

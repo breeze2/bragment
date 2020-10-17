@@ -1,11 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
-import React, { memo, Suspense } from 'react';
+import React, { lazy, memo, Suspense, useLayoutEffect } from 'react';
 import { useIntl } from 'react-intl';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
 import styles from '../../../styles/CreateFragmentDialog.module.scss';
 
-const GistFileField = React.lazy(() => import('./FileField'));
+const GistFileField = lazy(() => import('./FileField'));
 
 interface IGistFormData {
   title?: string;
@@ -18,9 +18,9 @@ interface IGistFormData {
 function CreateFragmentDialog() {
   const [form] = Form.useForm<IGistFormData>();
   const { formatMessage: f } = useIntl();
-  const handleSubmit = () => {};
+  const handleSubmit = () => undefined;
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const files: IGistFormData['files'] = form.getFieldValue('files');
     if (!files || !files.length) {
       form.setFields([{ name: 'files', value: [{ name: '', content: '' }] }]);

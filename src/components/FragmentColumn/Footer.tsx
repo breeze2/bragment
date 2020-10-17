@@ -5,7 +5,14 @@ import {
 } from '@ant-design/icons';
 import { Button, Dropdown, Menu } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  memo,
+  MouseEvent as ReactMouseEvent,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useIntl } from 'react-intl';
 import { EFragmentType, IFragmentColumn } from '../../api/types';
 import {
@@ -69,7 +76,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
         setTextMode();
       });
   };
-  const handleAddonClick = (event: React.MouseEvent) => {
+  const handleAddonClick = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
   };

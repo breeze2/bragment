@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import {
   Draggable,
   DraggableProvided,
@@ -22,7 +22,7 @@ interface IFragmentColumnProps {
 
 function FragmentColumn(props: IFragmentColumnProps) {
   const { data, index } = props;
-  const [scrollbarMaxHeight, setScrollbarMaxHeight] = React.useState(
+  const [scrollbarMaxHeight, setScrollbarMaxHeight] = useState(
     'calc(100vh - 192px)'
   );
   const cardEntities = useReduxSelector(selectFragmentCardEntities);

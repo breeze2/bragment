@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import {
   createMonacoEditor,
   setMonacoEditorLanguage,
@@ -11,14 +11,12 @@ export interface IGistCodeEditor {
   onChange?: (value: string) => void;
 }
 
-const GistCodeEditor: React.FC<IGistCodeEditor> = React.memo((props) => {
+function GistCodeEditor(props: IGistCodeEditor) {
   const { language, value, onChange } = props;
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const editorRef = React.useRef<ReturnType<typeof createMonacoEditor> | null>(
-    null
-  );
-  const onChangeRef = React.useRef(onChange);
-  React.useEffect(() => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<ReturnType<typeof createMonacoEditor> | null>(null);
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
     if (containerRef.current) {
       editorRef.current = createMonacoEditor(
         containerRef.current,
@@ -33,16 +31,16 @@ const GistCodeEditor: React.FC<IGistCodeEditor> = React.memo((props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
-  React.useEffect(() => {
+  useEffect(() => {
     const editor = editorRef.current;
     if (editor && editor.getValue() !== value) {
       editor.setValue(value || '');
     }
   }, [value]);
-  React.useEffect(() => {
+  useEffect(() => {
     const editor = editorRef.current;
     if (editor) {
       setMonacoEditorLanguage(editor, language);
@@ -50,6 +48,6 @@ const GistCodeEditor: React.FC<IGistCodeEditor> = React.memo((props) => {
   }, [language]);
 
   return <div className={styles.gistCodeEditor} ref={containerRef} />;
-});
+}
 
-export default GistCodeEditor;
+export default memo(GistCodeEditor);

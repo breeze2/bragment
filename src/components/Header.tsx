@@ -1,14 +1,14 @@
 import { Layout } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import styles from '../styles/Header.module.scss';
 import UserAvatar from './UserAvatar';
 
-const Header: React.FC = React.memo(() => {
+function Header() {
   return (
     <Layout.Header className={styles.wrapper}>
       <UserAvatar />
     </Layout.Header>
   );
-});
+}
 
-export default Header;
+export default memo(Header);

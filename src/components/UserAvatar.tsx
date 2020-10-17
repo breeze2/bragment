@@ -1,10 +1,10 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Menu } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 
 import styles from '../styles/UserAvatar.module.scss';
 
-const UserAvatar: React.FC = React.memo(() => {
+function UserAvatar() {
   const menu = (
     <Menu>
       <Menu.Item key="0">log out</Menu.Item>
@@ -16,6 +16,6 @@ const UserAvatar: React.FC = React.memo(() => {
       <Avatar size="large" icon={<UserOutlined />} />
     </Dropdown>
   );
-});
+}
 
-export default UserAvatar;
+export default memo(UserAvatar);

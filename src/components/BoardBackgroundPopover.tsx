@@ -1,6 +1,11 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { Col, Popover, Row } from 'antd';
-import React, { memo } from 'react';
+import React, {
+  memo,
+  ReactElement,
+  MouseEvent as ReactMouseEvent,
+  useState,
+} from 'react';
 import { IUnsplashPhoto } from '../api/types';
 import {
   selectStandbyBoardBgColors,
@@ -17,23 +22,24 @@ export interface ISelectedBackground {
 
 interface IBoardBackgroundPopoverProps {
   defaultValue: ISelectedBackground;
-  children?: React.ReactElement;
+  children?: ReactElement;
   onChange?: (value: ISelectedBackground) => void;
 }
 
 function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
   const colors = useReduxSelector(selectStandbyBoardBgColors);
   const images = useReduxSelector(selectStandbyBoardBgImages);
-  const [selectedValue, setSelectedValue] = React.useState<ISelectedBackground>(
-    {}
-  );
+  const [selectedValue, setSelectedValue] = useState<ISelectedBackground>({});
 
-  const handleContentClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    const target = event.target as HTMLDivElement;
-    const icon = target.closest('.anticon') as HTMLSpanElement;
-    if (!icon || !icon.dataset || icon.dataset.index === undefined) {
+  const handleContentClick = (event: ReactMouseEvent) => {
+    const target = event.target;
+    const icon =
+      target instanceof HTMLElement ? target.closest('.anticon') : null;
+    if (
+      !(icon instanceof HTMLElement) ||
+      !icon.dataset ||
+      icon.dataset.index === undefined
+    ) {
       return;
     }
     const index = icon.dataset.index;

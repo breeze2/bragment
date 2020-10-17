@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import React from 'react';
+import React, { memo } from 'react';
 import ProgressiveImage from 'react-progressive-image';
 import { IBoard } from '../../api/types';
 import { getSmallUrl, getThumbUrl } from '../../api/unsplash';
@@ -10,7 +10,7 @@ interface IBoardCardProps {
   board: IBoard;
 }
 
-const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
+function BoardCard(props: IBoardCardProps) {
   const { board } = props;
   const { color, image, title } = board;
   let progressiveImage;
@@ -57,6 +57,6 @@ const BoardCard: React.FC<IBoardCardProps> = React.memo((props) => {
       </div>
     </Card>
   );
-});
+}
 
-export default BoardCard;
+export default memo(BoardCard);

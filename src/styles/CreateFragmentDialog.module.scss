@@ -81,4 +81,9 @@
 
 .gistCodeEditor {
   height: 320px;
+  :global {
+    .scrollbar .slider {
+      border-radius: 4px;
+    }
+  }
 }
