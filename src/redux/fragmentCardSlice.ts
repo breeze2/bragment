@@ -5,11 +5,11 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
+  asyncCreateFragmentCard,
   asyncFetchFragmentCards,
-  asyncInsertFragmentCard,
 } from '../api/fragment';
 import { EFragmentType, IFragmentCard } from '../api/types';
-import { IFragmentCardExtraState, IReduxState } from './types';
+import { IFragmentCardExtraState } from './types';
 
 const adapter = createEntityAdapter<IFragmentCard>();
 
@@ -23,14 +23,11 @@ const thunks = {
       thunkAPI
     ) => {
       const userId = '1';
-      const card = await asyncInsertFragmentCard({
+      const card = await asyncCreateFragmentCard({
         userId,
         ...options,
       });
-      const rootState = thunkAPI.getState() as IReduxState;
-      if (card.boardId === rootState.board.currentId) {
-        return card;
-      }
+      return card;
     }
   ),
   fetchByBoard: createAsyncThunk(
@@ -69,6 +66,9 @@ const slice = createSlice({
     hideCreateDialog(state) {
       state.createDialogVisible = false;
     },
+    setCreateForColumnId(state, action: PayloadAction<string | undefined>) {
+      state.createForColumnId = action.payload;
+    },
     setCurrentId(state, action: PayloadAction<string>) {
       state.currentId = action.payload;
     },
@@ -79,9 +79,7 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(thunks.create.fulfilled, (state, action) => {
       const card = action.payload;
-      if (card) {
-        adapter.addOne(state, card);
-      }
+      adapter.addOne(state, card);
     });
     builder.addCase(thunks.fetchByBoard.fulfilled, (state, action) => {
       const cards = action.payload;

@@ -1,3 +1,4 @@
+/*eslint sort-keys: "warn"*/
 export default {
   addAnotherCard: 'Add another card.',
   addAnotherColumn: 'Add another column.',
@@ -13,6 +14,8 @@ export default {
   createGistCard: 'Create Gist',
   createNewBoard: 'Create new board...',
   fileName: 'File Name',
+  gistFileContentIsRequired: 'Gist content is required.',
+  gistTitleIsRequired: 'Gist title is required.',
   group: 'Group',
   inputCardTitle: 'Input the card title...',
   inputColumnTitle: 'Input the column title...',

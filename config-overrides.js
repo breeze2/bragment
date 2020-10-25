@@ -172,8 +172,8 @@ module.exports = {
     setWebpackPublicPath,
     setWebpackTarget,
     addWebpackPlugin(setEnv),
-    addWebpackPlugin(monacoEditorPlugin),
-    addWebpackPlugin(new HardSourceWebpackPlugin())
+    addWebpackPlugin(monacoEditorPlugin)
+    // addWebpackPlugin(new HardSourceWebpackPlugin())
   ),
   // The Jest config to use when running your jest tests - note that the normal rewires do not
   // work here.

@@ -1,3 +1,4 @@
+/*eslint sort-keys: "warn"*/
 export default {
   addAnotherCard: '添加另一张卡片',
   addAnotherColumn: '添加另一个列表',
@@ -12,6 +13,8 @@ export default {
   createGistCard: '创建 gist 卡片',
   createNewBoard: '创建新看板...',
   fileName: '文件名称',
+  gistFileContentIsRequired: 'Gist 内容不能为空',
+  gistTitleIsRequired: 'Gist 标题不能为空',
   group: '团队',
   inputCardTitle: '输入卡片标题...',
   inputColumnTitle: '输入列表标题...',

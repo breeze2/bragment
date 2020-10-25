@@ -13,20 +13,20 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import ProgressiveImage from 'react-progressive-image';
 import { RouteComponentProps } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { IBoard, IFragmentColumn } from '../../api/types';
+import { IFragmentColumn } from '../../api/types';
 import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
 import FragmentColumn from '../../components/FragmentColumn';
 import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
 import Header from '../../components/Header';
 import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
 import {
+  boardActions,
   boardThunks,
   fragmentCardThunks,
   fragmentColumnActions,
   fragmentColumnThunks,
-  selectCurrentBoard,
+  selectBoardEntities,
   selectFragmentColumnEntities,
-  selectPersonalBoardList,
   useReduxAsyncDispatch,
   useReduxDispatch,
   useReduxSelector,
@@ -52,15 +52,9 @@ function BoardPage(props: IBoardPageProps) {
   const boardId = props.match.params.id;
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
-  const lastBoard = useReduxSelector(selectCurrentBoard);
-  const personalBoardList = useReduxSelector(selectPersonalBoardList);
+  const boardEntities = useReduxSelector(selectBoardEntities);
   const fragmentColumnEntities = useReduxSelector(selectFragmentColumnEntities);
-  let currentBoard: IBoard | undefined;
-  if (lastBoard && lastBoard.id === boardId) {
-    currentBoard = lastBoard;
-  } else {
-    currentBoard = personalBoardList.find((board) => board.id === boardId);
-  }
+  const currentBoard = boardId ? boardEntities[boardId] : undefined;
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
@@ -69,8 +63,15 @@ function BoardPage(props: IBoardPageProps) {
         const fromId = getColumnWrapperId(source.index);
         const toId = getColumnWrapperId(destination.index);
         getColumnPlaceholder()?.removeAttribute('style');
-        if (fromId && toId) {
-          dispatch(boardThunks.moveColumn({ fromId, toId }));
+        if (currentBoard && fromId && toId && fromId !== toId) {
+          dispatch(
+            boardThunks.moveColumn({
+              fromBoardId: currentBoard.id,
+              fromId,
+              toBoardId: currentBoard.id,
+              toId,
+            })
+          );
         }
       }
       if (type === 'CARD' && destination) {
@@ -92,7 +93,7 @@ function BoardPage(props: IBoardPageProps) {
         }
       }
     },
-    [dispatch]
+    [currentBoard, dispatch]
   );
   const handleDragStart = useCallback((initial: DragStart) => {
     const { source, type } = initial;
@@ -135,6 +136,7 @@ function BoardPage(props: IBoardPageProps) {
     }
   }, []);
   useLayoutEffect(() => {
+    dispatch(boardActions.setCurrentId(boardId));
     if (boardId) {
       dispatch(fragmentColumnActions.setLoading(true));
       Promise.all([

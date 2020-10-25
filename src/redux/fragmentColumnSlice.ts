@@ -6,11 +6,12 @@ import {
 } from '@reduxjs/toolkit';
 import {
   asyncAdjustTowFragmentColumnCardOrders,
+  asyncCreateFragmentColumn,
   asyncFetchFragmentColumns,
-  asyncInsertFragmentColumn,
   asyncUpdateFragmentColumn,
 } from '../api/fragment';
 import { IFragmentColumn } from '../api/types';
+import { fragmentCardThunks } from './fragmentCardSlice';
 import {
   EFragmentThunkErrorMessage,
   IFragmentColumnExtraState,
@@ -27,14 +28,11 @@ const thunks = {
       thunkAPI
     ) => {
       const userId = '1';
-      const column = await asyncInsertFragmentColumn({
+      const column = await asyncCreateFragmentColumn({
         userId,
         ...options,
       });
-      const rootState = thunkAPI.getState() as IReduxState;
-      if (column.boardId === rootState.board.currentId) {
-        return column;
-      }
+      return column;
     }
   ),
   rename: createAsyncThunk(
@@ -63,12 +61,9 @@ const thunks = {
     ) => {
       const { fromColumnId, toColumnId } = arg;
       const rootState = thunkAPI.getState() as IReduxState;
-      const fromColumn = adapter
-        .getSelectors()
-        .selectById(rootState.fragmentColumn, fromColumnId);
-      const toColumn = adapter
-        .getSelectors()
-        .selectById(rootState.fragmentColumn, toColumnId);
+      const { selectById } = adapter.getSelectors();
+      const fromColumn = selectById(rootState.fragmentColumn, fromColumnId);
+      const toColumn = selectById(rootState.fragmentColumn, toColumnId);
 
       if (fromColumn && toColumn) {
         await asyncAdjustTowFragmentColumnCardOrders(
@@ -103,9 +98,7 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(thunks.create.fulfilled, (state, action) => {
       const column = action.payload;
-      if (column) {
-        adapter.addOne(state, column);
-      }
+      adapter.addOne(state, column);
     });
     builder.addCase(thunks.fetchByBoard.fulfilled, (state, action) => {
       const columns = action.payload;
@@ -128,8 +121,9 @@ const slice = createSlice({
     });
     builder.addCase(thunks.moveCard.pending, (state, action) => {
       const { fromColumnId, fromId, toColumnId, toId } = action.meta.arg;
-      const fromColumn = adapter.getSelectors().selectById(state, fromColumnId);
-      const toColumn = adapter.getSelectors().selectById(state, toColumnId);
+      const { selectById } = adapter.getSelectors();
+      const fromColumn = selectById(state, fromColumnId);
+      const toColumn = selectById(state, toColumnId);
       if (fromColumn && toColumn) {
         const fromCardOrder = [...fromColumn.cardOrder];
         const toCardOrder =
@@ -151,6 +145,16 @@ const slice = createSlice({
     });
     builder.addCase(thunks.moveCard.rejected, (state, action) => {
       // TODO: alert error and refresh column data
+    });
+    builder.addCase(fragmentCardThunks.create.fulfilled, (state, action) => {
+      const card = action.payload;
+      const column = adapter.getSelectors().selectById(state, card.columnId);
+      if (column) {
+        adapter.updateOne(state, {
+          id: card.columnId,
+          changes: { cardOrder: column.cardOrder.concat([card.id]) },
+        });
+      }
     });
   },
 });

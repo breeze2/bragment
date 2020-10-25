@@ -41,7 +41,7 @@ export async function asyncFetchFragmentColumns(boardId: string) {
   return columns;
 }
 
-export async function asyncInsertFragmentColumn(
+export async function asyncCreateFragmentColumn(
   options: { boardId: string; userId: string; title: string } & Partial<
     IFragmentColumn
   >
@@ -65,7 +65,7 @@ export async function asyncInsertFragmentColumn(
   });
 }
 
-export async function asyncInsertFragmentCard(
+export async function asyncCreateFragmentCard(
   options: {
     userId: string;
     boardId: string;
@@ -80,7 +80,7 @@ export async function asyncInsertFragmentCard(
     archived: false,
     ...options,
   };
-  const columnRef = firestore().collection('column').doc(data.columnId);
+  const columnRef = firestore().collection('columns').doc(data.columnId);
   const newCardRef = firestore().collection('cards').doc(data.id);
   return firestore().runTransaction(async (transaction) => {
     const columnDoc = await transaction.get(columnRef);
@@ -110,15 +110,15 @@ export async function asyncPushFragmentColumnCardOrder(
 }
 
 export async function asyncAdjustTowFragmentColumnCardOrders(
-  id1: string,
+  columnId1: string,
   cardOrder1: string[],
-  id2: string,
+  columnId2: string,
   cardOrder2: string[]
 ) {
-  const columnRef1 = firestore().collection('columns').doc(id1);
-  const columnRef2 = firestore().collection('columns').doc(id2);
+  const columnRef1 = firestore().collection('columns').doc(columnId1);
+  const columnRef2 = firestore().collection('columns').doc(columnId2);
   return firestore().runTransaction(async (transaction) => {
-    if (id1 === id2) {
+    if (columnId1 === columnId2) {
       const columnDoc = await transaction.get(columnRef2);
       if (!columnDoc.exists) {
         throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_NOT_EXISTED);

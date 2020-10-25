@@ -18,10 +18,8 @@ import { EFragmentType, IFragmentColumn } from '../../api/types';
 import {
   fragmentCardActions,
   fragmentCardThunks,
-  selectCurrentBoard,
   useReduxAsyncDispatch,
   useReduxDispatch,
-  useReduxSelector,
 } from '../../redux';
 import styles from '../../styles/FragmentColumn.module.scss';
 
@@ -44,7 +42,6 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const [submitting, setSubmitting] = useState(false);
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<TextArea>(null);
-  const currentBoard = useReduxSelector(selectCurrentBoard);
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
   const handlePressEnter = () => {
@@ -56,19 +53,19 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   };
   const handleSubmit = () => {
     const title = inputRef.current?.state.value;
-    if (!data.id || !currentBoard || !currentBoard.id || !title) {
+    if (!data.id || !data.boardId || !title) {
       return;
     }
     setSubmitting(true);
     asyncDispatch(
       fragmentCardThunks.create({
-        boardId: currentBoard.id,
+        boardId: data.boardId,
         columnId: data.id,
         title,
       })
     )
       .catch(() => {
-        // EXCEPTION:
+        // TODO: handle EXCEPTION
       })
       .finally(() => {
         inputRef.current?.setValue('');

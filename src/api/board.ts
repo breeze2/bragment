@@ -83,25 +83,53 @@ export async function asyncPushBoardColumnOrder(
   });
 }
 
-export async function asyncAdjustBoardColumnOrder(
-  boardId: string,
-  columnOrder: string[]
+export async function asyncAdjustTwoBoardColumnOrders(
+  boardId1: string,
+  columnOrder1: string[],
+  boardId2: string,
+  columnOrder2: string[]
 ) {
-  const boardRef = firestore().collection('boards').doc(boardId);
+  const boardRef1 = firestore().collection('boards').doc(boardId1);
+  const boardRef2 = firestore().collection('boards').doc(boardId2);
   return firestore().runTransaction(async (transaction) => {
-    const boardDoc = await transaction.get(boardRef);
-    if (!boardDoc.exists) {
-      throw new Error(EFirestoreErrorMessage.BOARD_NOT_EXISTED);
+    if (boardId1 === boardId2) {
+      const boardDoc = await transaction.get(boardRef2);
+      if (!boardDoc.exists) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_NOT_EXISTED);
+      }
+      const board = boardDoc.data({
+        serverTimestamps: 'estimate',
+      }) as IBoard;
+      if (!checkStringArrayEqual(board.columnOrder, columnOrder2)) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+      }
+      transaction.update(boardRef2, { columnOrder: columnOrder2 });
+    } else {
+      const [boardDoc1, boardDoc2] = await Promise.all([
+        transaction.get(boardRef1),
+        transaction.get(boardRef2),
+      ]);
+      const board1 = boardDoc1.data({
+        serverTimestamps: 'estimate',
+      }) as IBoard;
+      const board2 = boardDoc2.data({
+        serverTimestamps: 'estimate',
+      }) as IBoard;
+      if (
+        !checkStringArrayEqual(
+          board1.columnOrder.concat(board2.columnOrder),
+          columnOrder1.concat(columnOrder2)
+        )
+      ) {
+        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+      }
+      transaction.update(boardRef1, { columnOrder: columnOrder1 });
+      transaction.update(boardRef2, { columnOrder: columnOrder2 });
     }
-    const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
-    if (!checkStringArrayEqual(board.columnOrder, columnOrder)) {
-      throw new Error(EFirestoreErrorMessage.BOARD_EXPIRED_DATA);
-    }
-    transaction.update(boardRef, { columnOrder });
   });
 }
 
-export async function asyncInsertBoard(
+export async function asyncCreateBoard(
   options: {
     title: string;
     userId: string;

@@ -1,7 +1,13 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
-import React, { lazy, memo, Suspense, useLayoutEffect } from 'react';
+import { Button, Form, Input, message, Select } from 'antd';
+import React, { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import {
+  EFragmentType,
+  IFragmentColumn,
+  IFragmentFile,
+} from '../../../api/types';
+import { fragmentCardThunks, useReduxAsyncDispatch } from '../../../redux';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
 import styles from '../../../styles/CreateFragmentDialog.module.scss';
 
@@ -9,36 +15,106 @@ const GistFileField = lazy(() => import('./FileField'));
 
 interface IGistFormData {
   title?: string;
-  files?: {
-    name?: string;
-    content?: string;
-  }[];
+  files?: IFragmentFile[];
 }
 
-function CreateFragmentDialog() {
-  const [form] = Form.useForm<IGistFormData>();
-  const { formatMessage: f } = useIntl();
-  const handleSubmit = () => undefined;
+interface IGistFormProps {
+  columnList: IFragmentColumn[];
+  selectedColumn?: IFragmentColumn;
+  onFinish?: () => void;
+  onColumnChange?: (columnId: string) => void;
+}
 
-  useLayoutEffect(() => {
-    const files: IGistFormData['files'] = form.getFieldValue('files');
-    if (!files || !files.length) {
-      form.setFields([{ name: 'files', value: [{ name: '', content: '' }] }]);
+function CreateFragmentDialog(props: IGistFormProps) {
+  const { columnList, selectedColumn, onColumnChange, onFinish } = props;
+  const { formatMessage: f } = useIntl();
+  const asyncDispatch = useReduxAsyncDispatch();
+  const [form] = Form.useForm<IGistFormData>();
+  const [submitting, setSubmitting] = useState(false);
+  const titleInputRef = useRef<Input>(null);
+  const initialFormValues = useMemo<IGistFormData>(
+    () => ({ title: '', files: [{ name: '', content: '' }] }),
+    []
+  );
+
+  const handleColumnChange = (columnId: string) => {
+    if (onColumnChange) {
+      onColumnChange(columnId);
     }
-  }, [form]);
+  };
+
+  const handleSubmit = () => {
+    const data = form.getFieldsValue();
+    const title = (data.title || '').trim();
+    const files = (data.files || [])
+      .map<IFragmentFile>((file) => ({
+        name: file.name.trim(),
+        content: file.content.trim(),
+      }))
+      .filter((file) => file.name && file.content);
+
+    if (!selectedColumn) {
+      return;
+    }
+    if (!title) {
+      message.error(f({ id: 'gistTitleIsRequired' }));
+      return;
+    }
+    if (!files || !files.every((file) => !!file.content)) {
+      message.error(f({ id: 'gistFileContentIsRequired' }));
+      return;
+    }
+    setSubmitting(true);
+    asyncDispatch(
+      fragmentCardThunks.create({
+        boardId: selectedColumn.boardId,
+        columnId: selectedColumn.id,
+        title,
+        files,
+        type: EFragmentType.GIST,
+      })
+    )
+      .catch(() => {
+        // TODO: handle EXCEPTION
+      })
+      .then(() => {
+        form.resetFields();
+        if (onFinish) {
+          onFinish();
+        }
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  };
+
   return (
-    <Form className={styles.form} form={form} name="create-gist">
-      <Form.Item name="title" className={styles.title}>
+    <Form
+      className={styles.form}
+      form={form}
+      name="create-gist"
+      initialValues={initialFormValues}>
+      <Form.Item name="title" className={styles.titleField}>
         <Input
+          ref={titleInputRef}
           bordered={false}
           placeholder={f({ id: 'addGistTitle' })}
           size="large"
         />
       </Form.Item>
+      <Form.Item className={styles.columnField}>
+        <Select value={selectedColumn?.id} onChange={handleColumnChange}>
+          {columnList.map((column) => (
+            <Select.Option key={column.id} value={column.id}>
+              {column.title}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
       <Form.List name="files">
         {(fields, { add, remove }) => {
           return (
-            <div className={styles.content}>
+            <div className={styles.fileFields}>
               <Suspense fallback={<GistFormContentSkeleton />}>
                 {fields.map((field) => (
                   <GistFileField
@@ -57,6 +133,7 @@ function CreateFragmentDialog() {
                   <Button
                     type="primary"
                     className={styles.submit}
+                    loading={submitting}
                     onClick={handleSubmit}>
                     {f({ id: 'createGistCard' })}
                   </Button>
