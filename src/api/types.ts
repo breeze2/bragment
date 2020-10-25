@@ -41,6 +41,21 @@ export enum EFragmentTypeColor {
   GIST = '#722ed1',
 }
 
+export interface IUnsplashPhoto {
+  id: string;
+  color: string;
+  links: {
+    download: string;
+  };
+  urls: {
+    raw: string;
+    full: string;
+    small: string;
+    thumb: string;
+    regular: string;
+  };
+}
+
 export interface IBoard {
   id: string;
   title: string;
@@ -57,19 +72,6 @@ export interface IBoard {
   updatedAt: number | firestore.Timestamp | firestore.FieldValue;
 }
 
-export interface IFragmentCard {
-  id: string;
-  title: string;
-  boardId: string;
-  columnId: string;
-  userId: string;
-  image?: string;
-  link?: string;
-  archived: boolean;
-  tags: string[];
-  type: EFragmentType;
-}
-
 export interface IFragmentColumn {
   id: string;
   title: string;
@@ -79,17 +81,21 @@ export interface IFragmentColumn {
   archived: boolean;
 }
 
-export interface IUnsplashPhoto {
+export interface IFragmentFile {
+  name: string;
+  content: string;
+}
+
+export interface IFragmentCard {
   id: string;
-  color: string;
-  links: {
-    download: string;
-  };
-  urls: {
-    raw: string;
-    full: string;
-    small: string;
-    thumb: string;
-    regular: string;
-  };
+  title: string;
+  boardId: string;
+  columnId: string;
+  userId: string;
+  files?: IFragmentFile[];
+  image?: string;
+  link?: string;
+  archived: boolean;
+  tags: string[];
+  type: EFragmentType;
 }

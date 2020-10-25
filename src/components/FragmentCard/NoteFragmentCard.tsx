@@ -1,5 +1,7 @@
+import { Typography } from 'antd';
 import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
 
 import styles from '../../styles/FragmentCard.module.scss';
 
@@ -9,7 +11,11 @@ interface INoteFragmentCardProps {
 
 function NoteFragmentCard(props: INoteFragmentCardProps) {
   const { content } = props;
-  return <ReactMarkdown className={`${styles.note}`} source={content} />;
+  return (
+    <Typography>
+      <ReactMarkdown className={styles.note} plugins={[gfm]} children={content} />
+    </Typography>
+  );
 }
 
 export default memo(NoteFragmentCard);

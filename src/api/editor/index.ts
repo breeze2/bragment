@@ -37,6 +37,7 @@ export function createMonacoEditor(
       enabled: false,
     },
     contextmenu: false,
+    formatOnPaste: true,
     value,
     wordWrap: 'on',
     scrollbar: {
@@ -44,6 +45,7 @@ export function createMonacoEditor(
       horizontalScrollbarSize: 8,
       verticalScrollbarSize: 8,
     },
+    lineNumbersMinChars: 3,
   });
 }
 export function setMonacoEditorLanguage(

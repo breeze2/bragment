@@ -5,15 +5,16 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  asyncAdjustBoardColumnOrder,
+  asyncAdjustTwoBoardColumnOrders,
   asyncCheckBoard,
+  asyncCreateBoard,
   asyncFetchAllBoards,
   asyncFetchBoard,
-  asyncInsertBoard,
   boardComparatorByCheckedAt,
 } from '../api/board';
 import { EBoardPolicy, EBoardType, IBoard } from '../api/types';
 import { getRandomPhoto } from '../api/unsplash';
+import { fragmentColumnThunks } from './fragmentColumnSlice';
 import { IBoardsExtraState, IReduxState } from './types';
 
 const adapter = createEntityAdapter<IBoard>({
@@ -32,7 +33,7 @@ const thunks = {
     ) => {
       // TODO: get user id
       const userId = '1';
-      const board = await asyncInsertBoard({
+      const board = await asyncCreateBoard({
         userId,
         ...options,
       });
@@ -56,18 +57,25 @@ const thunks = {
     'board/moveColumn',
     async (
       arg: {
+        fromBoardId: string;
         fromId: string;
-        toId: string;
+        toBoardId: string;
+        toId?: string;
       },
       thunkAPI
     ) => {
+      const { fromBoardId, toBoardId } = arg;
       const rootState = thunkAPI.getState() as IReduxState;
-      const id = rootState.board.currentId;
-      const currentBoard = id
-        ? boardSelectors.selectById(rootState.board, id)
-        : undefined;
-      if (id && currentBoard) {
-        await asyncAdjustBoardColumnOrder(id, currentBoard.columnOrder);
+      const { selectById } = adapter.getSelectors();
+      const fromBoard = selectById(rootState.board, fromBoardId);
+      const toBoard = selectById(rootState.board, toBoardId);
+      if (fromBoard && toBoard) {
+        await asyncAdjustTwoBoardColumnOrders(
+          fromBoard.id,
+          fromBoard.columnOrder,
+          toBoard.id,
+          toBoard.columnOrder
+        );
       }
     }
   ),
@@ -97,6 +105,9 @@ const slice = createSlice({
     standbyBgImages: [],
   }),
   reducers: {
+    setCurrentId(state, action: PayloadAction<string | undefined>) {
+      state.currentId = action.payload;
+    },
     setCreateDialogVisible(state, action: PayloadAction<boolean>) {
       state.createDialogVisible = action.payload;
     },
@@ -111,26 +122,29 @@ const slice = createSlice({
     builder.addCase(thunks.fetch.fulfilled, (state, action) => {
       const board = action.payload;
       adapter.upsertOne(state, board);
-      state.currentId = board.id;
     });
     builder.addCase(thunks.fetchAll.fulfilled, (state, action) => {
       const boards = action.payload;
       adapter.setAll(state, boards);
     });
     builder.addCase(thunks.moveColumn.pending, (state, action) => {
-      const { fromId, toId } = action.meta.arg;
-      const { currentId } = state;
-      const currentBoard = currentId
-        ? boardSelectors.selectById(state, currentId)
-        : undefined;
-      if (currentId && currentBoard) {
-        const columnOrder = [...currentBoard.columnOrder];
-        const fromIndex = columnOrder.findIndex((el) => fromId === el);
-        const toIndex = columnOrder.findIndex((el) => toId === el);
-        if (fromIndex > -1 && toIndex > -1 && fromIndex !== toIndex) {
-          columnOrder.splice(fromIndex, 1);
-          columnOrder.splice(toIndex, 0, fromId);
-          adapter.updateOne(state, { id: currentId, changes: { columnOrder } });
+      const { fromBoardId, fromId, toBoardId, toId } = action.meta.arg;
+      const { selectById } = adapter.getSelectors();
+      const fromBoard = selectById(state, fromBoardId);
+      const toBoard = selectById(state, toBoardId);
+      if (fromBoard && toBoard) {
+        const fromColumnOrder = [...fromBoard.columnOrder];
+        const toColumnOrder =
+          fromBoard === toBoard ? fromColumnOrder : [...toBoard.columnOrder];
+        const fromIndex = fromColumnOrder.findIndex((id) => id === fromId);
+        const toIndex = toColumnOrder.findIndex((id) => id === toId);
+        if (fromIndex > -1) {
+          fromColumnOrder.splice(fromIndex, 1);
+          toColumnOrder.splice(toIndex > 0 ? toIndex : 0, 0, fromId);
+          adapter.updateMany(state, [
+            { id: fromBoardId, changes: { columnOrder: fromColumnOrder } },
+            { id: toBoardId, changes: { columnOrder: toColumnOrder } },
+          ]);
         }
       }
     });
@@ -142,6 +156,16 @@ const slice = createSlice({
     });
     builder.addCase(thunks.fetchBgImages.fulfilled, (state, action) => {
       state.standbyBgImages = action.payload;
+    });
+    builder.addCase(fragmentColumnThunks.create.fulfilled, (state, action) => {
+      const column = action.payload;
+      const board = adapter.getSelectors().selectById(state, column.boardId);
+      if (board) {
+        adapter.updateOne(state, {
+          id: column.boardId,
+          changes: { columnOrder: board.columnOrder.concat([column.id]) },
+        });
+      }
     });
   },
 });

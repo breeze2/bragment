@@ -20,14 +20,17 @@
 }
 
 .form {
-  .title {
+  .titleField {
     height: 56px;
-    padding: 9px 45px 9px 11px;
+    padding: 9px 45px 9px 13px;
     input {
       font-weight: bold;
     }
   }
-  .content {
+  .columnField {
+    padding: 0 22px 22px 22px;
+  }
+  .fileFields {
     padding: 0 22px 36px 22px;
   }
   .actions {
@@ -41,6 +44,9 @@
   :global {
     .ant-form-item {
       margin: 0;
+    }
+    .ant-form-item-explain {
+      display: none;
     }
   }
 }
