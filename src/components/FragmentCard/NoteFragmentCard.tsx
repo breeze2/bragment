@@ -13,7 +13,11 @@ function NoteFragmentCard(props: INoteFragmentCardProps) {
   const { content } = props;
   return (
     <Typography>
-      <ReactMarkdown className={styles.note} plugins={[gfm]} children={content} />
+      <ReactMarkdown
+        className={styles.note}
+        plugins={[gfm]}
+        children={content}
+      />
     </Typography>
   );
 }

@@ -7,6 +7,8 @@ import {
   IUnsplashPhoto,
 } from '../api/types';
 
+export const AUTHENTICATING = 'AUTHENTICATING';
+
 export enum EAppPage {
   BOARDS = 'BOARDS',
   SETTINGS = 'SETTINGS',
@@ -28,8 +30,21 @@ export enum EFragmentThunkErrorMessage {
 export interface ICommonState {
   language: string;
   onLine: boolean;
-  signInDialogVisible: boolean;
   theme: EAppTheme;
+}
+
+export interface IUserProfile {
+  displayName?: string;
+  photoUrl?: string;
+  email?: string;
+  emailVerified: boolean;
+  uid: string;
+}
+
+export interface IUserState {
+  currentId?: string;
+  currentProfile?: IUserProfile;
+  signInDialogVisible: boolean;
 }
 
 export interface IBoardsExtraState {
@@ -66,4 +81,5 @@ export interface IReduxState {
   common: ICommonState;
   fragmentColumn: IFragmentColumnState;
   fragmentCard: IFragmentCardState;
+  user: IUserState;
 }

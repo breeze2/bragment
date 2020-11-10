@@ -1,4 +1,4 @@
-import { arrayUnion, batchUpdate, firestore } from './firebase';
+import { arrayUnion, auth, batchUpdate, firestore } from './firebase';
 import {
   EFirestoreErrorMessage,
   EFragmentType,
@@ -42,12 +42,12 @@ export async function asyncFetchFragmentColumns(boardId: string) {
 }
 
 export async function asyncCreateFragmentColumn(
-  options: { boardId: string; userId: string; title: string } & Partial<
-    IFragmentColumn
-  >
+  options: { boardId: string; title: string } & Partial<IFragmentColumn>
 ) {
+  const userId = auth().currentUser?.uid || '';
   const data: IFragmentColumn = {
     id: generateUUID(),
+    userId,
     cardOrder: [],
     archived: false,
     ...options,
@@ -67,14 +67,15 @@ export async function asyncCreateFragmentColumn(
 
 export async function asyncCreateFragmentCard(
   options: {
-    userId: string;
     boardId: string;
     columnId: string;
     title: string;
   } & Partial<IFragmentCard>
 ) {
+  const userId = auth().currentUser?.uid || '';
   const data: IFragmentCard = {
     id: generateUUID(),
+    userId,
     tags: [],
     type: EFragmentType.NOTE,
     archived: false,

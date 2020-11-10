@@ -1,0 +1,12 @@
+.wrapper {
+  width: 320px;
+  max-width: 86%;
+  .formActions {
+    text-align: right;
+  }
+  :global {
+    .ant-input-prefix {
+      margin-right: 8px;
+    }
+  }
+}

@@ -5,7 +5,6 @@ const {
 } = require('customize-cra');
 const dotenv = require('dotenv');
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const webpack = require('webpack');
 
 dotenv.config();
@@ -173,7 +172,6 @@ module.exports = {
     setWebpackTarget,
     addWebpackPlugin(setEnv),
     addWebpackPlugin(monacoEditorPlugin)
-    // addWebpackPlugin(new HardSourceWebpackPlugin())
   ),
   // The Jest config to use when running your jest tests - note that the normal rewires do not
   // work here.

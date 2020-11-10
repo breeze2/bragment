@@ -1,25 +1,15 @@
 .wrapper {
   .body {
     position: relative;
-    padding: 36px 56px 36px 24px;
+    padding: 36px 56px 12px 24px;
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.6);
   }
 
-  .field {
-    margin-top: 16px;
-    &:first-child {
-      margin-top: 0px;
-    }
-    input {
-      cursor: text;
-    }
-  }
-
-  .action {
+  .formActions {
     position: absolute;
     right: 24px;
-    bottom: 36px;
+    bottom: 12px;
   }
 
   .bgSelect {
@@ -45,6 +35,10 @@
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
+    }
+    .ant-select {
+      width: auto;
+      min-width: 120px;
     }
     .ant-input,
     .ant-select-single .ant-select-selector {
@@ -102,6 +96,31 @@
     }
     .anticon-global {
       color: var(--green);
+    }
+  }
+}
+
+.overlay {
+  .content {
+    width: 152px;
+  }
+  :global(.ant-popover-inner-content) {
+    padding-bottom: 0;
+  }
+  :global(.anticon) {
+    cursor: pointer;
+    margin-bottom: 12px;
+    padding: 5px;
+    border-radius: 2px;
+    background-size: cover;
+    svg {
+      color: var(--none-color);
+    }
+    &.selected {
+      box-shadow: 0 0 4px currentColor;
+      svg {
+        color: var(--white);
+      }
     }
   }
 }

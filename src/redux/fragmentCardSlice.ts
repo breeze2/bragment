@@ -22,9 +22,7 @@ const thunks = {
       >,
       thunkAPI
     ) => {
-      const userId = '1';
       const card = await asyncCreateFragmentCard({
-        userId,
         ...options,
       });
       return card;

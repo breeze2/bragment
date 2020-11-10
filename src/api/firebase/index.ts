@@ -4,21 +4,17 @@ import 'firebase/firestore';
 import { IUpdateDataGroup } from '../types';
 import config from './config';
 
-export let firebaseApp: firebase.app.App | undefined;
+export const firebaseApp = firebase.initializeApp(config);
 
 export function initFirebase() {
-  firebaseApp = firebase.initializeApp(config);
+  firebaseApp.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-  firebase
-    .auth(firebaseApp)
-    .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
-  firebase.firestore(firebaseApp).settings({
+  firebaseApp.firestore().settings({
     cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
   });
 
-  firebase
-    .firestore(firebaseApp)
+  firebaseApp
+    .firestore()
     .enablePersistence()
     .catch((err) => {
       if (err.code === 'failed-precondition') {
@@ -32,11 +28,11 @@ export function initFirebase() {
 }
 
 export function firestore() {
-  return firebase.firestore(firebaseApp);
+  return firebaseApp.firestore();
 }
 
 export function auth() {
-  return firebase.auth(firebaseApp);
+  return firebaseApp.auth();
 }
 
 export function serverTimestamp() {

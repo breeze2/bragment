@@ -9,8 +9,13 @@ export function selectAppLanguage(state: IReduxState) {
   return state.common.language;
 }
 
-export function selectSignInDialogVisible(state: IReduxState) {
-  return state.common.signInDialogVisible;
+// for user
+export function selectCurrentUserId(state: IReduxState) {
+  return state.user.currentId;
+}
+
+export function selectUserSignInDialogVisible(state: IReduxState) {
+  return state.user.signInDialogVisible;
 }
 
 // for board
