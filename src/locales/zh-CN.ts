@@ -24,6 +24,11 @@ export default {
   private: '私有的',
   public: '公开的',
   recent: '最近',
+  requiredEmailTips: '请输入电子邮箱',
+  requiredPasswordTips: '请输入密码',
   selectLocalPath: '选择本地路径',
   settings: '设置',
+  signIn: '登录',
+  signOut: '退出',
+  signUp: '注册',
 };

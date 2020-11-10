@@ -25,6 +25,11 @@ export default {
   private: 'Private',
   public: 'Public',
   recent: 'Recent',
+  requiredEmailTips: 'Please input your email!',
+  requiredPasswordTips: 'Please input your password!',
   selectLocalPath: 'Select local path.',
   settings: 'Settings',
+  signIn: 'Sign In',
+  signOut: 'Sign Out',
+  signUp: 'Sign Up',
 };

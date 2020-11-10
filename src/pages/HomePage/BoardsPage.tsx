@@ -10,6 +10,7 @@ import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
   boardActions,
   boardThunks,
+  selectCurrentUserId,
   selectPersonalBoardList,
   selectRecentlyBoardList,
   useReduxDispatch,
@@ -21,16 +22,20 @@ import styles from '../../styles/HomePage.module.scss';
 function BoardsPage() {
   const dispatch = useReduxDispatch();
   const { formatMessage: f } = useIntl();
+  const userId = useReduxSelector(selectCurrentUserId);
   const personalList = useReduxSelector(selectPersonalBoardList);
   const recentList = useReduxSelector(selectRecentlyBoardList);
 
   useLayoutEffect(() => {
+    if (!userId) {
+      // TODO: reset data
+      return;
+    }
     dispatch(boardActions.setLoading(true));
     dispatch(boardThunks.fetchAll()).finally(() => {
       dispatch(boardActions.setLoading(false));
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, userId]);
 
   return (
     <Layout.Content className={styles.content}>

@@ -27,9 +27,7 @@ const thunks = {
       options: { boardId: string; title: string } & Partial<IFragmentColumn>,
       thunkAPI
     ) => {
-      const userId = '1';
       const column = await asyncCreateFragmentColumn({
-        userId,
         ...options,
       });
       return column;

@@ -4,37 +4,35 @@ import React, {
   memo,
   ReactElement,
   MouseEvent as ReactMouseEvent,
-  useState,
 } from 'react';
-import { IUnsplashPhoto } from '../api/types';
+import { IUnsplashPhoto } from '../../api/types';
 import {
   selectStandbyBoardBgColors,
   selectStandbyBoardBgImages,
   useReduxSelector,
-} from '../redux';
+} from '../../redux';
 
-import styles from '../styles/BoardBackgroundPopover.module.scss';
+import styles from '../../styles/CreateBoardDialog.module.scss';
 
 export interface ISelectedBackground {
   color?: string;
   image?: IUnsplashPhoto;
 }
 
-interface IBoardBackgroundPopoverProps {
-  defaultValue: ISelectedBackground;
+interface IBackgroundPopoverProps {
   children?: ReactElement;
+  value: ISelectedBackground;
   onChange?: (value: ISelectedBackground) => void;
 }
 
-function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
+function BackgroundPopover(props: IBackgroundPopoverProps) {
+  const { children, value, onChange } = props;
   const colors = useReduxSelector(selectStandbyBoardBgColors);
   const images = useReduxSelector(selectStandbyBoardBgImages);
-  const [selectedValue, setSelectedValue] = useState<ISelectedBackground>({});
 
   const handleContentClick = (event: ReactMouseEvent) => {
     const target = event.target;
-    const icon =
-      target instanceof HTMLElement ? target.closest('.anticon') : null;
+    const icon = target instanceof Element ? target.closest('.anticon') : null;
     if (
       !(icon instanceof HTMLElement) ||
       !icon.dataset ||
@@ -43,29 +41,25 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
       return;
     }
     const index = icon.dataset.index;
-    const value: ISelectedBackground = { image: undefined, color: undefined };
+    const bg: ISelectedBackground = {};
     if (icon.dataset.type === 'color') {
       const color = colors[parseInt(index, 10)];
-      if (color && color !== selectedValue.color) {
-        value.color = color;
+      if (color && color !== value.color) {
+        bg.color = color;
       }
     } else if (icon.dataset.type === 'image') {
       const image = images[parseInt(index, 10)];
-      if (image && image !== selectedValue.image) {
-        value.image = image;
+      if (image && image !== value.image) {
+        bg.image = image;
       }
     }
-    if (value.color || value.image) {
-      setSelectedValue(value);
-      if (props.onChange) {
-        props.onChange(value);
+    if (bg.color || bg.image) {
+      if (onChange) {
+        onChange(bg);
       }
     }
   };
-  const realSelectedValue =
-    selectedValue.color || selectedValue.image
-      ? selectedValue
-      : props.defaultValue;
+
   return (
     <Popover
       trigger="click"
@@ -77,9 +71,7 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
               {images.map((image, i) => (
                 <Col span={6} key={image.id}>
                   <CheckOutlined
-                    className={
-                      realSelectedValue.image === image ? styles.selected : ''
-                    }
+                    className={value.image === image ? styles.selected : ''}
                     data-type="image"
                     data-index={i}
                     style={{
@@ -97,7 +89,7 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
               <Col span={6} key={color}>
                 <CheckOutlined
                   className={
-                    realSelectedValue.color === color ? styles.selected : ''
+                    value.color === color && !value.color ? styles.selected : ''
                   }
                   data-type="color"
                   data-index={i}
@@ -111,9 +103,9 @@ function BoardBackgroundPopover(props: IBoardBackgroundPopoverProps) {
           </Row>
         </div>
       }>
-      {props.children}
+      {children}
     </Popover>
   );
 }
 
-export default memo(BoardBackgroundPopover);
+export default memo(BackgroundPopover);

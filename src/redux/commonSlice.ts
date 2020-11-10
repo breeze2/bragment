@@ -9,7 +9,6 @@ const defaultTheme = EAppTheme.LIGHT;
 const initialState: ICommonState = {
   language: defaultLanguage,
   onLine: navigator.onLine,
-  signInDialogVisible: false,
   theme: defaultTheme,
 };
 
@@ -22,9 +21,6 @@ const slice = createSlice({
     },
     setOnLine(state, action: PayloadAction<boolean>) {
       state.onLine = action.payload;
-    },
-    setSignInDialogVisible(state, action: PayloadAction<boolean>) {
-      state.signInDialogVisible = action.payload;
     },
     setTheme(state, action: PayloadAction<EAppTheme>) {
       state.theme = action.payload;

@@ -33,6 +33,8 @@ interface IFragmentColumnFooterProps {
   onModeChange?: (mode: EMode, clientHeight?: number) => void;
 }
 
+const defaultInputMaxRows = 6;
+
 function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const { data, onModeChange } = props;
   const { formatMessage: f } = useIntl();
@@ -40,11 +42,17 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const asyncDispatch = useReduxAsyncDispatch();
   const [mode, setMode] = useState(EMode.TEXT);
   const [submitting, setSubmitting] = useState(false);
+  const [inputMaxRows, setInputMaxRows] = useState(defaultInputMaxRows);
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<TextArea>(null);
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
   const handlePressEnter = () => {
+    // NOTE: set input max rows
+    const { offsetHeight } = document.body;
+    const rows = Math.floor((offsetHeight - 138 - 68) / 22);
+    const maxRows = Math.max(Math.min(rows, defaultInputMaxRows), 1);
+    setInputMaxRows(maxRows);
     setImmediate(() => {
       if (onModeChange) {
         onModeChange(mode, selfRef.current?.clientHeight);
@@ -136,7 +144,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
           <TextArea
             ref={inputRef}
             placeholder={f({ id: 'inputCardTitle' })}
-            autoSize={{ minRows: 1, maxRows: 6 }}
+            autoSize={{ minRows: 1, maxRows: inputMaxRows }}
             onPressEnter={handlePressEnter}
           />
           <div className={styles.actions}>

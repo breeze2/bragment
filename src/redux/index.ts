@@ -10,6 +10,7 @@ import { commonReducer } from './commonSlice';
 import { fragmentCardReducer } from './fragmentCardSlice';
 import { fragmentColumnReducer } from './fragmentColumnSlice';
 import { IReduxState } from './types';
+import { userReducer } from './userSlice';
 
 export const store = configureStore<IReduxState>({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore<IReduxState>({
     common: commonReducer,
     fragmentCard: fragmentCardReducer,
     fragmentColumn: fragmentColumnReducer,
+    user: userReducer,
   },
 });
 
@@ -32,6 +34,7 @@ export const useReduxAsyncDispatch = () => {
 };
 
 export { commonActions } from './commonSlice';
+export { userActions, userThunks } from './userSlice';
 export { boardActions, boardThunks } from './boardSlice';
 export { fragmentCardActions, fragmentCardThunks } from './fragmentCardSlice';
 export {

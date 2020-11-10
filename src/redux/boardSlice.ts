@@ -14,6 +14,7 @@ import {
 } from '../api/board';
 import { EBoardPolicy, EBoardType, IBoard } from '../api/types';
 import { getRandomPhoto } from '../api/unsplash';
+import { preloadImages } from '../utils';
 import { fragmentColumnThunks } from './fragmentColumnSlice';
 import { IBoardsExtraState, IReduxState } from './types';
 
@@ -31,19 +32,14 @@ const thunks = {
         policy: EBoardPolicy;
       } & Partial<IBoard>
     ) => {
-      // TODO: get user id
-      const userId = '1';
       const board = await asyncCreateBoard({
-        userId,
         ...options,
       });
       return board;
     }
   ),
   fetchAll: createAsyncThunk('board/fetchAll', async () => {
-    // TODO: get user id
-    const userId = '1';
-    const boards = await asyncFetchAllBoards(userId);
+    const boards = await asyncFetchAllBoards();
     return boards;
   }),
   fetch: createAsyncThunk('board/fetch', async (boardId: string) => {
@@ -155,7 +151,9 @@ const slice = createSlice({
       // TODO: alert error and refresh board data
     });
     builder.addCase(thunks.fetchBgImages.fulfilled, (state, action) => {
+      const images = action.payload;
       state.standbyBgImages = action.payload;
+      preloadImages(images.map((el) => el.urls.thumb));
     });
     builder.addCase(fragmentColumnThunks.create.fulfilled, (state, action) => {
       const column = action.payload;

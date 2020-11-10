@@ -26,6 +26,7 @@ import {
   fragmentColumnActions,
   fragmentColumnThunks,
   selectBoardEntities,
+  selectCurrentUserId,
   selectFragmentColumnEntities,
   useReduxAsyncDispatch,
   useReduxDispatch,
@@ -53,6 +54,7 @@ function BoardPage(props: IBoardPageProps) {
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
   const boardEntities = useReduxSelector(selectBoardEntities);
+  const userId = useReduxSelector(selectCurrentUserId);
   const fragmentColumnEntities = useReduxSelector(selectFragmentColumnEntities);
   const currentBoard = boardId ? boardEntities[boardId] : undefined;
 
@@ -137,6 +139,10 @@ function BoardPage(props: IBoardPageProps) {
   }, []);
   useLayoutEffect(() => {
     dispatch(boardActions.setCurrentId(boardId));
+    if (!userId) {
+      // TODO: reset data;
+      return;
+    }
     if (boardId) {
       dispatch(fragmentColumnActions.setLoading(true));
       Promise.all([
@@ -147,7 +153,7 @@ function BoardPage(props: IBoardPageProps) {
         dispatch(fragmentColumnActions.setLoading(false));
       });
     }
-  }, [boardId, dispatch, asyncDispatch]);
+  }, [boardId, userId, dispatch, asyncDispatch]);
 
   let progressiveImage;
   if (currentBoard && currentBoard.image) {

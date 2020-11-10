@@ -1,4 +1,4 @@
-import { firestore } from 'firebase/index';
+import firebase from 'firebase';
 
 export enum EFirestoreErrorMessage {
   BOARD_NOT_EXISTED = 'BOARD_NOT_EXISTED',
@@ -10,7 +10,7 @@ export enum EFirestoreErrorMessage {
 }
 
 export type IFieldValueMap = {
-  [key: string]: firestore.FieldValue;
+  [key: string]: firebase.firestore.FieldValue;
 };
 
 export type IUpdateDataGroup<T> = {
@@ -56,6 +56,10 @@ export interface IUnsplashPhoto {
   };
 }
 
+type ITimeStamp =
+  | number
+  | firebase.firestore.Timestamp
+  | firebase.firestore.FieldValue;
 export interface IBoard {
   id: string;
   title: string;
@@ -67,9 +71,9 @@ export interface IBoard {
   archived: boolean;
   type: EBoardType;
   policy: EBoardPolicy;
-  checkedAt: number | firestore.Timestamp | firestore.FieldValue;
-  createdAt: number | firestore.Timestamp | firestore.FieldValue;
-  updatedAt: number | firestore.Timestamp | firestore.FieldValue;
+  checkedAt: ITimeStamp;
+  createdAt: ITimeStamp;
+  updatedAt: ITimeStamp;
 }
 
 export interface IFragmentColumn {

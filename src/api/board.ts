@@ -1,5 +1,6 @@
 import {
   arrayUnion,
+  auth,
   firestore,
   generateTimestamp,
   serverTimestamp,
@@ -26,7 +27,8 @@ export function boardTimestampToNumber(board: IBoard) {
   board.updatedAt = timestampToNumber(board.updatedAt);
 }
 
-export async function asyncFetchAllBoards(userId: string) {
+export async function asyncFetchAllBoards() {
+  const userId = auth().currentUser?.uid;
   const querySnapshot = await firestore()
     .collection('boards')
     .where('userId', '==', userId)
@@ -132,15 +134,16 @@ export async function asyncAdjustTwoBoardColumnOrders(
 export async function asyncCreateBoard(
   options: {
     title: string;
-    userId: string;
     type: EBoardType;
     policy: EBoardPolicy;
   } & Partial<IBoard>
 ) {
   const timestamp = serverTimestamp();
   const time0 = generateTimestamp(0, 0);
+  const userId = auth().currentUser?.uid || '';
   const board: IBoard = {
     id: generateUUID(),
+    userId,
     columnOrder: [],
     archived: false,
     checkedAt: time0,
