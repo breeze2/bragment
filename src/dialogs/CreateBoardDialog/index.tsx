@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import React, {
+import {
   CSSProperties,
   memo,
   useEffect,

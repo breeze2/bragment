@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Header from '../../components/Header';
 import Navigator from '../../components/Navigator';

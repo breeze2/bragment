@@ -17,9 +17,11 @@ const thunks = {
   create: createAsyncThunk(
     'fragmentCard/create',
     async (
-      options: { boardId: string; columnId: string; title: string } & Partial<
-        IFragmentCard
-      >,
+      options: {
+        boardId: string;
+        columnId: string;
+        title: string;
+      } & Partial<IFragmentCard>,
       thunkAPI
     ) => {
       const card = await asyncCreateFragmentCard({

@@ -1,6 +1,6 @@
 import { LockOutlined, MailOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useReduxAsyncDispatch, userThunks } from '../../redux';
 import styles from '../../styles/UserSignInDialog.module.scss';
@@ -21,9 +21,9 @@ function SignUpForm(props: ISignUpFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
   const handleSubmit = () => {
-    const data = form.getFieldsValue();
+    const fields = form.getFieldsValue();
     setSubmitting(true);
-    asyncDispatch(userThunks.create(data))
+    asyncDispatch(userThunks.create(fields))
       .then(() => {
         if (onFinish) {
           onFinish();

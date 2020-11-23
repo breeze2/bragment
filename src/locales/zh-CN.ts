@@ -19,6 +19,7 @@ export default {
   inputCardTitle: '输入卡片标题...',
   inputColumnTitle: '输入列表标题...',
   loading: '正在加载...',
+  networkRequestFailed: '网络请求失败!',
   noGroups: '暂无团队',
   personal: '个人',
   private: '私有的',

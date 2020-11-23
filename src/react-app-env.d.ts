@@ -1,12 +1,9 @@
 /// <reference types="react-scripts" />
 
 declare module 'file-icons-js' {
-  class FileIcons {
-    public getClass: (name: string) => string;
-    public getClassWithColor: (name: string) => string | null;
-  }
-  const fileIcons: FileIcons;
-  export default fileIcons;
+  class Icon {}
+  export const getClass: (name: string, match?: Icon) => string;
+  export const getClassWithColor: (name: string, match?: Icon) => string;
 }
 
 declare module 'language-detect' {

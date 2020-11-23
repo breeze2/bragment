@@ -1,7 +1,7 @@
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { MenuInfo } from 'rc-menu/lib/interface';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import {
   selectCurrentUserId,

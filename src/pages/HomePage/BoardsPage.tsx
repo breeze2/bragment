@@ -1,6 +1,7 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Layout, Row } from 'antd';
-import React, { memo, useLayoutEffect } from 'react';
+import { memo, useLayoutEffect } from 'react';
+import Scrollbars from 'react-custom-scrollbars';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -38,62 +39,66 @@ function BoardsPage() {
   }, [dispatch, userId]);
 
   return (
-    <Layout.Content className={styles.content}>
-      <div className={styles.boardList}>
-        <Row gutter={[12, 12]}>
-          <Col lg={6} md={8} sm={12} xs={24}>
-            <BoardCardCreator />
-          </Col>
-        </Row>
-      </div>
-      {recentList.length > 0 && (
-        <div className={styles.boardList}>
-          <p className={styles.boardListLabel}>
-            <ClockCircleOutlined />
-            {f({ id: 'recent' })}
-          </p>
-          <TransitionGroup className="ant-row">
-            {recentList.map((board) => (
-              <CSSTransition
-                key={board.id}
-                in={true}
-                appear={true}
-                classNames="fade-right"
-                timeout={500}>
-                <Col lg={6} md={8} sm={12} xs={24}>
-                  <Link to={`/board/${board.id}`}>
-                    <BoardCard board={board} />
-                  </Link>
-                </Col>
-              </CSSTransition>
-            ))}
-          </TransitionGroup>
+    <Layout.Content>
+      <Scrollbars autoHide>
+        <div className={styles.container}>
+          <div className={styles.boardList}>
+            <Row gutter={[12, 12]}>
+              <Col lg={6} md={8} sm={12} xs={24}>
+                <BoardCardCreator />
+              </Col>
+            </Row>
+          </div>
+          {recentList.length > 0 && (
+            <div className={styles.boardList}>
+              <p className={styles.boardListLabel}>
+                <ClockCircleOutlined />
+                {f({ id: 'recent' })}
+              </p>
+              <TransitionGroup className="ant-row">
+                {recentList.map((board) => (
+                  <CSSTransition
+                    key={board.id}
+                    in={true}
+                    appear={true}
+                    classNames="fade-right"
+                    timeout={500}>
+                    <Col lg={6} md={8} sm={12} xs={24}>
+                      <Link to={`/board/${board.id}`}>
+                        <BoardCard board={board} />
+                      </Link>
+                    </Col>
+                  </CSSTransition>
+                ))}
+              </TransitionGroup>
+            </div>
+          )}
+          {personalList.length > 0 && (
+            <div className={styles.boardList}>
+              <p className={styles.boardListLabel}>
+                <UserOutlined />
+                {f({ id: 'personal' })}
+              </p>
+              <TransitionGroup className="ant-row">
+                {personalList.map((board) => (
+                  <CSSTransition
+                    key={board.id}
+                    in={true}
+                    appear={true}
+                    classNames="fade-right"
+                    timeout={500}>
+                    <Col lg={6} md={8} sm={12} xs={24}>
+                      <Link to={`/board/${board.id}`}>
+                        <BoardCard board={board} />
+                      </Link>
+                    </Col>
+                  </CSSTransition>
+                ))}
+              </TransitionGroup>
+            </div>
+          )}
         </div>
-      )}
-      {personalList.length > 0 && (
-        <div className={styles.boardList}>
-          <p className={styles.boardListLabel}>
-            <UserOutlined />
-            {f({ id: 'personal' })}
-          </p>
-          <TransitionGroup className="ant-row">
-            {personalList.map((board) => (
-              <CSSTransition
-                key={board.id}
-                in={true}
-                appear={true}
-                classNames="fade-right"
-                timeout={500}>
-                <Col lg={6} md={8} sm={12} xs={24}>
-                  <Link to={`/board/${board.id}`}>
-                    <BoardCard board={board} />
-                  </Link>
-                </Col>
-              </CSSTransition>
-            ))}
-          </TransitionGroup>
-        </div>
-      )}
+      </Scrollbars>
       <CreateBoardDialog />
     </Layout.Content>
   );

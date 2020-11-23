@@ -1,5 +1,5 @@
 import { Typography } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 

@@ -6,7 +6,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
-import React, { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { EBoardPolicy, EBoardType, IBoard } from '../../api/types';
 import { boardThunks, useReduxAsyncDispatch } from '../../redux';
@@ -53,8 +53,8 @@ function BoardForm(props: IBoardFormProps) {
   );
 
   const handleSubmit = () => {
-    const data = form.getFieldsValue();
-    const personal = data.groupId === EBoardType.PERSONAL;
+    const fields = form.getFieldsValue();
+    const personal = fields.groupId === EBoardType.PERSONAL;
     const options: Partial<IBoard> = {};
     if (background.image) {
       options.color = background.image.color;
@@ -64,13 +64,13 @@ function BoardForm(props: IBoardFormProps) {
       options.color = background.color;
     }
     if (!personal) {
-      options.groupId = data.groupId;
+      options.groupId = fields.groupId;
     }
     setSubmitting(true);
     asyncDispatch(
       boardThunks.create({
-        title: data.title,
-        policy: data.policy,
+        title: fields.title,
+        policy: fields.policy,
         type: personal ? EBoardType.PERSONAL : EBoardType.GROUP,
 
         ...options,

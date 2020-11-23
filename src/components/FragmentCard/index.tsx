@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import {
   Draggable,
   DraggableProvided,

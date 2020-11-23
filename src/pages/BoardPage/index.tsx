@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { memo, useCallback, useLayoutEffect } from 'react';
+import { memo, useCallback, useLayoutEffect } from 'react';
 import {
   DragDropContext,
   DragStart,

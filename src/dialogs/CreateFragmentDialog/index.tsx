@@ -1,5 +1,5 @@
 import Modal from 'antd/lib/modal/Modal';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { EFragmentType } from '../../api/types';
 import {
   fragmentCardActions,
