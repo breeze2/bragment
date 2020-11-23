@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import ProgressiveImage from 'react-progressive-image';
 import { IBoard } from '../../api/types';
 import { getSmallUrl, getThumbUrl } from '../../api/unsplash';

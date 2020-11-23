@@ -1,5 +1,5 @@
 import { Modal, Tabs } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import {
   selectUserSignInDialogVisible,
@@ -24,6 +24,7 @@ function UserSignInDialog() {
       className={styles.wrapper}
       visible={visible}
       maskClosable={false}
+      centered={true}
       width={360}
       footer={null}
       onCancel={hideSignInDialog}>

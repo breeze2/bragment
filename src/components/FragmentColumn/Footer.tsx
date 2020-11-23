@@ -3,9 +3,9 @@ import {
   EllipsisOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Button, Dropdown, Menu } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import React, {
+import { Button, Dropdown, Form, Menu } from 'antd';
+import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
+import {
   memo,
   MouseEvent as ReactMouseEvent,
   useLayoutEffect,
@@ -33,6 +33,10 @@ interface IFragmentColumnFooterProps {
   onModeChange?: (mode: EMode, clientHeight?: number) => void;
 }
 
+interface ICreateCardFormData {
+  title: string;
+}
+
 const defaultInputMaxRows = 6;
 
 function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
@@ -44,14 +48,18 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   const [submitting, setSubmitting] = useState(false);
   const [inputMaxRows, setInputMaxRows] = useState(defaultInputMaxRows);
   const selfRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<TextArea>(null);
+  const inputRef = useRef<TextAreaRef>(null);
+  const [form] = Form.useForm<ICreateCardFormData>();
   const setInputMode = () => setMode(EMode.INPUT);
   const setTextMode = () => setMode(EMode.TEXT);
-  const handlePressEnter = () => {
+  const handleTitleChange = () => {
     // NOTE: set input max rows
     const { offsetHeight } = document.body;
     const rows = Math.floor((offsetHeight - 138 - 68) / 22);
     const maxRows = Math.max(Math.min(rows, defaultInputMaxRows), 1);
+    if (maxRows === inputMaxRows) {
+      return;
+    }
     setInputMaxRows(maxRows);
     setImmediate(() => {
       if (onModeChange) {
@@ -60,7 +68,8 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     });
   };
   const handleSubmit = () => {
-    const title = inputRef.current?.state.value;
+    const fields = form.getFieldsValue();
+    const title = fields.title.trim();
     if (!data.id || !data.boardId || !title) {
       return;
     }
@@ -76,7 +85,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
         // TODO: handle EXCEPTION
       })
       .finally(() => {
-        inputRef.current?.setValue('');
+        form.resetFields();
         setSubmitting(false);
         setTextMode();
       });
@@ -108,7 +117,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     }
     if (mode === EMode.INPUT) {
       inputRef.current?.focus();
-      const handleBodyMouseUp = (event: MouseEvent) => {
+      const handleBodyMouseDown = (event: MouseEvent) => {
         if (
           event.target instanceof Node &&
           selfRef.current?.contains(event.target)
@@ -117,9 +126,9 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
         }
         setTextMode();
       };
-      document.body.addEventListener('mouseup', handleBodyMouseUp);
+      document.body.addEventListener('mousedown', handleBodyMouseDown);
       return () => {
-        document.body.removeEventListener('mouseup', handleBodyMouseUp);
+        document.body.removeEventListener('mousedown', handleBodyMouseDown);
       };
     }
   }, [mode, onModeChange]);
@@ -140,13 +149,18 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
             </Dropdown>
           </div>
         </div>
-        <div className={styles.input}>
-          <TextArea
-            ref={inputRef}
-            placeholder={f({ id: 'inputCardTitle' })}
-            autoSize={{ minRows: 1, maxRows: inputMaxRows }}
-            onPressEnter={handlePressEnter}
-          />
+        <Form
+          form={form}
+          name={`create_card_for_column${data.id}`}
+          className={styles.input}>
+          <Form.Item name="title">
+            <TextArea
+              ref={inputRef}
+              placeholder={f({ id: 'inputCardTitle' })}
+              autoSize={{ minRows: 1, maxRows: inputMaxRows }}
+              onChange={handleTitleChange}
+            />
+          </Form.Item>
           <div className={styles.actions}>
             <Button type="primary" loading={submitting} onClick={handleSubmit}>
               {f({ id: 'addCard' })}
@@ -157,7 +171,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
               onClick={setTextMode}
             />
           </div>
-        </div>
+        </Form>
       </div>
     </div>
   );

@@ -122,6 +122,12 @@
     margin-left: 12px;
   }
 
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+
   // transition: height 0.3s, background 0.2s;
 }
 

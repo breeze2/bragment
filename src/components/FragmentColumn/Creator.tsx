@@ -3,8 +3,8 @@ import {
   LoadingOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Button, Input } from 'antd';
-import React, { memo, useLayoutEffect, useRef } from 'react';
+import { Button, Form, Input } from 'antd';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useMultipleState } from '../../components/hooks';
 import {
@@ -28,11 +28,16 @@ export interface IFragmentColumnCreatorState {
   isCreating: boolean;
 }
 
+interface ICreateColumnFormData {
+  title: string;
+}
+
 function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const { formatMessage: f } = useIntl();
   const asyncDispatch = useReduxAsyncDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
+  const [form] = Form.useForm<ICreateColumnFormData>();
   const defaultState: IFragmentColumnCreatorState = {
     mode: EMode.TEXT,
     isCreating: false,
@@ -45,7 +50,8 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const setInputMode = () => setState({ mode: EMode.INPUT });
   const setTextMode = () => setState({ mode: EMode.TEXT });
   const handleCreate = () => {
-    const title = inputRef.current?.state.value;
+    const fields = form.getFieldsValue();
+    const title = fields.title.trim();
     if (!currentBoard || !currentBoard.id || !title) {
       return;
     }
@@ -57,7 +63,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
         // EXCEPTION:
       })
       .finally(() => {
-        inputRef.current?.setValue('');
+        form.resetFields();
         setState(defaultState);
       });
   };
@@ -65,7 +71,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   useLayoutEffect(() => {
     if (state.mode === EMode.INPUT) {
       inputRef.current?.focus();
-      const handleBodyMouseUp = (event: MouseEvent) => {
+      const handleBodyMouseDown = (event: MouseEvent) => {
         if (
           event.target instanceof Node &&
           selfRef.current?.contains(event.target)
@@ -74,9 +80,9 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
         }
         setState({ mode: EMode.TEXT });
       };
-      document.body.addEventListener('mouseup', handleBodyMouseUp);
+      document.body.addEventListener('mousedown', handleBodyMouseDown);
       return () => {
-        document.body.removeEventListener('mouseup', handleBodyMouseUp);
+        document.body.removeEventListener('mousedown', handleBodyMouseDown);
       };
     }
   }, [state.mode, setState]);
@@ -102,15 +108,14 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
           </>
         )}
       </div>
-      <div className={styles.input}>
-        <Input
-          ref={inputRef}
-          placeholder={f({ id: 'inputColumnTitle' })}
-          onPressEnter={handleCreate}
-        />
+      <Form form={form} name="creat_column_for_board" className={styles.input}>
+        <Form.Item name="title">
+          <Input ref={inputRef} placeholder={f({ id: 'inputColumnTitle' })} />
+        </Form.Item>
         <div className={styles.actions}>
           <Button
             type="primary"
+            htmlType="submit"
             loading={state.isCreating}
             onClick={handleCreate}>
             {f({ id: 'addColumn' })}
@@ -121,7 +126,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
             onClick={setTextMode}
           />
         </div>
-      </div>
+      </Form>
     </div>
   );
 }

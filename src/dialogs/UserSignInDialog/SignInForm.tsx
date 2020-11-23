@@ -1,6 +1,6 @@
 import { LockOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
-import React, { memo, useState } from 'react';
+import { Button, Form, Input, message } from 'antd';
+import { memo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useReduxAsyncDispatch, userThunks } from '../../redux';
 import styles from '../../styles/UserSignInDialog.module.scss';
@@ -21,16 +21,21 @@ function SignInForm(props: ISignInFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
   const handleSubmit = () => {
-    const data = form.getFieldsValue();
-    const { email, password } = data;
+    const fields = form.getFieldsValue();
+    const { email, password } = fields;
     if (email && password) {
       setSubmitting(true);
-      asyncDispatch(userThunks.login(data))
+      asyncDispatch(userThunks.login(fields))
         .then(() => {
           if (onFinish) {
             onFinish();
           }
           form.resetFields();
+        })
+        .catch((error) => {
+          if (error.code === 'auth/network-request-failed') {
+            message.error(f({ id: 'networkRequestFailed' }));
+          }
         })
         .finally(() => {
           setSubmitting(false);

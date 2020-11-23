@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 
 function SettingsPage() {
   return <Layout.Content>SettingsPage</Layout.Content>;

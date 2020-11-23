@@ -2,8 +2,8 @@ import 'file-icons-js/css/style.css';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input } from 'antd';
 import { FormListFieldData } from 'antd/lib/form/FormList';
-import fileIcons from 'file-icons-js';
-import React, { memo, ChangeEvent as ReactChangeEvent, useState } from 'react';
+import { getClassWithColor } from 'file-icons-js';
+import { memo, ChangeEvent as ReactChangeEvent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
   DEFAULT_LANGUAGE,
@@ -29,7 +29,7 @@ function GistFileField(props: IGistFileFieldProps) {
 
   const handleFileNameChange = (event: ReactChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const className = fileIcons.getClassWithColor(value);
+    const className = getClassWithColor(value);
     setFileIconClassName(className || defaultFileIconClassName);
     setLanguage(detectLanguageByFileName(value) || DEFAULT_LANGUAGE);
   };

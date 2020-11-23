@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Select } from 'antd';
-import React, { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
+import { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
   EFragmentType,
@@ -44,9 +44,9 @@ function CreateFragmentDialog(props: IGistFormProps) {
   };
 
   const handleSubmit = () => {
-    const data = form.getFieldsValue();
-    const title = (data.title || '').trim();
-    const files = (data.files || [])
+    const fields = form.getFieldsValue();
+    const title = (fields.title || '').trim();
+    const files = (fields.files || [])
       .map<IFragmentFile>((file) => ({
         name: file.name.trim(),
         content: file.content.trim(),

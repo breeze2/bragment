@@ -20,6 +20,7 @@ export default {
   inputCardTitle: 'Input the card title...',
   inputColumnTitle: 'Input the column title...',
   loading: 'Loading...',
+  networkRequestFailed: 'Network request Failed!',
   noGroups: 'No groups...',
   personal: 'Personal',
   private: 'Private',

@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Card } from 'antd';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import {
   boardActions,
