@@ -2,6 +2,7 @@ import 'file-icons-js/css/style.css';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input } from 'antd';
 import { FormListFieldData } from 'antd/lib/form/FormList';
+import classnames from 'classnames';
 import { getClassWithColor } from 'file-icons-js';
 import { memo, ChangeEvent as ReactChangeEvent, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -47,7 +48,9 @@ function GistFileField(props: IGistFileFieldProps) {
             onChange={handleFileNameChange}
             placeholder={f({ id: 'fileName' })}
             prefix={
-              <span className={`${fileIconClassName} ${styles.fileIcon}`} />
+              <span
+                className={classnames(fileIconClassName, styles.fileIcon)}
+              />
             }
           />
         </Form.Item>

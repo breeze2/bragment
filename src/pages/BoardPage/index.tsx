@@ -1,4 +1,5 @@
 import { Layout } from 'antd';
+import classnames from 'classnames';
 import { memo, useCallback, useLayoutEffect } from 'react';
 import {
   DragDropContext,
@@ -207,9 +208,10 @@ function BoardPage(props: IBoardPageProps) {
               ) => (
                 <div
                   ref={provided.innerRef}
-                  className={`${styles.container} ${
+                  className={classnames(
+                    styles.container,
                     snapshot.isDraggingOver ? styles.draggingOver : ''
-                  }`}
+                  )}
                   {...provided.droppableProps}>
                   <div className={styles.columnPlaceholder} />
                   <TransitionGroup component={null}>

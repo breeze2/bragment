@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Dropdown, Form, Menu } from 'antd';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
+import classnames from 'classnames';
 import {
   memo,
   MouseEvent as ReactMouseEvent,
@@ -137,9 +138,10 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   return (
     <div ref={selfRef} className={styles.footer}>
       <div
-        className={`${styles.creator} ${
+        className={classnames(
+          styles.creator,
           mode === EMode.INPUT ? styles.inputMode : styles.textMode
-        }`}>
+        )}>
         <div className={styles.text} onClick={setInputMode}>
           <PlusOutlined />
           {f({ id: 'addAnotherCard' })}

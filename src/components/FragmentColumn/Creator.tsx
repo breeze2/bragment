@@ -4,6 +4,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
+import classnames from 'classnames';
 import { memo, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useMultipleState } from '../../components/hooks';
@@ -90,9 +91,10 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   return (
     <div
       ref={selfRef}
-      className={`${styles.creator} ${
+      className={classnames(
+        styles.creator,
         state.mode === EMode.INPUT ? styles.inputMode : styles.textMode
-      }`}>
+      )}>
       <div
         className={styles.text}
         onClick={loading === true ? undefined : setInputMode}>

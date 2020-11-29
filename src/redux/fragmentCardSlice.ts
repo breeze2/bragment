@@ -9,6 +9,7 @@ import {
   asyncFetchFragmentCards,
 } from '../api/fragment';
 import { EFragmentType, IFragmentCard } from '../api/types';
+import { checkIdHttpUrl } from '../utils';
 import { IFragmentCardExtraState } from './types';
 
 const adapter = createEntityAdapter<IFragmentCard>();
@@ -24,6 +25,10 @@ const thunks = {
       } & Partial<IFragmentCard>,
       thunkAPI
     ) => {
+      if (checkIdHttpUrl(options.title)) {
+        options.link = options.title;
+        options.type = EFragmentType.LINK;
+      }
       const card = await asyncCreateFragmentCard({
         ...options,
       });

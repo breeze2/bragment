@@ -1,6 +1,8 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
+import classnames from 'classnames';
 import {
+  forwardRef,
   memo,
   ChangeEvent as ReactChangeEvent,
   KeyboardEvent as ReactKeyboardEvent,
@@ -26,7 +28,10 @@ enum EMode {
   TEXT,
 }
 
-function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
+const FragmentColumnHeader = forwardRef<
+  HTMLDivElement,
+  IFragmentColumnHeaderProps
+>((props, ref) => {
   const { data, dragHandle } = props;
   const { formatMessage: f } = useIntl();
   const inputRef = useRef<Input>(null);
@@ -83,11 +88,12 @@ function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
   }, [data, mode]);
   console.info('FragmentColumnHeader rendering...');
   return (
-    <div className={styles.header} {...dragHandle}>
+    <div ref={ref} className={styles.header} {...dragHandle}>
       <div
-        className={`${styles.title} ${
+        className={classnames(
+          styles.title,
           mode === EMode.INPUT ? styles.inputMode : styles.textMode
-        }`}>
+        )}>
         <div className={styles.text} onClick={setInputMode}>
           {data.title}
         </div>
@@ -107,6 +113,6 @@ function FragmentColumnHeader(props: IFragmentColumnHeaderProps) {
       </div>
     </div>
   );
-}
+});
 
 export default memo(FragmentColumnHeader);

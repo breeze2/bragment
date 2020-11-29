@@ -1,4 +1,5 @@
-import { memo, useCallback, useState } from 'react';
+import classnames from 'classnames';
+import { memo, useCallback, useRef, useState } from 'react';
 import {
   Draggable,
   DraggableProvided,
@@ -7,7 +8,10 @@ import {
   DroppableProvided,
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd';
-import { Scrollbars } from 'react-custom-scrollbars';
+import {
+  positionValues as IPositionValues,
+  Scrollbars,
+} from 'react-custom-scrollbars';
 import { IFragmentCard, IFragmentColumn } from '../../api/types';
 import { selectFragmentCardEntities, useReduxSelector } from '../../redux';
 import styles from '../../styles/FragmentColumn.module.scss';
@@ -22,6 +26,7 @@ interface IFragmentColumnProps {
 
 function FragmentColumn(props: IFragmentColumnProps) {
   const { data, index } = props;
+  const headerRef = useRef<HTMLDivElement>(null);
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = useState(
     'calc(100vh - 192px)'
   );
@@ -36,6 +41,13 @@ function FragmentColumn(props: IFragmentColumnProps) {
     },
     []
   );
+  const handleScrollFrame = useCallback((values: IPositionValues) => {
+    if (values.scrollTop !== 0) {
+      headerRef.current?.classList.add(styles.hasShadow);
+    } else {
+      headerRef.current?.classList.remove(styles.hasShadow);
+    }
+  }, []);
   return (
     <Draggable draggableId={data.id} index={index}>
       {(
@@ -43,17 +55,24 @@ function FragmentColumn(props: IFragmentColumnProps) {
         dragSnapshot: DraggableStateSnapshot
       ) => (
         <div
-          className={`${styles.layout} ${
+          className={classnames(
+            styles.layout,
             data.cardOrder.length === 0 ? styles.empty : ''
-          }`}
+          )}
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}>
-          <Header data={data} dragHandle={dragProvided.dragHandleProps} />
+          <Header
+            ref={headerRef}
+            data={data}
+            dragHandle={dragProvided.dragHandleProps}
+          />
           <Scrollbars
             className={styles.content}
             autoHeightMax={scrollbarMaxHeight}
             autoHeight
-            autoHide>
+            autoHide
+            onUpdate={handleScrollFrame}
+            onScrollFrame={handleScrollFrame}>
             <Droppable droppableId={data.id} type="CARD">
               {(
                 dropProvided: DroppableProvided,
@@ -61,9 +80,10 @@ function FragmentColumn(props: IFragmentColumnProps) {
               ) => (
                 <div
                   ref={dropProvided.innerRef}
-                  className={`${styles.container} ${
+                  className={classnames(
+                    styles.container,
                     dropSnapshot.isDraggingOver ? styles.draggingOver : ''
-                  }`}
+                  )}
                   {...dropProvided.droppableProps}>
                   <div className={styles.cardPlaceholder} />
                   {data.cardOrder

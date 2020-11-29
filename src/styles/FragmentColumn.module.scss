@@ -71,6 +71,10 @@
     font-weight: bold;
   }
 }
+.hasShadow {
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
 
 // creator
 .creator {
@@ -171,6 +175,7 @@
     width: 100%;
     &.inputMode {
       height: auto;
+      box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
     }
   }
 }
