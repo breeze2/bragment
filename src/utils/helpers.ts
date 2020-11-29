@@ -40,3 +40,20 @@ export function insertArrayItem<T>(list: T[], item: T, index: number) {
 export function renew<T>(current: T, next: T): T {
   return { ...current, ...next };
 }
+
+// tools
+export function checkIfSingleLine(str: string) {
+  return str.indexOf('\n') === -1;
+}
+
+export function checkIdHttpUrl(str: string) {
+  if (str.slice(0, 4) !== 'http') {
+    return false;
+  }
+  try {
+    new URL(str);
+  } catch (_) {
+    return false;
+  }
+  return true;
+}

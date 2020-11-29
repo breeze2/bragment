@@ -1,6 +1,7 @@
 .wrapper {
   // HACK: chrome's bug, there is one extra square after drag
   // margin: 0px 8px 8px 7px;
+  width: 250px;
   margin: 0px 8px 8px 8px;
   padding: 0;
   .title {
@@ -16,6 +17,15 @@
       padding: 0px;
       overflow: hidden;
       border-radius: 2px;
+    }
+    .ant-btn-link {
+      padding: 0;
+    }
+  }
+
+  .singleLine {
+    p:last-child {
+      margin-bottom: 0;
     }
   }
 

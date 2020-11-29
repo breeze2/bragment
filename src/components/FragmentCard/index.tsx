@@ -8,6 +8,7 @@ import {
 import { EFragmentType, IFragmentCard } from '../../api/types';
 import { fragmentCardActions, useReduxDispatch } from '../../redux';
 import styles from '../../styles/FragmentCard.module.scss';
+import LinkFragmentCard from './LinkFragmentCard';
 import NoteFragmentCard from './NoteFragmentCard';
 
 interface IFragmentCardProps {
@@ -16,10 +17,20 @@ interface IFragmentCardProps {
 }
 
 function renderContent(data: IFragmentCard) {
-  if (data.type === EFragmentType.NOTE) {
-    return <NoteFragmentCard content={data.title} />;
+  switch (data.type) {
+    case EFragmentType.NOTE:
+      return <NoteFragmentCard content={data.title} />;
+    case EFragmentType.LINK:
+      return (
+        <LinkFragmentCard
+          link={data.link || data.title}
+          title={data.title}
+          image={data.image}
+        />
+      );
+    default:
+      return <>{data.title}</>;
   }
-  return <>{data.title}</>;
 }
 
 function FragmentCard(props: IFragmentCardProps) {

@@ -1,19 +1,18 @@
-import Unsplash, { toJson } from 'unsplash-js';
+import { createApi } from 'unsplash-js';
 import { IUnsplashPhoto } from './types';
 
-const unsplash = new Unsplash({
+const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESSKEY || '',
-  secret: process.env.UNSPLASH_SECRET || '',
 });
 
 export async function getRandomPhoto(count = 4) {
   try {
-    const response = await unsplash.photos.getRandomPhoto({
+    const result = await unsplash.photos.getRandom({
       count,
       query: 'desktop wallpapers',
     });
-    const photoes: IUnsplashPhoto[] = toJson(response);
-    return photoes;
+    const photos: IUnsplashPhoto[] = result.response;
+    return photos;
   } catch (err) {
     // TODO: send to sentry
     console.error(err);
