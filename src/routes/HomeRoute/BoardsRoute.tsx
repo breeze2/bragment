@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Layout, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { memo, useLayoutEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { useIntl } from 'react-intl';
@@ -11,24 +11,24 @@ import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
   boardActions,
   boardThunks,
-  selectCurrentUserId,
   selectPersonalBoardList,
   selectRecentlyBoardList,
+  selectUserSignedIn,
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
 
-import styles from '../../styles/HomePage.module.scss';
+import styles from '../../styles/App.module.scss';
 
 function BoardsPage() {
   const dispatch = useReduxDispatch();
   const { formatMessage: f } = useIntl();
-  const userId = useReduxSelector(selectCurrentUserId);
+  const isSignedIn = useReduxSelector(selectUserSignedIn);
   const personalList = useReduxSelector(selectPersonalBoardList);
   const recentList = useReduxSelector(selectRecentlyBoardList);
 
   useLayoutEffect(() => {
-    if (!userId) {
+    if (!isSignedIn) {
       // TODO: reset data
       return;
     }
@@ -36,10 +36,10 @@ function BoardsPage() {
     dispatch(boardThunks.fetchAll()).finally(() => {
       dispatch(boardActions.setLoading(false));
     });
-  }, [dispatch, userId]);
+  }, [dispatch, isSignedIn]);
 
   return (
-    <Layout.Content>
+    <div className={styles.homeRoute}>
       <Scrollbars autoHide>
         <div className={styles.container}>
           <div className={styles.boardList}>
@@ -100,7 +100,7 @@ function BoardsPage() {
         </div>
       </Scrollbars>
       <CreateBoardDialog />
-    </Layout.Content>
+    </div>
   );
 }
 

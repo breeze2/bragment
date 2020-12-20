@@ -9,9 +9,11 @@ import {
 
 export const AUTHENTICATING = 'AUTHENTICATING';
 
-export enum EAppPage {
-  BOARDS = 'BOARDS',
-  SETTINGS = 'SETTINGS',
+export enum EAppRoute {
+  BOARDS = '/boards',
+  SETTINGS = '/settings',
+  HOME = '/',
+  BOARD = '/board/:id',
 }
 
 export enum EAppTheme {

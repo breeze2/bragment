@@ -12,7 +12,10 @@ import {
   fragmentColumnThunks,
   selectCurrentBoard,
   selectFragmentColumnLoading,
+  selectUserSignedIn,
+  userActions,
   useReduxAsyncDispatch,
+  useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
 
@@ -36,6 +39,7 @@ interface ICreateColumnFormData {
 function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   const { formatMessage: f } = useIntl();
   const asyncDispatch = useReduxAsyncDispatch();
+  const dispatch = useReduxDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
   const [form] = Form.useForm<ICreateColumnFormData>();
@@ -48,8 +52,18 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   );
   const currentBoard = useReduxSelector(selectCurrentBoard);
   const loading = useReduxSelector(selectFragmentColumnLoading);
+  const signedIn = useReduxSelector(selectUserSignedIn);
   const setInputMode = () => setState({ mode: EMode.INPUT });
   const setTextMode = () => setState({ mode: EMode.TEXT });
+  const handleTextClick = () => {
+    if (loading) {
+      // NOTE: do nothing
+    } else if (!signedIn) {
+      dispatch(userActions.setSignInDialogVisible(true));
+    } else {
+      setInputMode();
+    }
+  };
   const handleCreate = () => {
     const fields = form.getFieldsValue();
     const title = fields.title.trim();
@@ -95,10 +109,8 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
         styles.creator,
         state.mode === EMode.INPUT ? styles.inputMode : styles.textMode
       )}>
-      <div
-        className={styles.text}
-        onClick={loading === true ? undefined : setInputMode}>
-        {loading === true ? (
+      <div className={styles.text} onClick={handleTextClick}>
+        {loading ? (
           <>
             <LoadingOutlined />
             {f({ id: 'loading' })}
