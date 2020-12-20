@@ -1,4 +1,3 @@
-import { Layout } from 'antd';
 import classnames from 'classnames';
 import { memo, useCallback, useLayoutEffect } from 'react';
 import {
@@ -18,7 +17,6 @@ import { IFragmentColumn } from '../../api/types';
 import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
 import FragmentColumn from '../../components/FragmentColumn';
 import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
-import Header from '../../components/Header';
 import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
 import {
   boardActions,
@@ -27,13 +25,13 @@ import {
   fragmentColumnActions,
   fragmentColumnThunks,
   selectBoardEntities,
-  selectCurrentUserId,
   selectFragmentColumnEntities,
+  selectUserSignedIn,
   useReduxAsyncDispatch,
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/BoardPage.module.scss';
+import styles from '../../styles/App.module.scss';
 import {
   getAllCardPlaceholders,
   getCardPlaceholder,
@@ -55,7 +53,7 @@ function BoardPage(props: IBoardPageProps) {
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
   const boardEntities = useReduxSelector(selectBoardEntities);
-  const userId = useReduxSelector(selectCurrentUserId);
+  const isSignedIn = useReduxSelector(selectUserSignedIn);
   const fragmentColumnEntities = useReduxSelector(selectFragmentColumnEntities);
   const currentBoard = boardId ? boardEntities[boardId] : undefined;
 
@@ -140,7 +138,7 @@ function BoardPage(props: IBoardPageProps) {
   }, []);
   useLayoutEffect(() => {
     dispatch(boardActions.setCurrentId(boardId));
-    if (!userId) {
+    if (!isSignedIn) {
       // TODO: reset data;
       return;
     }
@@ -154,7 +152,7 @@ function BoardPage(props: IBoardPageProps) {
         dispatch(fragmentColumnActions.setLoading(false));
       });
     }
-  }, [boardId, userId, dispatch, asyncDispatch]);
+  }, [boardId, isSignedIn, dispatch, asyncDispatch]);
 
   let progressiveImage;
   if (currentBoard && currentBoard.image) {
@@ -192,60 +190,55 @@ function BoardPage(props: IBoardPageProps) {
 
   console.info('BoardPage rendering...');
   return (
-    <Layout className={styles.layout}>
+    <div className={styles.boardRoute}>
       {progressiveImage}
-      <Header />
-      <Layout.Content>
-        <Scrollbars autoHide>
-          <DragDropContext
-            onDragStart={handleDragStart}
-            onDragUpdate={handleDragUpdate}
-            onDragEnd={handleDragEnd}>
-            <Droppable droppableId="board" type="COLUMN" direction="horizontal">
-              {(
-                provided: DroppableProvided,
-                snapshot: DroppableStateSnapshot
-              ) => (
-                <div
-                  ref={provided.innerRef}
-                  className={classnames(
-                    styles.container,
-                    snapshot.isDraggingOver ? styles.draggingOver : ''
-                  )}
-                  {...provided.droppableProps}>
-                  <div className={styles.columnPlaceholder} />
-                  <TransitionGroup component={null}>
-                    {currentBoard?.columnOrder
-                      .filter((columnId) => fragmentColumnEntities[columnId])
-                      .map((columnId, index) => (
-                        <CSSTransition
+      <Scrollbars autoHide>
+        <DragDropContext
+          onDragStart={handleDragStart}
+          onDragUpdate={handleDragUpdate}
+          onDragEnd={handleDragEnd}>
+          <Droppable droppableId="board" type="COLUMN" direction="horizontal">
+            {(
+              provided: DroppableProvided,
+              snapshot: DroppableStateSnapshot
+            ) => (
+              <div
+                ref={provided.innerRef}
+                className={classnames(
+                  styles.container,
+                  snapshot.isDraggingOver ? styles.draggingOver : ''
+                )}
+                {...provided.droppableProps}>
+                <div className={styles.columnPlaceholder} />
+                <TransitionGroup component={null}>
+                  {currentBoard?.columnOrder
+                    .filter((columnId) => fragmentColumnEntities[columnId])
+                    .map((columnId, index) => (
+                      <CSSTransition
+                        key={columnId}
+                        classNames="fade-right"
+                        timeout={500}>
+                        <FragmentColumn
                           key={columnId}
-                          classNames="fade-right"
-                          timeout={500}>
-                          <FragmentColumn
-                            key={columnId}
-                            index={index}
-                            data={
-                              fragmentColumnEntities[
-                                columnId
-                              ] as IFragmentColumn
-                            }
-                          />
-                        </CSSTransition>
-                      ))}
-                  </TransitionGroup>
-                  {provided.placeholder}
-                  <div className={styles.actions}>
-                    <FragmentColumnCreator />
-                  </div>
+                          index={index}
+                          data={
+                            fragmentColumnEntities[columnId] as IFragmentColumn
+                          }
+                        />
+                      </CSSTransition>
+                    ))}
+                </TransitionGroup>
+                {provided.placeholder}
+                <div className={styles.actions}>
+                  <FragmentColumnCreator />
                 </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Scrollbars>
-      </Layout.Content>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Scrollbars>
       <CreateFragmentDialog />
-    </Layout>
+    </div>
   );
 }
 

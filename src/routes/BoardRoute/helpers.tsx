@@ -1,6 +1,6 @@
 import { DraggableLocation } from 'react-beautiful-dnd';
 
-import styles from '../../styles/BoardPage.module.scss';
+import styles from '../../styles/App.module.scss';
 import FragmentCardStyles from '../../styles/FragmentCard.module.scss';
 import FragmentColumnStyles from '../../styles/FragmentColumn.module.scss';
 

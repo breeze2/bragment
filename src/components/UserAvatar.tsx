@@ -4,26 +4,26 @@ import { MenuInfo } from 'rc-menu/lib/interface';
 import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import {
-  selectCurrentUserId,
+  selectUserAuthenticating,
+  selectUserSignedIn,
   userActions,
   useReduxAsyncDispatch,
   useReduxDispatch,
   useReduxSelector,
   userThunks,
 } from '../redux';
-import { AUTHENTICATING } from '../redux/types';
 
 import styles from '../styles/UserAvatar.module.scss';
 
 function UserAvatar() {
   const { formatMessage: f } = useIntl();
-  const userId = useReduxSelector(selectCurrentUserId);
+  const signedIn = useReduxSelector(selectUserSignedIn);
+  const authenticating = useReduxSelector(selectUserAuthenticating);
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
   const showSignInDialog = () => {
     dispatch(userActions.setSignInDialogVisible(true));
   };
-  const authenticating = userId === AUTHENTICATING;
 
   const handleMenuClick = (info: MenuInfo) => {
     switch (info.key) {
@@ -46,7 +46,7 @@ function UserAvatar() {
     </Menu>
   );
 
-  return userId && !authenticating ? (
+  return signedIn ? (
     <Dropdown className={styles.wrapper} overlay={menu} trigger={['click']}>
       <Avatar size="large" icon={<UserOutlined />} />
     </Dropdown>

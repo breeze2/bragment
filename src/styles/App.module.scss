@@ -1,0 +1,91 @@
+.layout {
+  height: 100%;
+  width: 100%;
+  > aside {
+    z-index: 5;
+    :global(.ant-menu-vertical) {
+      border: none;
+    }
+  }
+}
+.content {
+  display: flex;
+  > :first-child {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+// for home route
+.homeRoute {
+  position: relative;
+  .container {
+    padding: 26px 24px 36px 24px;
+  }
+
+  .boardList {
+    display: block;
+    margin-bottom: 20px;
+    :global {
+      .ant-row {
+        margin: -6px -6px 6px;
+      }
+      .ant-col {
+        padding: 6px;
+      }
+    }
+  }
+
+  .boardListLabel {
+    display: block;
+    :global {
+      .anticon {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+// for board route
+.boardRoute {
+  position: relative;
+  .background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .container {
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: inline-flex;
+    height: 100%;
+    min-width: 100vw;
+    padding: 8px;
+    position: relative;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    margin: 8px;
+  }
+
+  .columnPlaceholder {
+    position: absolute;
+    display: none;
+    width: 266px;
+    border-radius: 2px;
+    background-color: rgba(46, 62, 79, 0.45);
+  }
+
+  .container:not(.draggingOver) {
+    .columnPlaceholder {
+      display: none !important;
+    }
+  }
+}

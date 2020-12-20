@@ -2,7 +2,7 @@ import { EBoardType, IFragmentColumn } from '../api/types';
 import { boardSelectors } from './boardSlice';
 import { fragmentCardSelectors } from './fragmentCardSlice';
 import { fragmentColumnSelectors } from './fragmentColumnSlice';
-import { IReduxState } from './types';
+import { AUTHENTICATING, IReduxState } from './types';
 
 // for common
 export function selectAppLanguage(state: IReduxState) {
@@ -16,6 +16,14 @@ export function selectCurrentUserId(state: IReduxState) {
 
 export function selectUserSignInDialogVisible(state: IReduxState) {
   return state.user.signInDialogVisible;
+}
+
+export function selectUserSignedIn(state: IReduxState) {
+  return !!state.user.currentId && state.user.currentId !== AUTHENTICATING;
+}
+
+export function selectUserAuthenticating(state: IReduxState) {
+  return state.user.currentId === AUTHENTICATING;
 }
 
 // for board

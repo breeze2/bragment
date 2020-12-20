@@ -1,12 +1,13 @@
+import { Layout } from 'antd';
 import { memo, useEffect } from 'react';
 import { IntlProvider } from 'react-intl';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { auth } from './api/firebase';
+import Header from './components/Header';
+import Navigator from './components/Navigator';
 import UserSignInDialog from './dialogs/UserSignInDialog';
 import { defaultLanguage, messages } from './locales';
-import BoardPage from './pages/BoardPage';
-import HomePage from './pages/HomePage';
 import {
   boardThunks,
   selectAppLanguage,
@@ -14,10 +15,22 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from './redux';
+import { EAppRoute } from './redux/types';
+import BoardRoute from './routes/BoardRoute';
+import HomeRoute from './routes/HomeRoute';
+import styles from './styles/App.module.scss';
+
+function hasNavigator(pathname: string) {
+  return (
+    pathname === EAppRoute.BOARDS ||
+    pathname === EAppRoute.HOME ||
+    pathname === EAppRoute.SETTINGS
+  );
+}
 
 function App() {
-  const location = useLocation();
   const language = useReduxSelector(selectAppLanguage);
+  const location = useLocation();
   const dispatch = useReduxDispatch();
   useEffect(() => {
     dispatch(boardThunks.fetchBgImages());
@@ -45,14 +58,25 @@ function App() {
     <IntlProvider
       locale={language}
       messages={messages[language] || messages[defaultLanguage]}>
-      <TransitionGroup component={null}>
-        <CSSTransition key={location.pathname} classNames="page" timeout={500}>
-          <Switch location={location}>
-            <Route exact path="/board/:id" component={BoardPage} />
-            <Route path="/" component={HomePage} />
-          </Switch>
-        </CSSTransition>
-      </TransitionGroup>
+      <Layout className={styles.layout}>
+        {hasNavigator(location.pathname) && <Navigator />}
+        <Layout>
+          <Header />
+          <Layout.Content className={styles.content}>
+            <TransitionGroup component={null}>
+              <CSSTransition
+                key={location.pathname}
+                classNames="route"
+                timeout={500}>
+                <Switch location={location}>
+                  <Route exact path={EAppRoute.BOARD} component={BoardRoute} />
+                  <Route path={EAppRoute.HOME} component={HomeRoute} />
+                </Switch>
+              </CSSTransition>
+            </TransitionGroup>
+          </Layout.Content>
+        </Layout>
+      </Layout>
       <UserSignInDialog />
     </IntlProvider>
   );
