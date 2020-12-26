@@ -10,28 +10,27 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
-import ProgressiveImage from 'react-progressive-image';
 import { RouteComponentProps } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { IFragmentColumn } from '../../api/types';
-import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
-import FragmentColumn from '../../components/FragmentColumn';
-import FragmentColumnCreator from '../../components/FragmentColumn/Creator';
-import CreateFragmentDialog from '../../dialogs/CreateFragmentDialog';
+import { IColumn } from '../../api/types';
+import Column from '../../components/Column';
+import ColumnCreator from '../../components/Column/Creator';
+import CreateCardDialog from '../../dialogs/CreateCardDialog';
 import {
   boardActions,
   boardThunks,
-  fragmentCardThunks,
-  fragmentColumnActions,
-  fragmentColumnThunks,
+  cardThunks,
+  columnActions,
+  columnThunks,
   selectBoardEntities,
-  selectFragmentColumnEntities,
+  selectColumnEntities,
   selectUserSignedIn,
   useReduxAsyncDispatch,
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
 import styles from '../../styles/App.module.scss';
+import BoardRouteBackground from './Background';
 import {
   getAllCardPlaceholders,
   getCardPlaceholder,
@@ -42,19 +41,19 @@ import {
   makeColumnPlaceholderStyle,
 } from './helpers';
 
-interface IBoardPageRouteParams {
+interface IBoardRouteParams {
   id?: string;
 }
 
-interface IBoardPageProps extends RouteComponentProps<IBoardPageRouteParams> {}
+interface IBoardRouteProps extends RouteComponentProps<IBoardRouteParams> {}
 
-function BoardPage(props: IBoardPageProps) {
+function BoardRoute(props: IBoardRouteProps) {
   const boardId = props.match.params.id;
   const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
   const boardEntities = useReduxSelector(selectBoardEntities);
   const isSignedIn = useReduxSelector(selectUserSignedIn);
-  const fragmentColumnEntities = useReduxSelector(selectFragmentColumnEntities);
+  const columnEntities = useReduxSelector(selectColumnEntities);
   const currentBoard = boardId ? boardEntities[boardId] : undefined;
 
   const handleDragEnd = useCallback(
@@ -84,7 +83,7 @@ function BoardPage(props: IBoardPageProps) {
         );
         if (fromId) {
           dispatch(
-            fragmentColumnThunks.moveCard({
+            columnThunks.moveCard({
               fromColumnId: source.droppableId,
               fromId,
               toColumnId: destination.droppableId,
@@ -143,55 +142,28 @@ function BoardPage(props: IBoardPageProps) {
       return;
     }
     if (boardId) {
-      dispatch(fragmentColumnActions.setLoading(true));
+      dispatch(columnActions.setLoading(true));
       Promise.all([
         asyncDispatch(boardThunks.fetch(boardId)),
-        asyncDispatch(fragmentColumnThunks.fetchByBoard(boardId)),
-        asyncDispatch(fragmentCardThunks.fetchByBoard(boardId)),
-      ]).finally(() => {
-        dispatch(fragmentColumnActions.setLoading(false));
-      });
+        asyncDispatch(columnThunks.fetchByBoard(boardId)),
+        asyncDispatch(cardThunks.fetchByBoard(boardId)),
+      ])
+        .then(() => {
+          dispatch(boardActions.pushRecentBoardId(boardId));
+        })
+        .finally(() => {
+          dispatch(columnActions.setLoading(false));
+        });
     }
   }, [boardId, isSignedIn, dispatch, asyncDispatch]);
 
-  let progressiveImage;
-  if (currentBoard && currentBoard.image) {
-    const { color, image } = currentBoard;
-    const regularImage = getRegularUrl(image);
-    const thumbImage = getThumbUrl(image);
-    const placeholder = (
-      <div
-        className={styles.background}
-        style={{
-          filter: 'blur(10px)',
-          backgroundColor: color || undefined,
-          backgroundImage: thumbImage ? `url(${thumbImage})` : undefined,
-        }}
-      />
-    );
-    progressiveImage = (
-      <ProgressiveImage src={regularImage} placeholder={thumbImage}>
-        {(src: string, loading: boolean) =>
-          loading ? (
-            placeholder
-          ) : (
-            <div
-              className={styles.background}
-              style={{
-                backgroundColor: color || undefined,
-                backgroundImage: src ? `url(${src})` : undefined,
-              }}
-            />
-          )
-        }
-      </ProgressiveImage>
-    );
-  }
-
-  console.info('BoardPage rendering...');
+  console.info('BoardRoute rendering...');
   return (
     <div className={styles.boardRoute}>
-      {progressiveImage}
+      <BoardRouteBackground
+        color={currentBoard?.color}
+        image={currentBoard?.image}
+      />
       <Scrollbars autoHide>
         <DragDropContext
           onDragStart={handleDragStart}
@@ -212,34 +184,32 @@ function BoardPage(props: IBoardPageProps) {
                 <div className={styles.columnPlaceholder} />
                 <TransitionGroup component={null}>
                   {currentBoard?.columnOrder
-                    .filter((columnId) => fragmentColumnEntities[columnId])
+                    .filter((columnId) => columnEntities[columnId])
                     .map((columnId, index) => (
                       <CSSTransition
                         key={columnId}
                         classNames="fade-right"
                         timeout={500}>
-                        <FragmentColumn
+                        <Column
                           key={columnId}
                           index={index}
-                          data={
-                            fragmentColumnEntities[columnId] as IFragmentColumn
-                          }
+                          data={columnEntities[columnId] as IColumn}
                         />
                       </CSSTransition>
                     ))}
                 </TransitionGroup>
                 {provided.placeholder}
                 <div className={styles.actions}>
-                  <FragmentColumnCreator />
+                  <ColumnCreator />
                 </div>
               </div>
             )}
           </Droppable>
         </DragDropContext>
       </Scrollbars>
-      <CreateFragmentDialog />
+      <CreateCardDialog />
     </div>
   );
 }
 
-export default memo(BoardPage);
+export default memo(BoardRoute);

@@ -6,20 +6,23 @@ import {
 } from '@reduxjs/toolkit';
 import {
   asyncAdjustTwoBoardColumnOrders,
-  asyncCheckBoard,
   asyncCreateBoard,
   asyncFetchAllBoards,
   asyncFetchBoard,
-  boardComparatorByCheckedAt,
-} from '../api/board';
+  // boardComparatorByTimestamp,
+} from '../api/database/board';
 import { EBoardPolicy, EBoardType, IBoard } from '../api/types';
 import { getRandomPhoto } from '../api/unsplash';
-import { preloadImages } from '../utils';
-import { fragmentColumnThunks } from './fragmentColumnSlice';
+import {
+  getLocalRecentlyBoardIds,
+  preloadImages,
+  setLocalRecentlyBoardIds,
+} from '../utils';
+import { columnThunks } from './columnSlice';
 import { IBoardsExtraState, IReduxState } from './types';
 
 const adapter = createEntityAdapter<IBoard>({
-  sortComparer: boardComparatorByCheckedAt,
+  // sortComparer: boardComparatorByTimestamp.bind(undefined, 'createdAt'),
 });
 
 const thunks = {
@@ -44,9 +47,6 @@ const thunks = {
   }),
   fetch: createAsyncThunk('board/fetch', async (boardId: string) => {
     const board = await asyncFetchBoard(boardId);
-    if (board.id) {
-      asyncCheckBoard(board.id);
-    }
     return board;
   }),
   moveColumn: createAsyncThunk(
@@ -82,12 +82,15 @@ const thunks = {
   }),
 };
 
+const defaultRecentBoardIds = getLocalRecentlyBoardIds();
+
 const slice = createSlice({
   name: 'board',
   initialState: adapter.getInitialState<IBoardsExtraState>({
     createDialogVisible: false,
     currentId: undefined,
     loading: false,
+    recentBoardIds: defaultRecentBoardIds,
     standbyBgColors: [
       'var(--blue)',
       'var(--cyan)',
@@ -109,6 +112,15 @@ const slice = createSlice({
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
+    },
+    pushRecentBoardId(state, action: PayloadAction<string>) {
+      const id = action.payload;
+      const index = state.recentBoardIds.findIndex((el) => el === id);
+      if (index > -1) {
+        state.recentBoardIds.splice(index, 1);
+      }
+      state.recentBoardIds.unshift(id);
+      setLocalRecentlyBoardIds(state.recentBoardIds);
     },
   },
   extraReducers: (builder) => {
@@ -155,7 +167,7 @@ const slice = createSlice({
       state.standbyBgImages = action.payload;
       preloadImages(images.map((el) => el.urls.thumb));
     });
-    builder.addCase(fragmentColumnThunks.create.fulfilled, (state, action) => {
+    builder.addCase(columnThunks.create.fulfilled, (state, action) => {
       const column = action.payload;
       const board = adapter.getSelectors().selectById(state, column.boardId);
       if (board) {

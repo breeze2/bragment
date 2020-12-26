@@ -1,8 +1,8 @@
 import { DraggableLocation } from 'react-beautiful-dnd';
 
 import styles from '../../styles/App.module.scss';
-import FragmentCardStyles from '../../styles/FragmentCard.module.scss';
-import FragmentColumnStyles from '../../styles/FragmentColumn.module.scss';
+import cardStyles from '../../styles/Card.module.scss';
+import columnStyles from '../../styles/Column.module.scss';
 
 export function getColumnPlaceholder() {
   return document.querySelector<HTMLDivElement>(`.${styles.columnPlaceholder}`);
@@ -10,7 +10,7 @@ export function getColumnPlaceholder() {
 
 export function getColumnWrapper(index: number) {
   return document.querySelector<HTMLDivElement>(
-    `.${FragmentColumnStyles.layout}:nth-of-type(${index + 2})`
+    `.${columnStyles.layout}:nth-of-type(${index + 2})`
   );
 }
 
@@ -21,26 +21,24 @@ export function getColumnWrapperId(index: number) {
 
 export function getColumnContainer(droppableId: string) {
   return document.querySelector<HTMLDivElement>(
-    `.${FragmentColumnStyles.container}[data-rbd-droppable-id="${droppableId}"]`
+    `.${columnStyles.container}[data-rbd-droppable-id="${droppableId}"]`
   );
 }
 
 export function getAllCardPlaceholders() {
   return document.querySelectorAll<HTMLDivElement>(
-    `.${FragmentColumnStyles.cardPlaceholder}`
+    `.${columnStyles.cardPlaceholder}`
   );
 }
 
 export function getCardPlaceholder(droppableId: string) {
   return document.querySelector<HTMLDivElement>(
-    `.${FragmentColumnStyles.container}[data-rbd-droppable-id="${droppableId}"] .${FragmentColumnStyles.cardPlaceholder}`
+    `.${columnStyles.container}[data-rbd-droppable-id="${droppableId}"] .${columnStyles.cardPlaceholder}`
   );
 }
 
 export function getAllCardWrappersInColumnContainer(container: HTMLDivElement) {
-  return container.querySelectorAll<HTMLDivElement>(
-    `.${FragmentCardStyles.wrapper}`
-  );
+  return container.querySelectorAll<HTMLDivElement>(`.${cardStyles.wrapper}`);
 }
 
 export function getCardWrapperInColumnContainer(
@@ -48,7 +46,7 @@ export function getCardWrapperInColumnContainer(
   index: number
 ) {
   return container.querySelector<HTMLDivElement>(
-    `.${FragmentCardStyles.wrapper}:nth-of-type(${index + 2})`
+    `.${cardStyles.wrapper}:nth-of-type(${index + 2})`
   );
 }
 

@@ -2,30 +2,26 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Select } from 'antd';
 import { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-  EFragmentType,
-  IFragmentColumn,
-  IFragmentFile,
-} from '../../../api/types';
-import { fragmentCardThunks, useReduxAsyncDispatch } from '../../../redux';
+import { ECardType, ICardFile, IColumn } from '../../../api/types';
+import { cardThunks, useReduxAsyncDispatch } from '../../../redux';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
-import styles from '../../../styles/CreateFragmentDialog.module.scss';
+import styles from '../../../styles/CreateCardDialog.module.scss';
 
 const GistFileField = lazy(() => import('./FileField'));
 
 interface IGistFormData {
   title?: string;
-  files?: IFragmentFile[];
+  files?: ICardFile[];
 }
 
 interface IGistFormProps {
-  columnList: IFragmentColumn[];
-  selectedColumn?: IFragmentColumn;
+  columnList: IColumn[];
+  selectedColumn?: IColumn;
   onFinish?: () => void;
   onColumnChange?: (columnId: string) => void;
 }
 
-function CreateFragmentDialog(props: IGistFormProps) {
+function GistForm(props: IGistFormProps) {
   const { columnList, selectedColumn, onColumnChange, onFinish } = props;
   const { formatMessage: f } = useIntl();
   const asyncDispatch = useReduxAsyncDispatch();
@@ -47,7 +43,7 @@ function CreateFragmentDialog(props: IGistFormProps) {
     const fields = form.getFieldsValue();
     const title = (fields.title || '').trim();
     const files = (fields.files || [])
-      .map<IFragmentFile>((file) => ({
+      .map<ICardFile>((file) => ({
         name: file.name.trim(),
         content: file.content.trim(),
       }))
@@ -66,12 +62,12 @@ function CreateFragmentDialog(props: IGistFormProps) {
     }
     setSubmitting(true);
     asyncDispatch(
-      fragmentCardThunks.create({
+      cardThunks.create({
         boardId: selectedColumn.boardId,
         columnId: selectedColumn.id,
         title,
         files,
-        type: EFragmentType.GIST,
+        type: ECardType.GIST,
       })
     )
       .catch(() => {
@@ -147,4 +143,4 @@ function CreateFragmentDialog(props: IGistFormProps) {
   );
 }
 
-export default memo(CreateFragmentDialog);
+export default memo(GistForm);

@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import styles from '../../styles/App.module.scss';
 
-function SettingsPage() {
-  return <div className={styles.homeRoute}>SettingsPage</div>;
+function SettingsRoute() {
+  return <div className={styles.homeRoute}>SettingsRoute</div>;
 }
 
-export default memo(SettingsPage);
+export default memo(SettingsRoute);

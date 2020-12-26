@@ -9,7 +9,7 @@ export async function getRandomPhoto(count = 4) {
   try {
     const result = await unsplash.photos.getRandom({
       count,
-      query: 'desktop wallpapers',
+      query: 'desktop-wallpapers',
     });
     const photos: IUnsplashPhoto[] = result.response;
     return photos;

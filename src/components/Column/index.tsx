@@ -12,25 +12,25 @@ import {
   positionValues as IPositionValues,
   Scrollbars,
 } from 'react-custom-scrollbars';
-import { IFragmentCard, IFragmentColumn } from '../../api/types';
-import { selectFragmentCardEntities, useReduxSelector } from '../../redux';
-import styles from '../../styles/FragmentColumn.module.scss';
-import FragmentCard from '../FragmentCard';
+import { ICard, IColumn } from '../../api/types';
+import { selectCardEntities, useReduxSelector } from '../../redux';
+import styles from '../../styles/Column.module.scss';
+import Card from '../Card';
 import Footer, { EMode as EFooterMode } from './Footer';
 import Header from './Header';
 
-interface IFragmentColumnProps {
-  data: IFragmentColumn;
+interface IColumnProps {
+  data: IColumn;
   index: number;
 }
 
-function FragmentColumn(props: IFragmentColumnProps) {
+function Column(props: IColumnProps) {
   const { data, index } = props;
   const headerRef = useRef<HTMLDivElement>(null);
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = useState(
     'calc(100vh - 192px)'
   );
-  const cardEntities = useReduxSelector(selectFragmentCardEntities);
+  const cardEntities = useReduxSelector(selectCardEntities);
   const handleFooterModeChange = useCallback(
     (mode: EFooterMode, clientHeight?: number) => {
       if (mode === EFooterMode.TEXT) {
@@ -89,8 +89,8 @@ function FragmentColumn(props: IFragmentColumnProps) {
                   {data.cardOrder
                     .filter((cardId) => cardEntities[cardId])
                     .map((cardId, cardIndex) => (
-                      <FragmentCard
-                        data={cardEntities[cardId] as IFragmentCard}
+                      <Card
+                        data={cardEntities[cardId] as ICard}
                         index={cardIndex}
                         key={cardId}
                       />
@@ -107,4 +107,4 @@ function FragmentColumn(props: IFragmentColumnProps) {
   );
 }
 
-export default memo(FragmentColumn);
+export default memo(Column);

@@ -10,7 +10,7 @@ import {
   DEFAULT_LANGUAGE,
   detectLanguageByFileName,
 } from '../../../api/editor';
-import styles from '../../../styles/CreateFragmentDialog.module.scss';
+import styles from '../../../styles/CreateCardDialog.module.scss';
 import GistCodeEditor from './CodeEditor';
 
 export interface IGistFileFieldProps {

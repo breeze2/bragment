@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getLocalLanguage } from '../utils';
 import { EAppTheme, ICommonState } from './types';
 
-const LANGUAGE = 'LANGUAGE';
-const defaultLanguage =
-  window.localStorage.getItem(LANGUAGE) || navigator.language;
+const defaultLanguage = getLocalLanguage();
 const defaultTheme = EAppTheme.LIGHT;
 
 const initialState: ICommonState = {

@@ -1,9 +1,9 @@
 import { EntityState } from '@reduxjs/toolkit';
 import {
-  EFragmentType,
+  ECardType,
   IBoard,
-  IFragmentCard,
-  IFragmentColumn,
+  ICard,
+  IColumn,
   IUnsplashPhoto,
 } from '../api/types';
 
@@ -21,10 +21,9 @@ export enum EAppTheme {
   LIGHT = 'LIGHT',
 }
 
-export enum EFragmentThunkErrorMessage {
+export enum EReduxThunkErrorMessage {
   EXISTED_ARCHIVE = 'EXISTED_ARCHIVE',
   EXISTED_COLUMN = 'EXISTED_COLUMN',
-  EXISTED_DIRECTORY = 'EXISTED_DIRECTORY',
   EXISTED_FILE = 'EXISTED_FILE',
   UNKNOWN = 'UNKNOWN',
 }
@@ -53,35 +52,34 @@ export interface IBoardsExtraState {
   createDialogVisible: boolean;
   currentId?: string;
   loading: boolean;
+  recentBoardIds: string[];
   standbyBgColors: string[];
   standbyBgImages: IUnsplashPhoto[];
 }
 
 export type IBoardState = EntityState<IBoard> & IBoardsExtraState;
 
-export interface IFragmentColumnExtraState {
+export interface IColumnExtraState {
   currentId?: string;
   loading: boolean;
 }
 
-export type IFragmentCardState = EntityState<IFragmentCard> &
-  IFragmentCardExtraState;
+export type ICardState = EntityState<ICard> & ICardExtraState;
 
-export interface IFragmentCardExtraState {
-  createAsType: EFragmentType;
+export interface ICardExtraState {
+  createAsType: ECardType;
   createDialogVisible: boolean;
   createForColumnId?: string;
   currentId?: string;
   loading: boolean;
 }
 
-export type IFragmentColumnState = EntityState<IFragmentColumn> &
-  IFragmentColumnExtraState;
+export type IColumnState = EntityState<IColumn> & IColumnExtraState;
 
 export interface IReduxState {
   board: IBoardState;
   common: ICommonState;
-  fragmentColumn: IFragmentColumnState;
-  fragmentCard: IFragmentCardState;
+  column: IColumnState;
+  card: ICardState;
   user: IUserState;
 }

@@ -15,22 +15,22 @@ import {
   useState,
 } from 'react';
 import { useIntl } from 'react-intl';
-import { EFragmentType, IFragmentColumn } from '../../api/types';
+import { ECardType, IColumn } from '../../api/types';
 import {
-  fragmentCardActions,
-  fragmentCardThunks,
+  cardActions,
+  cardThunks,
   useReduxAsyncDispatch,
   useReduxDispatch,
 } from '../../redux';
-import styles from '../../styles/FragmentColumn.module.scss';
+import styles from '../../styles/Column.module.scss';
 
 export enum EMode {
   INPUT,
   TEXT,
 }
 
-interface IFragmentColumnFooterProps {
-  data: IFragmentColumn;
+interface IColumnFooterProps {
+  data: IColumn;
   onModeChange?: (mode: EMode, clientHeight?: number) => void;
 }
 
@@ -40,7 +40,7 @@ interface ICreateCardFormData {
 
 const defaultInputMaxRows = 6;
 
-function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
+function ColumnFooter(props: IColumnFooterProps) {
   const { data, onModeChange } = props;
   const { formatMessage: f } = useIntl();
   const dispatch = useReduxDispatch();
@@ -76,7 +76,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     }
     setSubmitting(true);
     asyncDispatch(
-      fragmentCardThunks.create({
+      cardThunks.create({
         boardId: data.boardId,
         columnId: data.id,
         title,
@@ -101,9 +101,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
       <Menu>
         <Menu.Item
           onClick={() => {
-            dispatch(
-              fragmentCardActions.showCreateDialog(data.id, EFragmentType.GIST)
-            );
+            dispatch(cardActions.showCreateDialog(data.id, ECardType.GIST));
           }}>
           {f({ id: 'addGistCard' })}
         </Menu.Item>
@@ -134,7 +132,7 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
     }
   }, [mode, onModeChange]);
 
-  console.info('FragmentColumnFooter rendering...');
+  console.info('ColumnFooter rendering...');
   return (
     <div ref={selfRef} className={styles.footer}>
       <div
@@ -179,4 +177,4 @@ function FragmentColumnFooter(props: IFragmentColumnFooterProps) {
   );
 }
 
-export default memo(FragmentColumnFooter);
+export default memo(ColumnFooter);

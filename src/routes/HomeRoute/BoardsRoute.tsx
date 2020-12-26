@@ -5,8 +5,8 @@ import Scrollbars from 'react-custom-scrollbars';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import BoardCard from '../../components/BoardCard';
-import BoardCardCreator from '../../components/BoardCard/Creator';
+import BoardCard from '../../components/Board';
+import BoardCardCreator from '../../components/Board/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
   boardActions,
@@ -20,7 +20,7 @@ import {
 
 import styles from '../../styles/App.module.scss';
 
-function BoardsPage() {
+function BoardsRoute() {
   const dispatch = useReduxDispatch();
   const { formatMessage: f } = useIntl();
   const isSignedIn = useReduxSelector(selectUserSignedIn);
@@ -104,4 +104,4 @@ function BoardsPage() {
   );
 }
 
-export default memo(BoardsPage);
+export default memo(BoardsRoute);

@@ -7,11 +7,10 @@ import { Button, Form, Input } from 'antd';
 import classnames from 'classnames';
 import { memo, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { useMultipleState } from '../../components/hooks';
 import {
-  fragmentColumnThunks,
+  columnThunks,
+  selectColumnLoading,
   selectCurrentBoard,
-  selectFragmentColumnLoading,
   selectUserSignedIn,
   userActions,
   useReduxAsyncDispatch,
@@ -19,15 +18,16 @@ import {
   useReduxSelector,
 } from '../../redux';
 
-import styles from '../../styles/FragmentColumn.module.scss';
+import styles from '../../styles/Column.module.scss';
+import { useMultipleState } from '../hooks';
 
 enum EMode {
   INPUT,
   TEXT,
 }
 
-export interface IFragmentColumnCreatorProps {}
-export interface IFragmentColumnCreatorState {
+export interface IColumnCreatorProps {}
+export interface IColumnCreatorState {
   mode: EMode;
   isCreating: boolean;
 }
@@ -36,22 +36,20 @@ interface ICreateColumnFormData {
   title: string;
 }
 
-function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
+function ColumnCreator(props: IColumnCreatorProps) {
   const { formatMessage: f } = useIntl();
   const asyncDispatch = useReduxAsyncDispatch();
   const dispatch = useReduxDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
   const [form] = Form.useForm<ICreateColumnFormData>();
-  const defaultState: IFragmentColumnCreatorState = {
+  const defaultState: IColumnCreatorState = {
     mode: EMode.TEXT,
     isCreating: false,
   };
-  const [state, setState] = useMultipleState<IFragmentColumnCreatorState>(
-    defaultState
-  );
+  const [state, setState] = useMultipleState<IColumnCreatorState>(defaultState);
   const currentBoard = useReduxSelector(selectCurrentBoard);
-  const loading = useReduxSelector(selectFragmentColumnLoading);
+  const loading = useReduxSelector(selectColumnLoading);
   const signedIn = useReduxSelector(selectUserSignedIn);
   const setInputMode = () => setState({ mode: EMode.INPUT });
   const setTextMode = () => setState({ mode: EMode.TEXT });
@@ -71,9 +69,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
       return;
     }
     setState({ isCreating: true });
-    asyncDispatch(
-      fragmentColumnThunks.create({ boardId: currentBoard.id, title })
-    )
+    asyncDispatch(columnThunks.create({ boardId: currentBoard.id, title }))
       .catch(() => {
         // EXCEPTION:
       })
@@ -101,7 +97,7 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
       };
     }
   }, [state.mode, setState]);
-  console.info('FragmentColumnCreator rendering...');
+  console.info('ColumnCreator rendering...');
   return (
     <div
       ref={selfRef}
@@ -145,4 +141,4 @@ function FragmentColumnCreator(props: IFragmentColumnCreatorProps) {
   );
 }
 
-export default memo(FragmentColumnCreator);
+export default memo(ColumnCreator);

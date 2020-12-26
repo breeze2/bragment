@@ -1,34 +1,34 @@
 import Modal from 'antd/lib/modal/Modal';
 import { memo } from 'react';
-import { EFragmentType } from '../../api/types';
+import { ECardType } from '../../api/types';
 import {
-  fragmentCardActions,
-  selectCreateFragmentCardAsType,
-  selectCreateFragmentCardDialogVisible,
-  selectCurrentFragmentColumnList,
-  selectFragmentCardCreateForColumn,
+  cardActions,
+  selectCreateCardAsType,
+  selectCreateCardDialogVisible,
+  selectCreateCardForColumn,
+  selectCurrentColumnList,
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/CreateFragmentDialog.module.scss';
+import styles from '../../styles/CreateCardDialog.module.scss';
 import GistForm from './GistForm';
 
-function CreateFragmentDialog() {
+function CreateCardDialog() {
   const dispatch = useReduxDispatch();
-  const columnList = useReduxSelector(selectCurrentFragmentColumnList);
-  const createForColumn = useReduxSelector(selectFragmentCardCreateForColumn);
-  const createAsType = useReduxSelector(selectCreateFragmentCardAsType);
-  const visible = useReduxSelector(selectCreateFragmentCardDialogVisible);
+  const columnList = useReduxSelector(selectCurrentColumnList);
+  const createForColumn = useReduxSelector(selectCreateCardForColumn);
+  const createAsType = useReduxSelector(selectCreateCardAsType);
+  const visible = useReduxSelector(selectCreateCardDialogVisible);
   const close = () => {
-    dispatch(fragmentCardActions.hideCreateDialog());
+    dispatch(cardActions.hideCreateDialog());
   };
   const handleColumnChange = (columnId: string) => {
-    dispatch(fragmentCardActions.setCreateForColumnId(columnId));
+    dispatch(cardActions.setCreateForColumnId(columnId));
   };
 
-  const renderCreateForm = (type: EFragmentType) => {
+  const renderCreateForm = (type: ECardType) => {
     switch (type) {
-      case EFragmentType.GIST:
+      case ECardType.GIST:
         return (
           <GistForm
             columnList={columnList}
@@ -63,4 +63,4 @@ function CreateFragmentDialog() {
   );
 }
 
-export default memo(CreateFragmentDialog);
+export default memo(CreateCardDialog);
