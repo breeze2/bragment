@@ -6,9 +6,9 @@ import {
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { boardReducer } from './boardSlice';
+import { cardReducer } from './cardSlice';
+import { columnReducer } from './columnSlice';
 import { commonReducer } from './commonSlice';
-import { fragmentCardReducer } from './fragmentCardSlice';
-import { fragmentColumnReducer } from './fragmentColumnSlice';
 import { IReduxState } from './types';
 import { userReducer } from './userSlice';
 
@@ -16,8 +16,8 @@ export const store = configureStore<IReduxState>({
   reducer: {
     board: boardReducer,
     common: commonReducer,
-    fragmentCard: fragmentCardReducer,
-    fragmentColumn: fragmentColumnReducer,
+    card: cardReducer,
+    column: columnReducer,
     user: userReducer,
   },
 });
@@ -36,10 +36,7 @@ export const useReduxAsyncDispatch = () => {
 export { commonActions } from './commonSlice';
 export { userActions, userThunks } from './userSlice';
 export { boardActions, boardThunks } from './boardSlice';
-export { fragmentCardActions, fragmentCardThunks } from './fragmentCardSlice';
-export {
-  fragmentColumnActions,
-  fragmentColumnThunks,
-} from './fragmentColumnSlice';
+export { cardActions, cardThunks } from './cardSlice';
+export { columnActions, columnThunks } from './columnSlice';
 
 export * from './selectors';

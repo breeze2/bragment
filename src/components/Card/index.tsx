@@ -1,28 +1,31 @@
-import { Card } from 'antd';
+import { Card as AntdCard } from 'antd';
 import { memo, useCallback } from 'react';
 import {
   Draggable,
   DraggableProvided,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
-import { EFragmentType, IFragmentCard } from '../../api/types';
-import { fragmentCardActions, useReduxDispatch } from '../../redux';
-import styles from '../../styles/FragmentCard.module.scss';
-import LinkFragmentCard from './LinkFragmentCard';
-import NoteFragmentCard from './NoteFragmentCard';
+import { ECardType, ICard } from '../../api/types';
+import { cardActions, useReduxDispatch } from '../../redux';
+import styles from '../../styles/Card.module.scss';
+import GistCard from './GistCard';
+import LinkCard from './LinkCard';
+import NoteCard from './NoteCard';
 
-interface IFragmentCardProps {
-  data: IFragmentCard;
+interface ICardProps {
+  data: ICard;
   index: number;
 }
 
-function renderContent(data: IFragmentCard) {
+function renderContent(data: ICard) {
   switch (data.type) {
-    case EFragmentType.NOTE:
-      return <NoteFragmentCard content={data.title} />;
-    case EFragmentType.LINK:
+    case ECardType.NOTE:
+      return <NoteCard content={data.title} />;
+    case ECardType.GIST:
+      return <GistCard title={data.title} files={data.files} />;
+    case ECardType.LINK:
       return (
-        <LinkFragmentCard
+        <LinkCard
           link={data.link || data.title}
           title={data.title}
           image={data.image}
@@ -33,11 +36,11 @@ function renderContent(data: IFragmentCard) {
   }
 }
 
-function FragmentCard(props: IFragmentCardProps) {
+function Card(props: ICardProps) {
   const { data, index } = props;
   const dispatch = useReduxDispatch();
   const handleClick = useCallback(
-    () => dispatch(fragmentCardActions.setCurrentId(data.id)),
+    () => dispatch(cardActions.setCurrentId(data.id)),
     [data, dispatch]
   );
 
@@ -51,13 +54,13 @@ function FragmentCard(props: IFragmentCardProps) {
           className={styles.wrapper}
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
-          <Card hoverable bordered={false} onClick={handleClick}>
+          <AntdCard hoverable bordered={false} onClick={handleClick}>
             <div className={styles.content}>{content}</div>
-          </Card>
+          </AntdCard>
         </div>
       )}
     </Draggable>
   );
 }
 
-export default memo(FragmentCard);
+export default memo(Card);

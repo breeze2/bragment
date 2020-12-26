@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { asyncSignIn, asyncSignOut, asyncSignUp } from '../api/user';
+import { asyncSignIn, asyncSignOut, asyncSignUp } from '../api/auth';
 import { AUTHENTICATING, IUserProfile, IUserState } from './types';
 
 const initialState: IUserState = {

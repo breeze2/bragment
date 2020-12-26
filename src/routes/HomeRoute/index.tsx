@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import BoardsRoute from './BoardsRoute';
 import SettingsRoute from './SettingsRoute';
 
-function HomePage() {
+function HomeRoute() {
   return (
     <Switch>
       <Route exact path="/settings" component={SettingsRoute} />
@@ -12,4 +12,4 @@ function HomePage() {
   );
 }
 
-export default memo(HomePage);
+export default memo(HomeRoute);

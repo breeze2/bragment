@@ -5,36 +5,36 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  asyncAdjustTowFragmentColumnCardOrders,
-  asyncCreateFragmentColumn,
-  asyncFetchFragmentColumns,
-  asyncUpdateFragmentColumn,
-} from '../api/fragment';
-import { IFragmentColumn } from '../api/types';
-import { fragmentCardThunks } from './fragmentCardSlice';
+  asyncAdjustTowColumnCardOrders,
+  asyncCreateColumn,
+  asyncFetchColumns,
+  asyncUpdateColumn,
+} from '../api/database/column';
+import { IColumn } from '../api/types';
+import { cardThunks } from './cardSlice';
 import {
-  EFragmentThunkErrorMessage,
-  IFragmentColumnExtraState,
+  EReduxThunkErrorMessage,
+  IColumnExtraState,
   IReduxState,
 } from './types';
 
-const adapter = createEntityAdapter<IFragmentColumn>();
+const adapter = createEntityAdapter<IColumn>();
 
 const thunks = {
   create: createAsyncThunk(
-    'fragmentColumn/create',
+    'column/create',
     async (
-      options: { boardId: string; title: string } & Partial<IFragmentColumn>,
+      options: { boardId: string; title: string } & Partial<IColumn>,
       thunkAPI
     ) => {
-      const column = await asyncCreateFragmentColumn({
+      const column = await asyncCreateColumn({
         ...options,
       });
       return column;
     }
   ),
   rename: createAsyncThunk(
-    'fragmentColumn/rename',
+    'column/rename',
     async (
       arg: {
         id: string;
@@ -43,11 +43,11 @@ const thunks = {
       thunkAPI
     ) => {
       const { id, title } = arg;
-      await asyncUpdateFragmentColumn(id, { title });
+      await asyncUpdateColumn(id, { title });
     }
   ),
   moveCard: createAsyncThunk(
-    'fragmentColumn/moveCard',
+    'column/moveCard',
     async (
       arg: {
         fromColumnId: string;
@@ -60,11 +60,11 @@ const thunks = {
       const { fromColumnId, toColumnId } = arg;
       const rootState = thunkAPI.getState() as IReduxState;
       const { selectById } = adapter.getSelectors();
-      const fromColumn = selectById(rootState.fragmentColumn, fromColumnId);
-      const toColumn = selectById(rootState.fragmentColumn, toColumnId);
+      const fromColumn = selectById(rootState.column, fromColumnId);
+      const toColumn = selectById(rootState.column, toColumnId);
 
       if (fromColumn && toColumn) {
-        await asyncAdjustTowFragmentColumnCardOrders(
+        await asyncAdjustTowColumnCardOrders(
           fromColumn.id,
           fromColumn.cardOrder,
           toColumn.id,
@@ -74,17 +74,17 @@ const thunks = {
     }
   ),
   fetchByBoard: createAsyncThunk(
-    'fragmentColumn/fetchByBoard',
+    'column/fetchByBoard',
     async (boardId: string) => {
-      const columns = await asyncFetchFragmentColumns(boardId);
+      const columns = await asyncFetchColumns(boardId);
       return columns;
     }
   ),
 };
 
 const slice = createSlice({
-  name: 'fragmentColumn',
-  initialState: adapter.getInitialState<IFragmentColumnExtraState>({
+  name: 'column',
+  initialState: adapter.getInitialState<IColumnExtraState>({
     currentId: undefined,
     loading: false,
   }),
@@ -107,7 +107,7 @@ const slice = createSlice({
       const { id, title } = action.meta.arg;
       const columns = adapter.getSelectors().selectAll(state);
       if (columns.some((el) => el.id !== id && el.title === title)) {
-        throw new Error(EFragmentThunkErrorMessage.EXISTED_COLUMN);
+        throw new Error(EReduxThunkErrorMessage.EXISTED_COLUMN);
       }
       adapter.updateOne(state, { id, changes: { title } });
     });
@@ -144,7 +144,7 @@ const slice = createSlice({
     builder.addCase(thunks.moveCard.rejected, (state, action) => {
       // TODO: alert error and refresh column data
     });
-    builder.addCase(fragmentCardThunks.create.fulfilled, (state, action) => {
+    builder.addCase(cardThunks.create.fulfilled, (state, action) => {
       const card = action.payload;
       const column = adapter.getSelectors().selectById(state, card.columnId);
       if (column) {
@@ -157,7 +157,7 @@ const slice = createSlice({
   },
 });
 
-export const fragmentColumnActions = slice.actions;
-export const fragmentColumnReducer = slice.reducer;
-export const fragmentColumnSelectors = adapter.getSelectors();
-export const fragmentColumnThunks = thunks;
+export const columnActions = slice.actions;
+export const columnReducer = slice.reducer;
+export const columnSelectors = adapter.getSelectors();
+export const columnThunks = thunks;

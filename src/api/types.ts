@@ -1,22 +1,20 @@
 import firebase from 'firebase';
 
-export enum EFirestoreErrorMessage {
+// constants
+export enum EDatabaseErrorMessage {
   BOARD_NOT_EXISTED = 'BOARD_NOT_EXISTED',
   BOARD_EXPIRED_DATA = 'BOARD_EXPIRED_DATA',
-  FRAGMENT_CARD_NOT_EXISTED = 'FRAGMENT_CARD_NOT_EXISTED',
-  FRAGMENT_COLUMN_NOT_EXISTED = 'FRAGMENT_COLUMN_NOT_EXISTED',
-  FRAGMENT_COLUMN_EXPIRED_DATA = 'FRAGMENT_COLUMN_EXPIRED_DATA',
+  CARD_NOT_EXISTED = 'CARD_NOT_EXISTED',
+  COLUMN_NOT_EXISTED = 'COLUMN_NOT_EXISTED',
+  COLUMN_EXPIRED_DATA = 'COLUMN_EXPIRED_DATA',
   UNKNOWN = 'UNKNOWN',
 }
 
-export type IFieldValueMap = {
-  [key: string]: firebase.firestore.FieldValue;
-};
-
-export type IUpdateDataGroup<T> = {
-  id: string;
-  data: Partial<T> | IFieldValueMap;
-}[];
+export enum EDataTable {
+  BOARD = 'boards',
+  CARD = 'cards',
+  COLUMN = 'columns',
+}
 
 export enum EBoardType {
   GROUP = 'GROUP',
@@ -29,7 +27,12 @@ export enum EBoardPolicy {
   PUBLIC = 'PUBLIC',
 }
 
-export enum EFragmentType {
+export enum EBoardMemberRole {
+  OWNER = 'OWNER',
+  NORMAL = 'NORMAL',
+}
+
+export enum ECardType {
   GIST = 'GIST',
   LINK = 'LINK',
   NOTE = 'NOTE',
@@ -37,9 +40,15 @@ export enum EFragmentType {
   TODO = 'TODO',
 }
 
-export enum EFragmentTypeColor {
-  GIST = '#722ed1',
-}
+// interfaces
+export type IFieldValueMap = {
+  [key: string]: firebase.firestore.FieldValue;
+};
+
+export type IUpdateDataGroup<T> = {
+  id: string;
+  data: Partial<T> | IFieldValueMap;
+}[];
 
 export interface IUnsplashPhoto {
   id: string;
@@ -60,6 +69,9 @@ type ITimeStamp =
   | number
   | firebase.firestore.Timestamp
   | firebase.firestore.FieldValue;
+
+type IBoardMemberShip = Record<string, EBoardMemberRole>;
+
 export interface IBoard {
   id: string;
   title: string;
@@ -68,15 +80,16 @@ export interface IBoard {
   color?: string;
   image?: string;
   columnOrder: string[];
+  memberShip: IBoardMemberShip;
   archived: boolean;
   type: EBoardType;
   policy: EBoardPolicy;
-  checkedAt: ITimeStamp;
   createdAt: ITimeStamp;
+  deletedAt?: ITimeStamp;
   updatedAt: ITimeStamp;
 }
 
-export interface IFragmentColumn {
+export interface IColumn {
   id: string;
   title: string;
   boardId: string;
@@ -85,21 +98,21 @@ export interface IFragmentColumn {
   archived: boolean;
 }
 
-export interface IFragmentFile {
+export interface ICardFile {
   name: string;
   content: string;
 }
 
-export interface IFragmentCard {
+export interface ICard {
   id: string;
   title: string;
   boardId: string;
   columnId: string;
   userId: string;
-  files?: IFragmentFile[];
+  files?: ICardFile[];
   image?: string;
   link?: string;
   archived: boolean;
   tags: string[];
-  type: EFragmentType;
+  type: ECardType;
 }

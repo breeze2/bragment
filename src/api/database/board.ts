@@ -2,61 +2,64 @@ import {
   arrayUnion,
   auth,
   firestore,
-  generateTimestamp,
   serverTimestamp,
   timestampToNumber,
-} from './firebase';
+} from '../firebase';
 import {
+  EBoardMemberRole,
   EBoardPolicy,
   EBoardType,
-  EFirestoreErrorMessage,
+  EDatabaseErrorMessage,
+  EDataTable,
   IBoard,
   IFieldValueMap,
-} from './types';
-import { checkStringArrayEqual, generateUUID } from './utils';
+} from '../types';
+import { checkStringArrayEqual, generateUUID } from '../utils';
 
-export function boardComparatorByCheckedAt(a: IBoard, b: IBoard) {
-  const checkedAtA = timestampToNumber(a.checkedAt);
-  const checkedAtB = timestampToNumber(b.checkedAt);
-  return checkedAtB - checkedAtA;
+export function boardComparatorByTimestamp(
+  ts: 'createdAt' | 'updatedAt',
+  a: IBoard,
+  b: IBoard
+) {
+  const tsA = timestampToNumber(a[ts]);
+  const tsB = timestampToNumber(b[ts]);
+  return tsB - tsA;
 }
 
 export function boardTimestampToNumber(board: IBoard) {
-  board.checkedAt = timestampToNumber(board.checkedAt);
   board.createdAt = timestampToNumber(board.createdAt);
+  board.deletedAt = board.deletedAt && timestampToNumber(board.deletedAt);
   board.updatedAt = timestampToNumber(board.updatedAt);
 }
 
 export async function asyncFetchAllBoards() {
   const userId = auth().currentUser?.uid;
-  const querySnapshot = await firestore()
-    .collection('boards')
-    .where('userId', '==', userId)
-    .get();
   const boards: IBoard[] = [];
-  querySnapshot.forEach((doc) => {
-    if (doc.exists) {
-      const board = doc.data({ serverTimestamps: 'estimate' }) as IBoard;
-      boardTimestampToNumber(board);
-      boards.push(board);
-    }
-  });
+  if (userId) {
+    const querySnapshot = await firestore()
+      .collection(EDataTable.BOARD)
+      .where(`memberShip.${userId}`, '!=', null)
+      .get();
+    querySnapshot.forEach((doc) => {
+      if (doc.exists) {
+        const board = doc.data({ serverTimestamps: 'estimate' }) as IBoard;
+        boardTimestampToNumber(board);
+        boards.push(board);
+      }
+    });
+  }
   return boards;
 }
 
-export async function asyncFetchBoard(boardId: string, newCheckedAt = true) {
-  const boardRef = firestore().collection('boards').doc(boardId);
+export async function asyncFetchBoard(boardId: string) {
+  const boardRef = firestore().collection(EDataTable.BOARD).doc(boardId);
   return firestore().runTransaction(async (transaction) => {
     const boardDoc = await transaction.get(boardRef);
     if (!boardDoc.exists) {
-      throw new Error(EFirestoreErrorMessage.BOARD_NOT_EXISTED);
+      throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
     }
     const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
-    if (newCheckedAt) {
-      transaction.update(boardRef, { checkedAt: serverTimestamp() });
-    }
     boardTimestampToNumber(board);
-    board.checkedAt = timestampToNumber(Date.now());
     return board;
   });
 }
@@ -69,11 +72,7 @@ export async function asyncUpdateBoard(
   if (newUpdatedAt) {
     data.updatedAt = serverTimestamp();
   }
-  await firestore().collection('boards').doc(boardId).update(data);
-}
-
-export async function asyncCheckBoard(boardId: string) {
-  await asyncUpdateBoard(boardId, { checkedAt: serverTimestamp() });
+  await firestore().collection(EDataTable.BOARD).doc(boardId).update(data);
 }
 
 export async function asyncPushBoardColumnOrder(
@@ -91,19 +90,19 @@ export async function asyncAdjustTwoBoardColumnOrders(
   boardId2: string,
   columnOrder2: string[]
 ) {
-  const boardRef1 = firestore().collection('boards').doc(boardId1);
-  const boardRef2 = firestore().collection('boards').doc(boardId2);
+  const boardRef1 = firestore().collection(EDataTable.BOARD).doc(boardId1);
+  const boardRef2 = firestore().collection(EDataTable.BOARD).doc(boardId2);
   return firestore().runTransaction(async (transaction) => {
     if (boardId1 === boardId2) {
       const boardDoc = await transaction.get(boardRef2);
       if (!boardDoc.exists) {
-        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_NOT_EXISTED);
+        throw new Error(EDatabaseErrorMessage.COLUMN_NOT_EXISTED);
       }
       const board = boardDoc.data({
         serverTimestamps: 'estimate',
       }) as IBoard;
       if (!checkStringArrayEqual(board.columnOrder, columnOrder2)) {
-        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+        throw new Error(EDatabaseErrorMessage.COLUMN_EXPIRED_DATA);
       }
       transaction.update(boardRef2, { columnOrder: columnOrder2 });
     } else {
@@ -123,7 +122,7 @@ export async function asyncAdjustTwoBoardColumnOrders(
           columnOrder1.concat(columnOrder2)
         )
       ) {
-        throw new Error(EFirestoreErrorMessage.FRAGMENT_COLUMN_EXPIRED_DATA);
+        throw new Error(EDatabaseErrorMessage.COLUMN_EXPIRED_DATA);
       }
       transaction.update(boardRef1, { columnOrder: columnOrder1 });
       transaction.update(boardRef2, { columnOrder: columnOrder2 });
@@ -139,19 +138,18 @@ export async function asyncCreateBoard(
   } & Partial<IBoard>
 ) {
   const timestamp = serverTimestamp();
-  const time0 = generateTimestamp(0, 0);
   const userId = auth().currentUser?.uid || '';
   const board: IBoard = {
     id: generateUUID(),
     userId,
     columnOrder: [],
+    memberShip: { [userId]: EBoardMemberRole.OWNER },
     archived: false,
-    checkedAt: time0,
     createdAt: timestamp,
     updatedAt: timestamp,
     ...options,
   };
-  await firestore().collection('boards').doc(board.id).set(board);
+  await firestore().collection(EDataTable.BOARD).doc(board.id).set(board);
   boardTimestampToNumber(board);
   return board;
 }

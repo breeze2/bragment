@@ -1,7 +1,7 @@
-import { EBoardType, IFragmentColumn } from '../api/types';
+import { EBoardType, IBoard, IColumn } from '../api/types';
 import { boardSelectors } from './boardSlice';
-import { fragmentCardSelectors } from './fragmentCardSlice';
-import { fragmentColumnSelectors } from './fragmentColumnSlice';
+import { cardSelectors } from './cardSlice';
+import { columnSelectors } from './columnSlice';
 import { AUTHENTICATING, IReduxState } from './types';
 
 // for common
@@ -44,7 +44,19 @@ export function selectPersonalBoardList(state: IReduxState) {
 }
 
 export function selectRecentlyBoardList(state: IReduxState) {
-  return boardSelectors.selectAll(state.board).slice(0, 4);
+  const ids = state.board.recentBoardIds;
+  const list: IBoard[] = [];
+  const boardMap = boardSelectors.selectEntities(state.board);
+  for (const id of ids) {
+    const board = boardMap[id];
+    if (board) {
+      list.push(board);
+    }
+    if (list.length > 3) {
+      break;
+    }
+  }
+  return list;
 }
 
 export function selectCurrentBoard(state: IReduxState) {
@@ -70,41 +82,37 @@ export function selectCreateBoardDialogVisible(state: IReduxState) {
   return state.board.createDialogVisible;
 }
 
-// for fragment
-export function selectFragmentColumnEntities(state: IReduxState) {
-  return fragmentColumnSelectors.selectEntities(state.fragmentColumn);
+// for column
+export function selectColumnEntities(state: IReduxState) {
+  return columnSelectors.selectEntities(state.column);
 }
-
-export function selectFragmentCardEntities(state: IReduxState) {
-  return fragmentCardSelectors.selectEntities(state.fragmentCard);
-}
-
-export function selectCurrentFragmentColumnList(state: IReduxState) {
+export function selectCurrentColumnList(state: IReduxState) {
   const board = selectCurrentBoard(state);
-  const columnEntities = selectFragmentColumnEntities(state);
+  const columnEntities = selectColumnEntities(state);
   if (board) {
     return board.columnOrder
       .filter((columnId) => columnEntities[columnId])
-      .map((columnId) => columnEntities[columnId] as IFragmentColumn);
+      .map((columnId) => columnEntities[columnId] as IColumn);
   }
   return [];
 }
-
-export function selectFragmentColumnLoading(state: IReduxState) {
-  return state.fragmentColumn.loading;
+export function selectColumnLoading(state: IReduxState) {
+  return state.column.loading;
 }
 
-export function selectCreateFragmentCardDialogVisible(state: IReduxState) {
-  return state.fragmentCard.createDialogVisible;
+// for card
+export function selectCardEntities(state: IReduxState) {
+  return cardSelectors.selectEntities(state.card);
 }
-
-export function selectCreateFragmentCardAsType(state: IReduxState) {
-  return state.fragmentCard.createAsType;
+export function selectCreateCardDialogVisible(state: IReduxState) {
+  return state.card.createDialogVisible;
 }
-
-export function selectFragmentCardCreateForColumn(state: IReduxState) {
-  const columnId = state.fragmentCard.createForColumnId;
+export function selectCreateCardAsType(state: IReduxState) {
+  return state.card.createAsType;
+}
+export function selectCreateCardForColumn(state: IReduxState) {
+  const columnId = state.card.createForColumnId;
   if (columnId) {
-    return fragmentColumnSelectors.selectById(state.fragmentColumn, columnId);
+    return columnSelectors.selectById(state.column, columnId);
   }
 }

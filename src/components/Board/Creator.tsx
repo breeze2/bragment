@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Card } from 'antd';
+import { Card as AntdCard } from 'antd';
 import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -11,11 +11,11 @@ import {
   useReduxSelector,
 } from '../../redux';
 
-import styles from '../../styles/BoardCard.module.scss';
+import styles from '../../styles/Board.module.scss';
 
-interface ICreateBoardCardProps {}
+interface IBoardCreatorProps {}
 
-function CreateBoardCard(props: ICreateBoardCardProps) {
+function BoardCreator(props: IBoardCreatorProps) {
   const { formatMessage: f } = useIntl();
   const dispatch = useReduxDispatch();
   const loading = useReduxSelector(selectBoardLoading);
@@ -30,7 +30,7 @@ function CreateBoardCard(props: ICreateBoardCardProps) {
     }
   };
   return (
-    <Card className={styles.creator} hoverable onClick={handleClick}>
+    <AntdCard className={styles.creator} hoverable onClick={handleClick}>
       <p className={styles.title}>
         {loading ? (
           <>
@@ -41,8 +41,8 @@ function CreateBoardCard(props: ICreateBoardCardProps) {
           f({ id: 'createNewBoard' })
         )}
       </p>
-    </Card>
+    </AntdCard>
   );
 }
 
-export default memo(CreateBoardCard);
+export default memo(BoardCreator);

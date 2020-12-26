@@ -1,5 +1,11 @@
 .wrapper {
-  position: relative;
+  display: flex;
+  flex-direction: row;
   box-shadow: 0 1px 8px #001529;
   z-index: 3;
+}
+
+.rightSide {
+  flex: 1 1 auto;
+  text-align: right;
 }

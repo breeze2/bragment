@@ -4,63 +4,60 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import {
-  asyncCreateFragmentCard,
-  asyncFetchFragmentCards,
-} from '../api/fragment';
-import { EFragmentType, IFragmentCard } from '../api/types';
-import { checkIdHttpUrl } from '../utils';
-import { IFragmentCardExtraState } from './types';
+import { asyncCreateCard, asyncFetchCards } from '../api/database/card';
+import { ECardType, ICard } from '../api/types';
+import { checkIfHttpUrl } from '../utils';
+import { ICardExtraState } from './types';
 
-const adapter = createEntityAdapter<IFragmentCard>();
+const adapter = createEntityAdapter<ICard>();
 
 const thunks = {
   create: createAsyncThunk(
-    'fragmentCard/create',
+    'card/create',
     async (
       options: {
         boardId: string;
         columnId: string;
         title: string;
-      } & Partial<IFragmentCard>,
+      } & Partial<ICard>,
       thunkAPI
     ) => {
-      if (checkIdHttpUrl(options.title)) {
+      if (checkIfHttpUrl(options.title)) {
         options.link = options.title;
-        options.type = EFragmentType.LINK;
+        options.type = ECardType.LINK;
       }
-      const card = await asyncCreateFragmentCard({
+      const card = await asyncCreateCard({
         ...options,
       });
       return card;
     }
   ),
   fetchByBoard: createAsyncThunk(
-    'fragmentCard/fetchByBoard',
+    'card/fetchByBoard',
     async (boardId: string) => {
-      const cards = await asyncFetchFragmentCards(boardId);
+      const cards = await asyncFetchCards(boardId);
       return cards;
     }
   ),
 };
 
 const slice = createSlice({
-  name: 'fragmentCard',
-  initialState: adapter.getInitialState<IFragmentCardExtraState>({
+  name: 'card',
+  initialState: adapter.getInitialState<ICardExtraState>({
     createDialogVisible: false,
-    createAsType: EFragmentType.NOTE,
+    createAsType: ECardType.NOTE,
     createForColumnId: undefined,
     currentId: undefined,
     loading: false,
   }),
   reducers: {
     showCreateDialog: {
-      prepare(columnId: string, type: EFragmentType) {
+      prepare(columnId: string, type: ECardType) {
         return { payload: { columnId, type } };
       },
       reducer(
         state,
-        action: PayloadAction<{ columnId: string; type: EFragmentType }>
+        action: PayloadAction<{ columnId: string; type: ECardType }>
       ) {
         const { columnId, type } = action.payload;
         state.createForColumnId = columnId;
@@ -94,7 +91,7 @@ const slice = createSlice({
   },
 });
 
-export const fragmentCardActions = slice.actions;
-export const fragmentCardReducer = slice.reducer;
-export const fragmentCardSelectors = adapter.getSelectors();
-export const fragmentCardThunks = thunks;
+export const cardActions = slice.actions;
+export const cardReducer = slice.reducer;
+export const cardSelectors = adapter.getSelectors();
+export const cardThunks = thunks;
