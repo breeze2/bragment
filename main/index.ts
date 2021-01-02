@@ -20,8 +20,8 @@ function createWindow() {
 
     // icon: path.join(__dirname, './icons/png/256x256.png'),
     show: false,
-    titleBarStyle: 'hiddenInset',
-    vibrancy: 'dark',
+    titleBarStyle: 'hidden',
+    // vibrancy: 'header',
   });
 
   if (app.isPackaged) {
