@@ -1,11 +1,23 @@
 .wrapper {
   display: flex;
   flex-direction: row;
-  box-shadow: 0 1px 8px #001529;
+  position: absolute;
+  width: 100%;
+  height: var(--header-height);
+  line-height: var(--header-height);
+  padding: 0 0px 0 16px;
   z-index: 3;
+  background-color: transparent;
+  backdrop-filter: blur(6px);
 }
 
 .rightSide {
   flex: 1 1 auto;
   text-align: right;
+  .userActions {
+    padding-right: 16px;
+  }
+}
+.backCover {
+  background-color: var(--layout-background-color);
 }

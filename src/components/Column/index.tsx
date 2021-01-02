@@ -14,6 +14,7 @@ import {
 } from 'react-custom-scrollbars';
 import { ICard, IColumn } from '../../api/types';
 import { selectCardEntities, useReduxSelector } from '../../redux';
+import { APP_HEADER_HEIGHT } from '../../redux/types';
 import styles from '../../styles/Column.module.scss';
 import Card from '../Card';
 import Footer, { EMode as EFooterMode } from './Footer';
@@ -28,15 +29,21 @@ function Column(props: IColumnProps) {
   const { data, index } = props;
   const headerRef = useRef<HTMLDivElement>(null);
   const [scrollbarMaxHeight, setScrollbarMaxHeight] = useState(
-    'calc(100vh - 192px)'
+    `calc(100vh - ${APP_HEADER_HEIGHT}px - 16px - 48px - 48px - 16px)`
   );
   const cardEntities = useReduxSelector(selectCardEntities);
   const handleFooterModeChange = useCallback(
     (mode: EFooterMode, clientHeight?: number) => {
       if (mode === EFooterMode.TEXT) {
-        setScrollbarMaxHeight('calc(100vh - 144px - 48px)');
+        setScrollbarMaxHeight(
+          `calc(100vh - ${APP_HEADER_HEIGHT}px - 16px - 48px - 48px - 16px)`
+        );
       } else {
-        setScrollbarMaxHeight(`calc(100vh - 144px - ${clientHeight || 88}px)`);
+        setScrollbarMaxHeight(
+          `calc(100vh - ${APP_HEADER_HEIGHT}px - 16px - 48px - ${
+            clientHeight || 88
+          }px - 16px)`
+        );
       }
     },
     []

@@ -20,7 +20,7 @@ function createWindow() {
 
     // icon: path.join(__dirname, './icons/png/256x256.png'),
     show: false,
-    titleBarStyle: 'hidden',
+    titleBarStyle: 'hiddenInset',
     // vibrancy: 'header',
   });
 

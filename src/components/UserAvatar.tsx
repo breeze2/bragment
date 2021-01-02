@@ -2,6 +2,7 @@ import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { memo } from 'react';
+import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 import {
   selectUserAuthenticating,
@@ -14,6 +15,13 @@ import {
 } from '../redux';
 
 import styles from '../styles/UserAvatar.module.scss';
+
+function AuthenticatingMask() {
+  return createPortal(
+    <div className={styles.authenticatingMask} />,
+    document.body
+  );
+}
 
 function UserAvatar() {
   const { formatMessage: f } = useIntl();
@@ -48,7 +56,7 @@ function UserAvatar() {
 
   return signedIn ? (
     <Dropdown className={styles.wrapper} overlay={menu} trigger={['click']}>
-      <Avatar size="large" icon={<UserOutlined />} />
+      <Avatar icon={<UserOutlined />} />
     </Dropdown>
   ) : (
     <div className={styles.wrapper}>
@@ -58,7 +66,7 @@ function UserAvatar() {
         onClick={showSignInDialog}>
         {f({ id: 'signIn' })}
       </Button>
-      {authenticating && <div className={styles.authenticatingMask} />}
+      {authenticating && <AuthenticatingMask />}
     </div>
   );
 }

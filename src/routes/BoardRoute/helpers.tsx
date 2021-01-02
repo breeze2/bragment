@@ -1,4 +1,5 @@
 import { DraggableLocation } from 'react-beautiful-dnd';
+import { APP_HEADER_HEIGHT } from '../../redux/types';
 
 import styles from '../../styles/App.module.scss';
 import cardStyles from '../../styles/Card.module.scss';
@@ -77,7 +78,9 @@ export function makeColumnPlaceholderStyle(
   if (fromColumn) {
     const style = `display: block; height: ${getColumnHeight(
       fromColumn
-    )}px; left: ${266 * toIndex + 16 * toIndex + 16}px; top: 16px`;
+    )}px; left: ${266 * toIndex + 16 * toIndex + 16}px; top: ${
+      16 + APP_HEADER_HEIGHT
+    }px`;
     return style;
   }
 }
