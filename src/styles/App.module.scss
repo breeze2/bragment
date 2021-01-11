@@ -1,12 +1,9 @@
 .layout {
   height: 100%;
   width: 100%;
-  > aside {
-    z-index: 5;
-    :global(.ant-menu-vertical) {
-      border: none;
-    }
-  }
+}
+.main {
+  position: relative;
 }
 .content {
   display: flex;
@@ -20,7 +17,7 @@
 .homeRoute {
   position: relative;
   .container {
-    padding: 26px 24px 36px 24px;
+    padding: calc(var(--header-height) + 16px) 16px 36px 16px;
   }
 
   .boardList {
@@ -66,8 +63,8 @@
     background-color: rgba(255, 255, 255, 0.4);
     display: inline-flex;
     height: 100%;
-    min-width: 100vw;
-    padding: 8px;
+    min-width: 100%;
+    padding: calc(var(--header-height) + 8px) 8px 8px 8px;
     position: relative;
   }
 
@@ -80,7 +77,7 @@
   .columnPlaceholder {
     position: absolute;
     display: none;
-    width: 266px;
+    width: var(--column-width);
     border-radius: 2px;
     background-color: rgba(46, 62, 79, 0.45);
   }

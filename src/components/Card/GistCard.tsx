@@ -1,9 +1,11 @@
 import { Typography } from 'antd';
+import classnames from 'classnames';
 import { memo } from 'react';
 import { ICardFile } from '../../api/types';
+import styles from '../../styles/Card.module.scss';
 
 interface IGistCardProps {
-  title: string;
+  title?: string;
   files?: ICardFile[];
 }
 
@@ -13,9 +15,12 @@ function GistCard(props: IGistCardProps) {
   const { title, files } = props;
   return (
     <Typography>
-      <Paragraph>
-        <Text strong>{title}</Text>
-      </Paragraph>
+      {title && (
+        <Paragraph
+          className={classnames(!files?.length && styles.singleLineTitle)}>
+          <Text strong>{title}</Text>
+        </Paragraph>
+      )}
       {!!files?.length && (
         <Paragraph>
           <pre>{files[0].content}</pre>

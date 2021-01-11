@@ -1,11 +1,16 @@
-import { arrayUnion, auth, firestore } from '../firebase';
+import { arrayUnion, firestore, serverTimestamp } from '../firebase';
 import {
   EDatabaseErrorMessage,
   EDataTable,
   IColumn,
   IFieldValueMap,
 } from '../types';
-import { checkStringArrayEqual, generateUUID } from '../utils';
+import {
+  checkStringArrayEqual,
+  documentTimestampToNumber,
+  generateUUID,
+  getCurrentUserId,
+} from '../utils';
 
 export async function asyncFetchColumns(boardId: string) {
   const querySnapshot = await firestore()
@@ -18,6 +23,7 @@ export async function asyncFetchColumns(boardId: string) {
       const column = doc.data({
         serverTimestamps: 'estimate',
       }) as IColumn;
+      documentTimestampToNumber(column);
       columns.push(column);
     }
   });
@@ -27,24 +33,28 @@ export async function asyncFetchColumns(boardId: string) {
 export async function asyncCreateColumn(
   options: { boardId: string; title: string } & Partial<IColumn>
 ) {
-  const userId = auth().currentUser?.uid || '';
-  const data: IColumn = {
+  const userId = getCurrentUserId();
+  const timestamp = serverTimestamp();
+  const column: IColumn = {
     id: generateUUID(),
     userId,
     cardOrder: [],
     archived: false,
+    createdAt: timestamp,
+    updatedAt: timestamp,
     ...options,
   };
-  const boardRef = firestore().collection('boards').doc(data.boardId);
-  const newColumnRef = firestore().collection(EDataTable.COLUMN).doc(data.id);
+  const boardRef = firestore().collection('boards').doc(column.boardId);
+  const newColumnRef = firestore().collection(EDataTable.COLUMN).doc(column.id);
   return firestore().runTransaction(async (transaction) => {
     const boardDoc = await transaction.get(boardRef);
     if (!boardDoc.exists) {
       throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
     }
-    transaction.set(newColumnRef, data);
-    transaction.update(boardRef, { columnOrder: arrayUnion(data.id) });
-    return data;
+    transaction.set(newColumnRef, column);
+    transaction.update(boardRef, { columnOrder: arrayUnion(column.id) });
+    documentTimestampToNumber(column);
+    return column;
   });
 }
 

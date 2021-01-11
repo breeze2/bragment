@@ -1,6 +1,5 @@
 import {
   arrayUnion,
-  auth,
   firestore,
   serverTimestamp,
   timestampToNumber,
@@ -14,7 +13,12 @@ import {
   IBoard,
   IFieldValueMap,
 } from '../types';
-import { checkStringArrayEqual, generateUUID } from '../utils';
+import {
+  checkStringArrayEqual,
+  documentTimestampToNumber,
+  generateUUID,
+  getCurrentUserId,
+} from '../utils';
 
 export function boardComparatorByTimestamp(
   ts: 'createdAt' | 'updatedAt',
@@ -26,28 +30,20 @@ export function boardComparatorByTimestamp(
   return tsB - tsA;
 }
 
-export function boardTimestampToNumber(board: IBoard) {
-  board.createdAt = timestampToNumber(board.createdAt);
-  board.deletedAt = board.deletedAt && timestampToNumber(board.deletedAt);
-  board.updatedAt = timestampToNumber(board.updatedAt);
-}
-
 export async function asyncFetchAllBoards() {
-  const userId = auth().currentUser?.uid;
+  const userId = getCurrentUserId();
   const boards: IBoard[] = [];
-  if (userId) {
-    const querySnapshot = await firestore()
-      .collection(EDataTable.BOARD)
-      .where(`memberShip.${userId}`, '!=', null)
-      .get();
-    querySnapshot.forEach((doc) => {
-      if (doc.exists) {
-        const board = doc.data({ serverTimestamps: 'estimate' }) as IBoard;
-        boardTimestampToNumber(board);
-        boards.push(board);
-      }
-    });
-  }
+  const querySnapshot = await firestore()
+    .collection(EDataTable.BOARD)
+    .where(`memberShip.${userId}`, '!=', null)
+    .get();
+  querySnapshot.forEach((doc) => {
+    if (doc.exists) {
+      const board = doc.data({ serverTimestamps: 'estimate' }) as IBoard;
+      documentTimestampToNumber(board);
+      boards.push(board);
+    }
+  });
   return boards;
 }
 
@@ -59,7 +55,7 @@ export async function asyncFetchBoard(boardId: string) {
       throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
     }
     const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
-    boardTimestampToNumber(board);
+    documentTimestampToNumber(board);
     return board;
   });
 }
@@ -138,7 +134,7 @@ export async function asyncCreateBoard(
   } & Partial<IBoard>
 ) {
   const timestamp = serverTimestamp();
-  const userId = auth().currentUser?.uid || '';
+  const userId = getCurrentUserId();
   const board: IBoard = {
     id: generateUUID(),
     userId,
@@ -150,6 +146,6 @@ export async function asyncCreateBoard(
     ...options,
   };
   await firestore().collection(EDataTable.BOARD).doc(board.id).set(board);
-  boardTimestampToNumber(board);
+  documentTimestampToNumber(board);
   return board;
 }

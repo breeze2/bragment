@@ -20,14 +20,6 @@ import BoardRoute from './routes/BoardRoute';
 import HomeRoute from './routes/HomeRoute';
 import styles from './styles/App.module.scss';
 
-function hasNavigator(pathname: string) {
-  return (
-    pathname === EAppRoute.BOARDS ||
-    pathname === EAppRoute.HOME ||
-    pathname === EAppRoute.SETTINGS
-  );
-}
-
 function App() {
   const language = useReduxSelector(selectAppLanguage);
   const location = useLocation();
@@ -59,8 +51,8 @@ function App() {
       locale={language}
       messages={messages[language] || messages[defaultLanguage]}>
       <Layout className={styles.layout}>
-        {hasNavigator(location.pathname) && <Navigator />}
-        <Layout>
+        <Navigator />
+        <Layout className={styles.main}>
           <Header />
           <Layout.Content className={styles.content}>
             <TransitionGroup component={null}>

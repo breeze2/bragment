@@ -35,7 +35,7 @@ interface IColumnFooterProps {
 }
 
 interface ICreateCardFormData {
-  title: string;
+  content: string;
 }
 
 const defaultInputMaxRows = 6;
@@ -70,16 +70,16 @@ function ColumnFooter(props: IColumnFooterProps) {
   };
   const handleSubmit = () => {
     const fields = form.getFieldsValue();
-    const title = fields.title.trim();
-    if (!data.id || !data.boardId || !title) {
+    const content = fields.content.trim();
+    if (!data.id || !data.boardId || !content) {
       return;
     }
     setSubmitting(true);
     asyncDispatch(
-      cardThunks.create({
+      cardThunks.simplyCreate({
         boardId: data.boardId,
         columnId: data.id,
-        title,
+        content,
       })
     )
       .catch(() => {
@@ -144,7 +144,7 @@ function ColumnFooter(props: IColumnFooterProps) {
           <PlusOutlined />
           {f({ id: 'addAnotherCard' })}
           <div className={styles.addon} onClick={handleAddonClick}>
-            <Dropdown trigger={['click']} overlay={menu}>
+            <Dropdown trigger={['hover']} overlay={menu}>
               <EllipsisOutlined />
             </Dropdown>
           </div>
@@ -153,7 +153,7 @@ function ColumnFooter(props: IColumnFooterProps) {
           form={form}
           name={`create_card_for_column${data.id}`}
           className={styles.input}>
-          <Form.Item name="title">
+          <Form.Item name="content">
             <TextArea
               ref={inputRef}
               placeholder={f({ id: 'inputCardTitle' })}

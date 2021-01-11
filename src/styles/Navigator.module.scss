@@ -1,0 +1,13 @@
+.wrapper {
+  padding-top: 40px;
+  z-index: 5;
+  :global {
+    .ant-menu {
+      width: 100%;
+      border: none;
+    }
+    .ant-menu-item-selected::after {
+      border-right: none;
+    }
+  }
+}

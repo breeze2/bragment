@@ -20,13 +20,13 @@ interface ICardProps {
 function renderContent(data: ICard) {
   switch (data.type) {
     case ECardType.NOTE:
-      return <NoteCard content={data.title} />;
+      return <NoteCard content={data.content} title={data.title} />;
     case ECardType.GIST:
       return <GistCard title={data.title} files={data.files} />;
     case ECardType.LINK:
       return (
         <LinkCard
-          link={data.link || data.title}
+          link={data.link || ''}
           title={data.title}
           image={data.image}
         />

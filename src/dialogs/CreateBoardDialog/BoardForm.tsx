@@ -1,4 +1,5 @@
 import {
+  FormOutlined,
   GlobalOutlined,
   LockOutlined,
   PictureOutlined,
@@ -6,7 +7,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
-import { memo, useMemo, useState } from 'react';
+import classnames from 'classnames';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { EBoardPolicy, EBoardType, IBoard } from '../../api/types';
 import { boardThunks, useReduxAsyncDispatch } from '../../redux';
@@ -31,6 +33,7 @@ function BoardForm(props: IBoardFormProps) {
   const { formatMessage: f } = useIntl();
   const [form] = Form.useForm<IBoardFormData>();
   const [submitting, setSubmitting] = useState(false);
+  const [bgPopoverVisible, setBgPopoverVisible] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
   const initialFormValues = useMemo<IBoardFormData>(
     () => ({
@@ -41,15 +44,21 @@ function BoardForm(props: IBoardFormProps) {
     []
   );
 
-  const backgroundPopover = useMemo(
+  const handleVisibleChange = useCallback((visible: boolean) => {
+    setBgPopoverVisible(visible);
+  }, []);
+  const bgPopover = useMemo(
     () => (
-      <BackgroundPopover value={background} onChange={onBackgroundChange}>
+      <BackgroundPopover
+        value={background}
+        onChange={onBackgroundChange}
+        onVisibleChange={handleVisibleChange}>
         <div className={styles.bgSelect}>
           <PictureOutlined />
         </div>
       </BackgroundPopover>
     ),
-    [background, onBackgroundChange]
+    [background, onBackgroundChange, handleVisibleChange]
   );
 
   const handleSubmit = () => {
@@ -94,14 +103,19 @@ function BoardForm(props: IBoardFormProps) {
     <Form form={form} initialValues={initialFormValues}>
       <Form.Item
         name="title"
-        rules={[{ required: true, message: f({ id: 'requiredEmailTips' }) }]}>
+        rules={[
+          { required: true, message: f({ id: 'requiredBoardTitleTips' }) },
+        ]}>
         <Input
+          className={classnames(bgPopoverVisible && styles.withBgPopover)}
+          bordered={false}
+          prefix={<FormOutlined />}
           placeholder={f({ id: 'addBoardTitle' })}
-          addonAfter={backgroundPopover}
+          addonAfter={bgPopover}
         />
       </Form.Item>
       <Form.Item name="groupId">
-        <Select dropdownClassName={styles.dropdown}>
+        <Select bordered={false} dropdownClassName={styles.dropdown}>
           <Select.Option value={EBoardType.PERSONAL}>
             <UserOutlined />
             {f({ id: 'personal' })}
@@ -113,7 +127,7 @@ function BoardForm(props: IBoardFormProps) {
         </Select>
       </Form.Item>
       <Form.Item name="policy">
-        <Select dropdownClassName={styles.dropdown}>
+        <Select bordered={false} dropdownClassName={styles.dropdown}>
           <Select.Option value={EBoardPolicy.PRIVATE}>
             <LockOutlined />
             {f({ id: 'private' })}

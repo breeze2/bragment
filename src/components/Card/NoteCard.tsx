@@ -8,19 +8,34 @@ import styles from '../../styles/Card.module.scss';
 import { checkIfSingleLine } from '../../utils';
 
 interface INoteCardProps {
-  content: string;
+  title?: string;
+  content?: string;
 }
 
+const { Paragraph, Text } = Typography;
+
 function NoteCard(props: INoteCardProps) {
-  const { content } = props;
-  const isSingleLine = checkIfSingleLine(content);
+  const { title, content } = props;
+  const isSingleLineTitle = !content && title && checkIfSingleLine(title);
+  const isSingleLineContent = !title && content && checkIfSingleLine(content);
   return (
     <Typography>
-      <ReactMarkdown
-        className={classnames(styles.note, isSingleLine && styles.singleLine)}
-        plugins={[gfm]}
-        children={content}
-      />
+      {title && (
+        <Paragraph
+          className={classnames(isSingleLineTitle && styles.singleLineTitle)}>
+          <Text strong>{title}</Text>
+        </Paragraph>
+      )}
+      {content && (
+        <ReactMarkdown
+          className={classnames(
+            styles.note,
+            isSingleLineContent && styles.singleLineContent
+          )}
+          plugins={[gfm]}
+          children={content}
+        />
+      )}
     </Typography>
   );
 }

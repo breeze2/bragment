@@ -19,10 +19,11 @@ interface IBackgroundPopoverProps {
   children?: ReactElement;
   value: ISelectedBackground;
   onChange?: (value: ISelectedBackground) => void;
+  onVisibleChange?: (visible: boolean) => void;
 }
 
 function BackgroundPopover(props: IBackgroundPopoverProps) {
-  const { children, value, onChange } = props;
+  const { children, value, onChange, onVisibleChange } = props;
   const colors = useReduxSelector(selectStandbyBoardBgColors);
   const images = useReduxSelector(selectStandbyBoardBgImages);
 
@@ -60,6 +61,7 @@ function BackgroundPopover(props: IBackgroundPopoverProps) {
     <Popover
       trigger="click"
       overlayClassName={styles.overlay}
+      onVisibleChange={onVisibleChange}
       content={
         <div className={styles.content} onClick={handleContentClick}>
           {images.length > 0 && (

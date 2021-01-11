@@ -1,4 +1,9 @@
 import { DraggableLocation } from 'react-beautiful-dnd';
+import {
+  APP_HEADER_HEIGHT,
+  COLUMN_CONTENT_PADDING_TOP,
+  COLUMN_WIDTH,
+} from '../../redux/types';
 
 import styles from '../../styles/App.module.scss';
 import cardStyles from '../../styles/Card.module.scss';
@@ -10,7 +15,7 @@ export function getColumnPlaceholder() {
 
 export function getColumnWrapper(index: number) {
   return document.querySelector<HTMLDivElement>(
-    `.${columnStyles.layout}:nth-of-type(${index + 2})`
+    `.${columnStyles.wrapper}:nth-of-type(${index + 2})`
   );
 }
 
@@ -77,7 +82,9 @@ export function makeColumnPlaceholderStyle(
   if (fromColumn) {
     const style = `display: block; height: ${getColumnHeight(
       fromColumn
-    )}px; left: ${266 * toIndex + 16 * toIndex + 16}px; top: 16px`;
+    )}px; left: ${COLUMN_WIDTH * toIndex + 16 * toIndex + 16}px; top: ${
+      16 + APP_HEADER_HEIGHT
+    }px`;
     return style;
   }
 }
@@ -98,17 +105,20 @@ export function makeCardPlaceholderStyle(
       from.index
     );
     if (fromCard) {
-      let top = Array.prototype.slice.call(toCards, 0, to.index).reduce(
-        (value, card) => {
+      let top = Array.prototype.slice
+        .call(toCards, 0, to.index)
+        .reduce((value, card) => {
           return value + card.offsetHeight + 8;
-        },
-        toCards.length === 0 ? 6 : 0
-      );
+        }, 0);
       if (to.droppableId === from.droppableId && to.index > from.index) {
         top -= toCards[from.index].offsetHeight + 8;
         top += toCards[to.index].offsetHeight + 8;
       }
-      const style = `display: block; height: ${fromCard.offsetHeight}px; position: absolute; top: ${top}px; left: 8px`;
+      const style = `display: block; height: ${
+        fromCard.offsetHeight
+      }px; position: absolute; top: ${
+        top + COLUMN_CONTENT_PADDING_TOP
+      }px; left: 8px`;
       return style;
     }
   }

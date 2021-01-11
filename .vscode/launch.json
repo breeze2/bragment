@@ -1,0 +1,42 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Electron Main",
+      "type": "pwa-node",
+      "request": "launch",
+      "restart": true,
+      "cwd": "${workspaceRoot}",
+      // "program": "${workspaceRoot}/public/electron.js",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nodemon",
+      "runtimeArgs": [
+        "--exec",
+        "${workspaceFolder}/node_modules/.bin/electron ${workspaceRoot}/public/electron.js",
+        "--watch",
+        "${workspaceFolder}/public"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nodemon.cmd",
+        "runtimeArgs": [
+          "--exec",
+          "${workspaceFolder}/node_modules/.bin/electron.cmd ${workspaceRoot}/public/electron.js",
+          "--watch",
+          "${workspaceFolder}/public"
+        ]
+      },
+    }
+  ]
+}

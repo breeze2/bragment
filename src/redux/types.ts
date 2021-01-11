@@ -7,7 +7,11 @@ import {
   IUnsplashPhoto,
 } from '../api/types';
 
+// constants
 export const AUTHENTICATING = 'AUTHENTICATING';
+export const APP_HEADER_HEIGHT = 48;
+export const COLUMN_WIDTH = 266;
+export const COLUMN_CONTENT_PADDING_TOP = 6;
 
 export enum EAppRoute {
   BOARDS = '/boards',
@@ -28,6 +32,7 @@ export enum EReduxThunkErrorMessage {
   UNKNOWN = 'UNKNOWN',
 }
 
+// interfaces
 export interface ICommonState {
   language: string;
   onLine: boolean;

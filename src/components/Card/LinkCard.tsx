@@ -2,9 +2,9 @@ import { Typography } from 'antd';
 import { memo } from 'react';
 
 interface ILinkCardProps {
-  image?: string;
   link: string;
-  title: string;
+  image?: string;
+  title?: string;
 }
 
 const { Link } = Typography;

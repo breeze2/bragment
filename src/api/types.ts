@@ -7,6 +7,7 @@ export enum EDatabaseErrorMessage {
   CARD_NOT_EXISTED = 'CARD_NOT_EXISTED',
   COLUMN_NOT_EXISTED = 'COLUMN_NOT_EXISTED',
   COLUMN_EXPIRED_DATA = 'COLUMN_EXPIRED_DATA',
+  UNAUTHORIZED = 'UNAUTHORIZED',
   UNKNOWN = 'UNKNOWN',
 }
 
@@ -72,7 +73,13 @@ type ITimeStamp =
 
 type IBoardMemberShip = Record<string, EBoardMemberRole>;
 
-export interface IBoard {
+export interface IBaseDocument {
+  createdAt: ITimeStamp;
+  deletedAt?: ITimeStamp;
+  updatedAt: ITimeStamp;
+}
+
+export interface IBoard extends IBaseDocument {
   id: string;
   title: string;
   userId: string;
@@ -84,12 +91,9 @@ export interface IBoard {
   archived: boolean;
   type: EBoardType;
   policy: EBoardPolicy;
-  createdAt: ITimeStamp;
-  deletedAt?: ITimeStamp;
-  updatedAt: ITimeStamp;
 }
 
-export interface IColumn {
+export interface IColumn extends IBaseDocument {
   id: string;
   title: string;
   boardId: string;
@@ -103,12 +107,13 @@ export interface ICardFile {
   content: string;
 }
 
-export interface ICard {
+export interface ICard extends IBaseDocument {
   id: string;
-  title: string;
   boardId: string;
   columnId: string;
   userId: string;
+  title?: string;
+  content?: string;
   files?: ICardFile[];
   image?: string;
   link?: string;

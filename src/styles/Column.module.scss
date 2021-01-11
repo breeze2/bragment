@@ -1,31 +1,43 @@
-.layout {
+.wrapper {
   display: flex;
   flex-direction: column;
   margin: 8px;
   border-radius: 2px;
   overflow: hidden;
-  &.empty {
-    .header {
-      height: 42px;
-      padding-bottom: 2px;
-    }
+  .header {
+    height: 42px;
+    padding-bottom: 2px;
   }
 }
 
 .content {
   flex: 0 1 auto;
+  position: relative;
   background-color: var(--card-background-color);
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 6px;
+    width: 100%;
+    top: 0;
+    background-color: var(--card-background-color);
+  }
+}
+
+.scrolled {
+  .content::before {
+    z-index: 1;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+  }
 }
 
 .container {
   position: relative;
   min-height: 6px;
+  padding-top: 6px;
   // HACK: chrome's bug, there is one extra square after drag
   // left: 1px;
-}
-
-.empty .container {
-  padding-top: 6px;
 }
 
 .cardPlaceholder {
@@ -46,7 +58,7 @@
   flex: 0 0 auto;
   display: block;
   position: relative;
-  width: 266px;
+  width: var(--column-width);
   height: 48px;
   padding: 8px;
   font-size: 14px;
@@ -78,7 +90,7 @@
 
 // creator
 .creator {
-  width: 266px;
+  width: var(--column-width);
   border-radius: 2px;
   padding: 8px;
   overflow: hidden;
@@ -181,21 +193,27 @@
   }
 }
 
-.header,
-.footer {
-  .addon {
-    cursor: pointer;
-    display: inline-block;
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    text-align: center;
-    font-size: 16px;
-    :global(.anticon) {
-      width: 32px;
-      height: 32px;
-      line-height: 32px;
+@mixin rightAddon($fontSize) {
+  cursor: pointer;
+  display: inline-block;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  font-size: $fontSize;
+  :global {
+    .anticon {
+      margin-right: 0;
     }
   }
+}
+
+.header .addon {
+  @include rightAddon(12px);
+}
+.footer .addon {
+  @include rightAddon(16px);
 }
