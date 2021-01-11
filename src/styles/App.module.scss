@@ -77,7 +77,7 @@
   .columnPlaceholder {
     position: absolute;
     display: none;
-    width: 266px;
+    width: var(--column-width);
     border-radius: 2px;
     background-color: rgba(46, 62, 79, 0.45);
   }

@@ -69,6 +69,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
       maskClosable={false}
       footer={null}
       visible={visible}
+      centered={true}
       onCancel={handleClose}
       bodyStyle={bodyStyle}>
       <div className={styles.body}>

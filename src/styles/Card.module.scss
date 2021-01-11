@@ -23,10 +23,14 @@
     }
   }
 
-  .singleLine {
+  .singleLineContent {
     p:last-child {
       margin-bottom: 0;
     }
+  }
+
+  .singleLineTitle {
+    margin-bottom: 0;
   }
 
   .note {

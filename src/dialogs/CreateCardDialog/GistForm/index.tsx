@@ -1,9 +1,15 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Select } from 'antd';
+import {
+  FormOutlined,
+  PlusOutlined,
+  ProjectOutlined,
+  TagsOutlined,
+} from '@ant-design/icons';
+import { Button, Col, Form, Input, message, Row, Select, Space } from 'antd';
 import { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { ECardType, ICardFile, IColumn } from '../../../api/types';
 import { cardThunks, useReduxAsyncDispatch } from '../../../redux';
+import { COLUMN_WIDTH } from '../../../redux/types';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
 import styles from '../../../styles/CreateCardDialog.module.scss';
 
@@ -90,22 +96,37 @@ function GistForm(props: IGistFormProps) {
       form={form}
       name="create-gist"
       initialValues={initialFormValues}>
+      <Form.Item className={styles.columnField}>
+        <ProjectOutlined className={styles.columnFieldIcon} />
+        <Row>
+          <Col flex="1 1 auto">
+            <Select
+              bordered={false}
+              dropdownMatchSelectWidth={COLUMN_WIDTH}
+              value={selectedColumn?.id}
+              onChange={handleColumnChange}>
+              {columnList.map((column) => (
+                <Select.Option key={column.id} value={column.id}>
+                  {column.title}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col flex="0 0 auto">
+            <Space align="center">
+              <Button type="text" icon={<TagsOutlined />} />
+            </Space>
+          </Col>
+        </Row>
+      </Form.Item>
       <Form.Item name="title" className={styles.titleField}>
         <Input
           ref={titleInputRef}
           bordered={false}
+          prefix={<FormOutlined />}
           placeholder={f({ id: 'addGistTitle' })}
           size="large"
         />
-      </Form.Item>
-      <Form.Item className={styles.columnField}>
-        <Select value={selectedColumn?.id} onChange={handleColumnChange}>
-          {columnList.map((column) => (
-            <Select.Option key={column.id} value={column.id}>
-              {column.title}
-            </Select.Option>
-          ))}
-        </Select>
       </Form.Item>
       <Form.List name="files">
         {(fields, { add, remove }) => {

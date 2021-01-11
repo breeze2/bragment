@@ -1,6 +1,10 @@
-import { arrayUnion, auth, firestore } from '../firebase';
+import { arrayUnion, firestore, serverTimestamp } from '../firebase';
 import { ECardType, EDatabaseErrorMessage, EDataTable, ICard } from '../types';
-import { generateUUID } from '../utils';
+import {
+  documentTimestampToNumber,
+  generateUUID,
+  getCurrentUserId,
+} from '../utils';
 
 export async function asyncFetchCards(boardId: string) {
   const querySnapshot = await firestore()
@@ -11,6 +15,7 @@ export async function asyncFetchCards(boardId: string) {
   querySnapshot.forEach((doc) => {
     if (doc.exists) {
       const card = doc.data({ serverTimestamps: 'estimate' }) as ICard;
+      documentTimestampToNumber(card);
       cards.push(card);
     }
   });
@@ -21,27 +26,30 @@ export async function asyncCreateCard(
   options: {
     boardId: string;
     columnId: string;
-    title: string;
   } & Partial<ICard>
 ) {
-  const userId = auth().currentUser?.uid || '';
-  const data: ICard = {
+  const userId = getCurrentUserId();
+  const timestamp = serverTimestamp();
+  const card: ICard = {
     id: generateUUID(),
     userId,
     tags: [],
     type: ECardType.NOTE,
     archived: false,
+    createdAt: timestamp,
+    updatedAt: timestamp,
     ...options,
   };
-  const columnRef = firestore().collection('columns').doc(data.columnId);
-  const newCardRef = firestore().collection(EDataTable.CARD).doc(data.id);
+  const columnRef = firestore().collection('columns').doc(card.columnId);
+  const newCardRef = firestore().collection(EDataTable.CARD).doc(card.id);
   return firestore().runTransaction(async (transaction) => {
     const columnDoc = await transaction.get(columnRef);
     if (!columnDoc.exists) {
       throw new Error(EDatabaseErrorMessage.COLUMN_NOT_EXISTED);
     }
-    transaction.set(newCardRef, data);
-    transaction.update(columnRef, { cardOrder: arrayUnion(data.id) });
-    return data;
+    transaction.set(newCardRef, card);
+    transaction.update(columnRef, { cardOrder: arrayUnion(card.id) });
+    documentTimestampToNumber(card);
+    return card;
   });
 }

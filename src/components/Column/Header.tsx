@@ -1,4 +1,4 @@
-import { EllipsisOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
 import classnames from 'classnames';
 import {
@@ -109,7 +109,7 @@ const ColumnHeader = forwardRef<HTMLDivElement, IColumnHeaderProps>(
           />
         </div>
         <div className={styles.addon}>
-          <EllipsisOutlined />
+          <DownOutlined />
         </div>
       </div>
     );

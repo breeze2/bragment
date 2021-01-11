@@ -6,26 +6,41 @@ import {
 } from '@reduxjs/toolkit';
 import { asyncCreateCard, asyncFetchCards } from '../api/database/card';
 import { ECardType, ICard } from '../api/types';
-import { checkIfHttpUrl } from '../utils';
+import { checkIfHttpUrl, checkIfSingleLine } from '../utils';
 import { ICardExtraState } from './types';
 
 const adapter = createEntityAdapter<ICard>();
 
 const thunks = {
-  create: createAsyncThunk(
+  simplyCreate: createAsyncThunk(
     'card/create',
     async (
       options: {
         boardId: string;
         columnId: string;
-        title: string;
-      } & Partial<ICard>,
+        content: string;
+      },
       thunkAPI
     ) => {
-      if (checkIfHttpUrl(options.title)) {
-        options.link = options.title;
-        options.type = ECardType.LINK;
+      const { boardId, columnId, content } = options;
+      const data: Parameters<typeof asyncCreateCard>[0] = { boardId, columnId };
+      if (checkIfHttpUrl(options.content)) {
+        data.link = content;
+        data.type = ECardType.LINK;
+      } else if (checkIfSingleLine(content)) {
+        data.title = content;
+        data.type = ECardType.NOTE;
+      } else {
+        data.content = content;
+        data.type = ECardType.NOTE;
       }
+      const card = await asyncCreateCard(data);
+      return card;
+    }
+  ),
+  create: createAsyncThunk(
+    'card/create',
+    async (options: Parameters<typeof asyncCreateCard>[0], thunkAPI) => {
       const card = await asyncCreateCard({
         ...options,
       });

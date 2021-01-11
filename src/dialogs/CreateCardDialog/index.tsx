@@ -54,7 +54,7 @@ function CreateCardDialog() {
       className={styles.wrapper}
       title={null}
       footer={null}
-      width={720}
+      width={520}
       visible={visible}
       centered={true}
       onCancel={close}>
