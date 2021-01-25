@@ -53,6 +53,7 @@
         @include editable;
         border-radius: 2px;
         width: auto;
+        max-width: 248px;
         .ant-select-selector {
           padding-left: 36px;
         }

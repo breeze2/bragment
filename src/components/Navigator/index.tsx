@@ -3,8 +3,8 @@ import { Layout, Menu } from 'antd';
 import { memo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
-import { EAppRoute } from '../redux/types';
-import styles from '../styles/Navigator.module.scss';
+import { EAppRoute } from '../../redux/types';
+import styles from './index.module.scss';
 
 function Navigator() {
   const { formatMessage: f } = useIntl();

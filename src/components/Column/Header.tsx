@@ -12,11 +12,11 @@ import {
 } from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { useIntl } from 'react-intl';
+
 import { IColumn } from '../../api/types';
 import { columnThunks, useReduxAsyncDispatch } from '../../redux';
 import { EReduxThunkErrorMessage } from '../../redux/types';
-
-import styles from '../../styles/Column.module.scss';
+import styles from './index.module.scss';
 
 interface IColumnHeaderProps {
   data: IColumn;
@@ -89,24 +89,23 @@ const ColumnHeader = forwardRef<HTMLDivElement, IColumnHeaderProps>(
     console.info('ColumnHeader rendering...');
     return (
       <div ref={ref} className={styles.header} {...dragHandle}>
-        <div
-          className={classnames(
-            styles.title,
-            mode === EMode.INPUT ? styles.inputMode : styles.textMode
-          )}>
-          <div className={styles.text} onClick={setInputMode}>
-            {data.title}
-          </div>
-          <Input
-            ref={inputRef}
-            value={newTitle}
-            className={styles.input}
-            defaultValue={data.title}
-            onBlur={handleInputBlur}
-            onChange={handleInputChange}
-            onPressEnter={handleInputSubmit}
-            onKeyDown={handleInputKeyDown}
-          />
+        <div className={classnames(styles.title)}>
+          {mode === EMode.TEXT ? (
+            <div className={styles.text} onClick={setInputMode}>
+              <span title={data.title}>{data.title}</span>
+            </div>
+          ) : (
+            <Input
+              ref={inputRef}
+              value={newTitle}
+              className={styles.input}
+              defaultValue={data.title}
+              onBlur={handleInputBlur}
+              onChange={handleInputChange}
+              onPressEnter={handleInputSubmit}
+              onKeyDown={handleInputKeyDown}
+            />
+          )}
         </div>
         <div className={styles.addon}>
           <DownOutlined />

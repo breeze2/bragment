@@ -3,7 +3,7 @@ import {
   createMonacoEditor,
   setMonacoEditorLanguage,
 } from '../../../api/editor';
-import styles from '../../../styles/CreateCardDialog.module.scss';
+import styles from '../index.module.scss';
 
 export interface IGistCodeEditor {
   language: string;

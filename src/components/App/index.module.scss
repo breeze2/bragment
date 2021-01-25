@@ -1,0 +1,16 @@
+.layout {
+  height: 100%;
+  width: 100%;
+  background-color: var(--layout-background-color);
+}
+.main {
+  position: relative;
+  background-color: var(--layout-background-color);
+}
+.content {
+  display: flex;
+  > :first-child {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}

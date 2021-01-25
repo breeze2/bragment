@@ -2,7 +2,7 @@ import { memo } from 'react';
 import ProgressiveImage from 'react-progressive-image';
 import { IBoard } from '../../api/types';
 import { getRegularUrl, getThumbUrl } from '../../api/unsplash';
-import styles from '../../styles/App.module.scss';
+import styles from './index.module.scss';
 
 interface IBoardRouteBackgroundProps {
   color: IBoard['color'];

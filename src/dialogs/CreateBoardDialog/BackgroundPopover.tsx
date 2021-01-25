@@ -1,14 +1,14 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { Col, Popover, Row } from 'antd';
 import { memo, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
+
 import { IUnsplashPhoto } from '../../api/types';
 import {
   selectStandbyBoardBgColors,
   selectStandbyBoardBgImages,
   useReduxSelector,
 } from '../../redux';
-
-import styles from '../../styles/CreateBoardDialog.module.scss';
+import styles from './index.module.scss';
 
 export interface ISelectedBackground {
   color?: string;

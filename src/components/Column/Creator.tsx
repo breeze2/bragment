@@ -5,8 +5,9 @@ import {
 } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import classnames from 'classnames';
-import { memo, useLayoutEffect, useRef } from 'react';
+import { memo, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
 import {
   columnThunks,
   selectColumnLoading,
@@ -17,9 +18,7 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-
-import styles from '../../styles/Column.module.scss';
-import { useMultipleState } from '../hooks';
+import styles from './index.module.scss';
 
 enum EMode {
   INPUT,
@@ -43,16 +42,13 @@ function ColumnCreator(props: IColumnCreatorProps) {
   const selfRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<Input>(null);
   const [form] = Form.useForm<ICreateColumnFormData>();
-  const defaultState: IColumnCreatorState = {
-    mode: EMode.TEXT,
-    isCreating: false,
-  };
-  const [state, setState] = useMultipleState<IColumnCreatorState>(defaultState);
+  const [mode, setMode] = useState(EMode.TEXT);
+  const [submitting, setSubmitting] = useState(false);
   const currentBoard = useReduxSelector(selectCurrentBoard);
   const loading = useReduxSelector(selectColumnLoading);
   const signedIn = useReduxSelector(selectUserSignedIn);
-  const setInputMode = () => setState({ mode: EMode.INPUT });
-  const setTextMode = () => setState({ mode: EMode.TEXT });
+  const setInputMode = () => setMode(EMode.INPUT);
+  const setTextMode = () => setMode(EMode.TEXT);
   const handleTextClick = () => {
     if (loading) {
       // NOTE: do nothing
@@ -68,19 +64,20 @@ function ColumnCreator(props: IColumnCreatorProps) {
     if (!currentBoard || !currentBoard.id || !title) {
       return;
     }
-    setState({ isCreating: true });
+    setSubmitting(true);
     asyncDispatch(columnThunks.create({ boardId: currentBoard.id, title }))
       .catch(() => {
         // EXCEPTION:
       })
       .finally(() => {
         form.resetFields();
-        setState(defaultState);
+        setSubmitting(false);
+        setTextMode();
       });
   };
 
   useLayoutEffect(() => {
-    if (state.mode === EMode.INPUT) {
+    if (mode === EMode.INPUT) {
       inputRef.current?.focus();
       const handleBodyMouseDown = (event: MouseEvent) => {
         if (
@@ -89,54 +86,60 @@ function ColumnCreator(props: IColumnCreatorProps) {
         ) {
           return;
         }
-        setState({ mode: EMode.TEXT });
+        setTextMode();
       };
       document.body.addEventListener('mousedown', handleBodyMouseDown);
       return () => {
         document.body.removeEventListener('mousedown', handleBodyMouseDown);
       };
     }
-  }, [state.mode, setState]);
+  }, [mode]);
   console.info('ColumnCreator rendering...');
   return (
     <div
       ref={selfRef}
       className={classnames(
         styles.creator,
-        state.mode === EMode.INPUT ? styles.inputMode : styles.textMode
+        mode === EMode.TEXT ? styles.textMode : styles.inputMode
       )}>
-      <div className={styles.text} onClick={handleTextClick}>
-        {loading ? (
-          <>
-            <LoadingOutlined />
-            {f({ id: 'loading' })}
-          </>
-        ) : (
-          <>
-            <PlusOutlined />
-            {f({ id: 'addAnotherColumn' })}
-          </>
-        )}
-      </div>
-      <Form form={form} name="creat_column_for_board" className={styles.input}>
-        <Form.Item name="title">
-          <Input ref={inputRef} placeholder={f({ id: 'inputColumnTitle' })} />
-        </Form.Item>
-        <div className={styles.actions}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={state.isCreating}
-            onClick={handleCreate}>
-            {f({ id: 'addColumn' })}
-          </Button>
-          <CloseOutlined
-            style={{ display: state.isCreating ? 'none' : undefined }}
-            className={styles.close}
-            onClick={setTextMode}
-          />
+      {mode === EMode.TEXT ? (
+        <div className={styles.text} onClick={handleTextClick}>
+          {loading ? (
+            <>
+              <LoadingOutlined />
+              {f({ id: 'loading' })}
+            </>
+          ) : (
+            <>
+              <PlusOutlined />
+              {f({ id: 'addAnotherColumn' })}
+            </>
+          )}
         </div>
-      </Form>
+      ) : (
+        <Form
+          form={form}
+          name="creat_column_for_board"
+          className={styles.input}>
+          <Form.Item name="title">
+            <Input ref={inputRef} placeholder={f({ id: 'inputColumnTitle' })} />
+          </Form.Item>
+          <div className={styles.actions}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={submitting}
+              onClick={handleCreate}>
+              {f({ id: 'addColumn' })}
+            </Button>
+            <CloseOutlined
+              style={{ display: submitting ? 'none' : undefined }}
+              className={styles.close}
+              onClick={setTextMode}
+            />
+          </div>
+        </Form>
+      )}
     </div>
   );
 }

@@ -1,4 +1,7 @@
 .wrapper {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+
   padding-top: 40px;
   z-index: 5;
   :global {

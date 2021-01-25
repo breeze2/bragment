@@ -4,8 +4,8 @@ import { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 
-import styles from '../../styles/Card.module.scss';
 import { checkIfSingleLine } from '../../utils';
+import styles from './index.module.scss';
 
 interface INoteCardProps {
   title?: string;

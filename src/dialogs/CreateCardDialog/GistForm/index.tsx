@@ -11,7 +11,7 @@ import { ECardType, ICardFile, IColumn } from '../../../api/types';
 import { cardThunks, useReduxAsyncDispatch } from '../../../redux';
 import { COLUMN_WIDTH } from '../../../redux/types';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
-import styles from '../../../styles/CreateCardDialog.module.scss';
+import styles from '../index.module.scss';
 
 const GistFileField = lazy(() => import('./FileField'));
 

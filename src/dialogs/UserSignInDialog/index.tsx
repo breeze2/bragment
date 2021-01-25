@@ -1,13 +1,14 @@
 import { Modal, Tabs } from 'antd';
 import { memo } from 'react';
 import { useIntl } from 'react-intl';
+
 import {
   selectUserSignInDialogVisible,
   userActions,
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/UserSignInDialog.module.scss';
+import styles from './index.module.scss';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 

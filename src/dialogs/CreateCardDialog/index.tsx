@@ -1,5 +1,6 @@
 import Modal from 'antd/lib/modal/Modal';
 import { memo } from 'react';
+
 import { ECardType } from '../../api/types';
 import {
   cardActions,
@@ -10,8 +11,8 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/CreateCardDialog.module.scss';
 import GistForm from './GistForm';
+import styles from './index.module.scss';
 
 function CreateCardDialog() {
   const dispatch = useReduxDispatch();
@@ -54,7 +55,7 @@ function CreateCardDialog() {
       className={styles.wrapper}
       title={null}
       footer={null}
-      width={520}
+      width={540}
       visible={visible}
       centered={true}
       onCancel={close}>

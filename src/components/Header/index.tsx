@@ -1,7 +1,8 @@
 import { Space } from 'antd';
 import { memo } from 'react';
-import styles from '../styles/Header.module.scss';
-import UserAvatar from './UserAvatar';
+
+import UserAvatar from '../UserAvatar';
+import styles from './index.module.scss';
 
 function Header() {
   return (

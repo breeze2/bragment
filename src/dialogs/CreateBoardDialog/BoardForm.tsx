@@ -10,11 +10,12 @@ import { Button, Form, Input, Select } from 'antd';
 import classnames from 'classnames';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+
 import { EBoardPolicy, EBoardType, IBoard } from '../../api/types';
 import { boardThunks, useReduxAsyncDispatch } from '../../redux';
-import styles from '../../styles/CreateBoardDialog.module.scss';
 import { preloadImage } from '../../utils';
 import BackgroundPopover, { ISelectedBackground } from './BackgroundPopover';
+import styles from './index.module.scss';
 
 interface IBoardFormData {
   title: string;
