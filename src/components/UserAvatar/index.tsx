@@ -4,6 +4,7 @@ import { MenuInfo } from 'rc-menu/lib/interface';
 import { memo } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
+
 import {
   selectUserAuthenticating,
   selectUserSignedIn,
@@ -12,9 +13,8 @@ import {
   useReduxDispatch,
   useReduxSelector,
   userThunks,
-} from '../redux';
-
-import styles from '../styles/UserAvatar.module.scss';
+} from '../../redux';
+import styles from './index.module.scss';
 
 function AuthenticatingMask() {
   return createPortal(

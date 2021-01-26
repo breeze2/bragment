@@ -12,13 +12,14 @@ import {
   positionValues as IPositionValues,
   Scrollbars,
 } from 'react-custom-scrollbars';
+
 import { ICard, IColumn } from '../../api/types';
 import { selectCardEntities, useReduxSelector } from '../../redux';
 import { APP_HEADER_HEIGHT } from '../../redux/types';
-import styles from '../../styles/Column.module.scss';
 import Card from '../Card';
 import Footer, { EMode as EFooterMode } from './Footer';
 import Header from './Header';
+import styles from './index.module.scss';
 
 interface IColumnProps {
   data: IColumn;

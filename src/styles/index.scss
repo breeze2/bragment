@@ -8,6 +8,7 @@ body {
   user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: transparent;
 }
 
 code {
@@ -40,7 +41,7 @@ code {
   --card-background-color: rgb(235, 236, 240);
 
   --header-height: 48px;
-  --layout-background-color: rgb(240, 242, 245);
+  --layout-background-color: rgba(240, 242, 245, 0.1);
 
   --column-width: 266px;
 }

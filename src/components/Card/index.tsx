@@ -5,10 +5,11 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
+
 import { ECardType, ICard } from '../../api/types';
 import { cardActions, useReduxDispatch } from '../../redux';
-import styles from '../../styles/Card.module.scss';
 import GistCard from './GistCard';
+import styles from './index.module.scss';
 import LinkCard from './LinkCard';
 import NoteCard from './NoteCard';
 

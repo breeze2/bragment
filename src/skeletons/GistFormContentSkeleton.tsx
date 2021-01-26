@@ -1,6 +1,6 @@
 import { Skeleton } from 'antd';
 import { memo } from 'react';
-import styles from '../styles/Skeletons.module.scss';
+import styles from './Skeletons.module.scss';
 
 function GistFormContentSkeleton() {
   return (

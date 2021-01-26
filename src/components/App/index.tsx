@@ -3,22 +3,22 @@ import { memo, useEffect } from 'react';
 import { IntlProvider } from 'react-intl';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { auth } from './api/firebase';
-import Header from './components/Header';
-import Navigator from './components/Navigator';
-import UserSignInDialog from './dialogs/UserSignInDialog';
-import { defaultLanguage, messages } from './locales';
+import { auth } from '../../api/firebase';
+import UserSignInDialog from '../../dialogs/UserSignInDialog';
+import { defaultLanguage, messages } from '../../locales';
 import {
   boardThunks,
   selectAppLanguage,
   userActions,
   useReduxDispatch,
   useReduxSelector,
-} from './redux';
-import { EAppRoute } from './redux/types';
-import BoardRoute from './routes/BoardRoute';
-import HomeRoute from './routes/HomeRoute';
-import styles from './styles/App.module.scss';
+} from '../../redux';
+import { EAppRoute } from '../../redux/types';
+import BoardRoute from '../../routes/BoardRoute';
+import HomeRoute from '../../routes/HomeRoute';
+import Header from '../Header';
+import Navigator from '../Navigator';
+import styles from './index.module.scss';
 
 function App() {
   const language = useReduxSelector(selectAppLanguage);

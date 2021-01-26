@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
+
 import {
   boardActions,
   boardThunks,
@@ -15,10 +16,10 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/CreateBoardDialog.module.scss';
 import { preloadImage } from '../../utils';
 import { ISelectedBackground } from './BackgroundPopover';
 import BoardForm from './BoardForm';
+import styles from './index.module.scss';
 
 export interface ICreateBoardDialogProps {
   defaultGroupId?: string;

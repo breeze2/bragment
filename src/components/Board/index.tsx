@@ -1,8 +1,8 @@
 import { Card as AntdCard } from 'antd';
 import { memo } from 'react';
 import { IBoard } from '../../api/types';
-import styles from '../../styles/Board.module.scss';
 import BoardBackground from './Background';
+import styles from './index.module.scss';
 
 interface IBoardProps {
   board: IBoard;

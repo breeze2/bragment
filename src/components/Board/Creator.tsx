@@ -11,7 +11,7 @@ import {
   useReduxSelector,
 } from '../../redux';
 
-import styles from '../../styles/Board.module.scss';
+import styles from './index.module.scss';
 
 interface IBoardCreatorProps {}
 

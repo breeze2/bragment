@@ -1,8 +1,9 @@
 import { Typography } from 'antd';
 import classnames from 'classnames';
 import { memo } from 'react';
+
 import { ICardFile } from '../../api/types';
-import styles from '../../styles/Card.module.scss';
+import styles from './index.module.scss';
 
 interface IGistCardProps {
   title?: string;

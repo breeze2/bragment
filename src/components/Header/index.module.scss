@@ -1,4 +1,7 @@
 .wrapper {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+
   display: flex;
   flex-direction: row;
   position: absolute;
@@ -17,7 +20,4 @@
   .userActions {
     padding-right: 16px;
   }
-}
-.backCover {
-  background-color: var(--layout-background-color);
 }

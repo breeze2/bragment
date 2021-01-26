@@ -3,7 +3,7 @@ import { Button, Form, Input } from 'antd';
 import { memo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useReduxAsyncDispatch, userThunks } from '../../redux';
-import styles from '../../styles/UserSignInDialog.module.scss';
+import styles from './index.module.scss';
 
 interface ISignUpFormData {
   email: string;

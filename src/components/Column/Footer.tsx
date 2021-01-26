@@ -1,28 +1,14 @@
-import {
-  CloseOutlined,
-  EllipsisOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import { Button, Dropdown, Form, Menu } from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form } from 'antd';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import classnames from 'classnames';
-import {
-  memo,
-  MouseEvent as ReactMouseEvent,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { memo, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { ECardType, IColumn } from '../../api/types';
-import {
-  cardActions,
-  cardThunks,
-  useReduxAsyncDispatch,
-  useReduxDispatch,
-} from '../../redux';
-import styles from '../../styles/Column.module.scss';
+
+import { IColumn } from '../../api/types';
+import { cardThunks, useReduxAsyncDispatch } from '../../redux';
+import FooterDropdown from './FooterDropdown';
+import styles from './index.module.scss';
 
 export enum EMode {
   INPUT,
@@ -43,7 +29,6 @@ const defaultInputMaxRows = 6;
 function ColumnFooter(props: IColumnFooterProps) {
   const { data, onModeChange } = props;
   const { formatMessage: f } = useIntl();
-  const dispatch = useReduxDispatch();
   const asyncDispatch = useReduxAsyncDispatch();
   const [mode, setMode] = useState(EMode.TEXT);
   const [submitting, setSubmitting] = useState(false);
@@ -91,24 +76,6 @@ function ColumnFooter(props: IColumnFooterProps) {
         setTextMode();
       });
   };
-  const handleAddonClick = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const menu = useMemo(
-    () => (
-      <Menu>
-        <Menu.Item
-          onClick={() => {
-            dispatch(cardActions.showCreateDialog(data.id, ECardType.GIST));
-          }}>
-          {f({ id: 'addGistCard' })}
-        </Menu.Item>
-      </Menu>
-    ),
-    [data.id, dispatch, f]
-  );
 
   useLayoutEffect(() => {
     if (onModeChange) {
@@ -138,40 +105,44 @@ function ColumnFooter(props: IColumnFooterProps) {
       <div
         className={classnames(
           styles.creator,
-          mode === EMode.INPUT ? styles.inputMode : styles.textMode
+          mode === EMode.TEXT ? styles.textMode : styles.inputMode
         )}>
-        <div className={styles.text} onClick={setInputMode}>
-          <PlusOutlined />
-          {f({ id: 'addAnotherCard' })}
-          <div className={styles.addon} onClick={handleAddonClick}>
-            <Dropdown trigger={['hover']} overlay={menu}>
-              <EllipsisOutlined />
-            </Dropdown>
+        {mode === EMode.TEXT ? (
+          <div className={styles.text} onClick={setInputMode}>
+            <PlusOutlined />
+            {f({ id: 'addAnotherCard' })}
           </div>
+        ) : (
+          <Form
+            form={form}
+            name={`create_card_for_column${data.id}`}
+            className={styles.input}>
+            <Form.Item name="content">
+              <TextArea
+                ref={inputRef}
+                placeholder={f({ id: 'inputCardTitle' })}
+                autoSize={{ minRows: 1, maxRows: inputMaxRows }}
+                onChange={handleTitleChange}
+              />
+            </Form.Item>
+            <div className={styles.actions}>
+              <Button
+                type="primary"
+                loading={submitting}
+                onClick={handleSubmit}>
+                {f({ id: 'addCard' })}
+              </Button>
+              <CloseOutlined
+                style={{ display: submitting ? 'none' : undefined }}
+                className={styles.close}
+                onClick={setTextMode}
+              />
+            </div>
+          </Form>
+        )}
+        <div className={styles.addon}>
+          <FooterDropdown columnId={data.id} />
         </div>
-        <Form
-          form={form}
-          name={`create_card_for_column${data.id}`}
-          className={styles.input}>
-          <Form.Item name="content">
-            <TextArea
-              ref={inputRef}
-              placeholder={f({ id: 'inputCardTitle' })}
-              autoSize={{ minRows: 1, maxRows: inputMaxRows }}
-              onChange={handleTitleChange}
-            />
-          </Form.Item>
-          <div className={styles.actions}>
-            <Button type="primary" loading={submitting} onClick={handleSubmit}>
-              {f({ id: 'addCard' })}
-            </Button>
-            <CloseOutlined
-              style={{ display: submitting ? 'none' : undefined }}
-              className={styles.close}
-              onClick={setTextMode}
-            />
-          </div>
-        </Form>
       </div>
     </div>
   );

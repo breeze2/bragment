@@ -1,13 +1,13 @@
 import { DraggableLocation } from 'react-beautiful-dnd';
+
+import cardStyles from '../../components/Card/index.module.scss';
+import columnStyles from '../../components/Column/index.module.scss';
 import {
   APP_HEADER_HEIGHT,
   COLUMN_CONTENT_PADDING_TOP,
   COLUMN_WIDTH,
 } from '../../redux/types';
-
-import styles from '../../styles/App.module.scss';
-import cardStyles from '../../styles/Card.module.scss';
-import columnStyles from '../../styles/Column.module.scss';
+import styles from './index.module.scss';
 
 export function getColumnPlaceholder() {
   return document.querySelector<HTMLDivElement>(`.${styles.columnPlaceholder}`);

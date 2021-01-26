@@ -12,6 +12,7 @@ import {
 import { Scrollbars } from 'react-custom-scrollbars';
 import { RouteComponentProps } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 import { IColumn } from '../../api/types';
 import Column from '../../components/Column';
 import ColumnCreator from '../../components/Column/Creator';
@@ -29,7 +30,6 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
-import styles from '../../styles/App.module.scss';
 import BoardRouteBackground from './Background';
 import {
   getAllCardPlaceholders,
@@ -40,6 +40,7 @@ import {
   makeCardPlaceholderStyle,
   makeColumnPlaceholderStyle,
 } from './helpers';
+import styles from './index.module.scss';
 
 interface IBoardRouteParams {
   id?: string;
@@ -159,7 +160,7 @@ function BoardRoute(props: IBoardRouteProps) {
 
   console.info('BoardRoute rendering...');
   return (
-    <div className={styles.boardRoute}>
+    <div className={styles.wrapper}>
       <BoardRouteBackground
         color={currentBoard?.color}
         image={currentBoard?.image}

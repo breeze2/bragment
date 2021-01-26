@@ -5,6 +5,7 @@ import Scrollbars from 'react-custom-scrollbars';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 import BoardCard from '../../components/Board';
 import BoardCardCreator from '../../components/Board/Creator';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
@@ -18,7 +19,7 @@ import {
   useReduxSelector,
 } from '../../redux';
 
-import styles from '../../styles/App.module.scss';
+import styles from './index.module.scss';
 
 function BoardsRoute() {
   const dispatch = useReduxDispatch();
@@ -39,7 +40,7 @@ function BoardsRoute() {
   }, [dispatch, isSignedIn]);
 
   return (
-    <div className={styles.homeRoute}>
+    <div className={styles.wrapper}>
       <Scrollbars autoHide>
         <div className={styles.container}>
           <div className={styles.boardList}>
