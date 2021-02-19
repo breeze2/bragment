@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Card as AntdCard } from 'antd';
 import { memo } from 'react';
-import { useIntl } from 'react-intl';
+
 import {
   boardActions,
   selectBoardLoading,
@@ -10,13 +10,14 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
+import { useFormatMessage } from '../hooks';
 
 import styles from './index.module.scss';
 
 interface IBoardCreatorProps {}
 
 function BoardCreator(props: IBoardCreatorProps) {
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const dispatch = useReduxDispatch();
   const loading = useReduxSelector(selectBoardLoading);
   const signedIn = useReduxSelector(selectUserSignedIn);
@@ -35,10 +36,10 @@ function BoardCreator(props: IBoardCreatorProps) {
         {loading ? (
           <>
             <LoadingOutlined />
-            {f({ id: 'loading' })}
+            {f('loading')}
           </>
         ) : (
-          f({ id: 'createNewBoard' })
+          f('createNewBoard')
         )}
       </p>
     </AntdCard>

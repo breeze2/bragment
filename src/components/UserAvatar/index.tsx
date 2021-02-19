@@ -3,7 +3,6 @@ import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { memo } from 'react';
 import { createPortal } from 'react-dom';
-import { useIntl } from 'react-intl';
 
 import {
   selectUserAuthenticating,
@@ -14,6 +13,7 @@ import {
   useReduxSelector,
   userThunks,
 } from '../../redux';
+import { useFormatMessage } from '../hooks';
 import styles from './index.module.scss';
 
 function AuthenticatingMask() {
@@ -24,7 +24,7 @@ function AuthenticatingMask() {
 }
 
 function UserAvatar() {
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const signedIn = useReduxSelector(selectUserSignedIn);
   const authenticating = useReduxSelector(selectUserAuthenticating);
   const dispatch = useReduxDispatch();
@@ -49,7 +49,7 @@ function UserAvatar() {
   const menu = (
     <Menu className={styles.dropdownMenu} onClick={handleMenuClick}>
       <Menu.Item key="signOut" icon={<LogoutOutlined />}>
-        {f({ id: 'signOut' })}
+        {f('signOut')}
       </Menu.Item>
     </Menu>
   );
@@ -64,7 +64,7 @@ function UserAvatar() {
         type="primary"
         loading={authenticating}
         onClick={showSignInDialog}>
-        {f({ id: 'signIn' })}
+        {f('signIn')}
       </Button>
       {authenticating && <AuthenticatingMask />}
     </div>

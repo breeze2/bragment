@@ -1,7 +1,8 @@
 import { LockOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
 import { memo, useState } from 'react';
-import { useIntl } from 'react-intl';
+
+import { useFormatMessage } from '../../components/hooks';
 import { useReduxAsyncDispatch, userThunks } from '../../redux';
 import styles from './index.module.scss';
 
@@ -16,7 +17,7 @@ interface ISignInFormProps {
 
 function SignInForm(props: ISignInFormProps) {
   const { onFinish } = props;
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const [form] = Form.useForm<ISignInFormData>();
   const [submitting, setSubmitting] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
@@ -34,7 +35,7 @@ function SignInForm(props: ISignInFormProps) {
         })
         .catch((error) => {
           if (error.code === 'auth/network-request-failed') {
-            message.error(f({ id: 'networkRequestFailed' }));
+            message.error(f('networkRequestFailed'));
           }
         })
         .finally(() => {
@@ -63,7 +64,7 @@ function SignInForm(props: ISignInFormProps) {
           icon={<LoginOutlined />}
           loading={submitting}
           block>
-          {f({ id: 'signIn' })}
+          {f('signIn')}
         </Button>
       </Form.Item>
     </Form>

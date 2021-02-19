@@ -1,10 +1,10 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, Menu } from 'antd';
 import { memo, useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 
 import { ECardType } from '../../api/types';
 import { cardActions, useReduxDispatch } from '../../redux';
+import { useFormatMessage } from '../hooks';
 
 export enum EMode {
   INPUT,
@@ -18,7 +18,7 @@ interface IColumnFooterDropdownProps {
 function ColumnFooterDropdown(props: IColumnFooterDropdownProps) {
   const { columnId } = props;
   const dispatch = useReduxDispatch();
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
 
   const handleMenuItemClick = useCallback(
     (type: ECardType) => {
@@ -31,7 +31,7 @@ function ColumnFooterDropdown(props: IColumnFooterDropdownProps) {
       <Menu>
         <Menu.Item
           onClick={handleMenuItemClick.bind(undefined, ECardType.GIST)}>
-          {f({ id: 'addGistCard' })}
+          {f('addGistCard')}
         </Menu.Item>
       </Menu>
     ),

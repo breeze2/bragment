@@ -9,9 +9,9 @@ import {
 import { Button, Form, Input, Select } from 'antd';
 import classnames from 'classnames';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 import { EBoardPolicy, EBoardType, IBoard } from '../../api/types';
+import { useFormatMessage } from '../../components/hooks';
 import { boardThunks, useReduxAsyncDispatch } from '../../redux';
 import { preloadImage } from '../../utils';
 import BackgroundPopover, { ISelectedBackground } from './BackgroundPopover';
@@ -31,7 +31,7 @@ interface IBoardFormProps {
 
 function BoardForm(props: IBoardFormProps) {
   const { background, onFinish, onBackgroundChange } = props;
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const [form] = Form.useForm<IBoardFormData>();
   const [submitting, setSubmitting] = useState(false);
   const [bgPopoverVisible, setBgPopoverVisible] = useState(false);
@@ -104,14 +104,12 @@ function BoardForm(props: IBoardFormProps) {
     <Form form={form} initialValues={initialFormValues}>
       <Form.Item
         name="title"
-        rules={[
-          { required: true, message: f({ id: 'requiredBoardTitleTips' }) },
-        ]}>
+        rules={[{ required: true, message: f('requiredBoardTitleTips') }]}>
         <Input
           className={classnames(bgPopoverVisible && styles.withBgPopover)}
           bordered={false}
           prefix={<FormOutlined />}
-          placeholder={f({ id: 'addBoardTitle' })}
+          placeholder={f('addBoardTitle')}
           addonAfter={bgPopover}
         />
       </Form.Item>
@@ -119,11 +117,11 @@ function BoardForm(props: IBoardFormProps) {
         <Select bordered={false} dropdownClassName={styles.dropdown}>
           <Select.Option value={EBoardType.PERSONAL}>
             <UserOutlined />
-            {f({ id: 'personal' })}
+            {f('personal')}
           </Select.Option>
           <Select.Option value="disabled" disabled>
             <TeamOutlined />
-            {f({ id: 'noGroups' })}
+            {f('noGroups')}
           </Select.Option>
         </Select>
       </Form.Item>
@@ -131,11 +129,11 @@ function BoardForm(props: IBoardFormProps) {
         <Select bordered={false} dropdownClassName={styles.dropdown}>
           <Select.Option value={EBoardPolicy.PRIVATE}>
             <LockOutlined />
-            {f({ id: 'private' })}
+            {f('private')}
           </Select.Option>
           <Select.Option value={EBoardPolicy.PUBLIC}>
             <GlobalOutlined />
-            {f({ id: 'public' })}
+            {f('public')}
           </Select.Option>
         </Select>
       </Form.Item>
@@ -145,7 +143,7 @@ function BoardForm(props: IBoardFormProps) {
           htmlType="submit"
           onClick={handleSubmit}
           loading={submitting}>
-          {f({ id: 'createBoard' })}
+          {f('createBoard')}
         </Button>
       </Form.Item>
     </Form>

@@ -1,7 +1,8 @@
 import { LockOutlined, MailOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { memo, useState } from 'react';
-import { useIntl } from 'react-intl';
+
+import { useFormatMessage } from '../../components/hooks';
 import { useReduxAsyncDispatch, userThunks } from '../../redux';
 import styles from './index.module.scss';
 
@@ -16,7 +17,7 @@ interface ISignUpFormProps {
 
 function SignUpForm(props: ISignUpFormProps) {
   const { onFinish } = props;
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const [form] = Form.useForm<ISignUpFormData>();
   const [submitting, setSubmitting] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
@@ -39,14 +40,12 @@ function SignUpForm(props: ISignUpFormProps) {
     <Form form={form} onFinish={handleSubmit}>
       <Form.Item
         name="email"
-        rules={[{ required: true, message: f({ id: 'requiredEmailTips' }) }]}>
+        rules={[{ required: true, message: f('requiredEmailTips') }]}>
         <Input size="large" prefix={<MailOutlined />} placeholder="Email" />
       </Form.Item>
       <Form.Item
         name="password"
-        rules={[
-          { required: true, message: f({ id: 'requiredPasswordTips' }) },
-        ]}>
+        rules={[{ required: true, message: f('requiredPasswordTips') }]}>
         <Input.Password
           size="large"
           prefix={<LockOutlined />}
@@ -61,7 +60,7 @@ function SignUpForm(props: ISignUpFormProps) {
           icon={<UserAddOutlined />}
           loading={submitting}
           block>
-          {f({ id: 'signUp' })}
+          {f('signUp')}
         </Button>
       </Form.Item>
     </Form>

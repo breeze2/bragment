@@ -51,7 +51,7 @@ const setEnv = new webpack.DefinePlugin({
 });
 
 const monacoEditorPlugin = new MonacoEditorWebpackPlugin({
-  filename: '[name].worker.js',
+  filename: '[name].[hash].worker.js',
   publicPath: '',
   languages: [
     'abap',

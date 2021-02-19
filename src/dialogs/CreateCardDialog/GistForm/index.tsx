@@ -6,8 +6,8 @@ import {
 } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Row, Select, Space } from 'antd';
 import { lazy, memo, Suspense, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { ECardType, ICardFile, IColumn } from '../../../api/types';
+import { useFormatMessage } from '../../../components/hooks';
 import { cardThunks, useReduxAsyncDispatch } from '../../../redux';
 import { COLUMN_WIDTH } from '../../../redux/types';
 import GistFormContentSkeleton from '../../../skeletons/GistFormContentSkeleton';
@@ -29,7 +29,7 @@ interface IGistFormProps {
 
 function GistForm(props: IGistFormProps) {
   const { columnList, selectedColumn, onColumnChange, onFinish } = props;
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const asyncDispatch = useReduxAsyncDispatch();
   const [form] = Form.useForm<IGistFormData>();
   const [submitting, setSubmitting] = useState(false);
@@ -59,11 +59,11 @@ function GistForm(props: IGistFormProps) {
       return;
     }
     if (!title) {
-      message.error(f({ id: 'gistTitleIsRequired' }));
+      message.error(f('gistTitleIsRequired'));
       return;
     }
     if (!files || !files.every((file) => !!file.content)) {
-      message.error(f({ id: 'gistFileContentIsRequired' }));
+      message.error(f('gistFileContentIsRequired'));
       return;
     }
     setSubmitting(true);
@@ -124,7 +124,7 @@ function GistForm(props: IGistFormProps) {
           ref={titleInputRef}
           bordered={false}
           prefix={<FormOutlined />}
-          placeholder={f({ id: 'addGistTitle' })}
+          placeholder={f('addGistTitle')}
           size="large"
         />
       </Form.Item>
@@ -152,7 +152,7 @@ function GistForm(props: IGistFormProps) {
                     className={styles.submit}
                     loading={submitting}
                     onClick={handleSubmit}>
-                    {f({ id: 'createGistCard' })}
+                    {f('createGistCard')}
                   </Button>
                 </div>
               </Suspense>
