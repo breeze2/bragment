@@ -3,10 +3,10 @@ import { Button, Form } from 'antd';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import classnames from 'classnames';
 import { memo, useLayoutEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 import { IColumn } from '../../api/types';
 import { cardThunks, useReduxAsyncDispatch } from '../../redux';
+import { useFormatMessage } from '../hooks';
 import FooterDropdown from './FooterDropdown';
 import styles from './index.module.scss';
 
@@ -28,7 +28,7 @@ const defaultInputMaxRows = 6;
 
 function ColumnFooter(props: IColumnFooterProps) {
   const { data, onModeChange } = props;
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const asyncDispatch = useReduxAsyncDispatch();
   const [mode, setMode] = useState(EMode.TEXT);
   const [submitting, setSubmitting] = useState(false);
@@ -110,7 +110,7 @@ function ColumnFooter(props: IColumnFooterProps) {
         {mode === EMode.TEXT ? (
           <div className={styles.text} onClick={setInputMode}>
             <PlusOutlined />
-            {f({ id: 'addAnotherCard' })}
+            {f('addAnotherCard')}
           </div>
         ) : (
           <Form
@@ -120,7 +120,7 @@ function ColumnFooter(props: IColumnFooterProps) {
             <Form.Item name="content">
               <TextArea
                 ref={inputRef}
-                placeholder={f({ id: 'inputCardTitle' })}
+                placeholder={f('inputCardTitle')}
                 autoSize={{ minRows: 1, maxRows: inputMaxRows }}
                 onChange={handleTitleChange}
               />
@@ -130,7 +130,7 @@ function ColumnFooter(props: IColumnFooterProps) {
                 type="primary"
                 loading={submitting}
                 onClick={handleSubmit}>
-                {f({ id: 'addCard' })}
+                {f('addCard')}
               </Button>
               <CloseOutlined
                 style={{ display: submitting ? 'none' : undefined }}

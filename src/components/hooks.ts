@@ -1,4 +1,15 @@
+import type { PrimitiveType } from 'intl-messageformat';
 import { Reducer, useEffect, useReducer, useRef } from 'react';
+import { useIntl } from 'react-intl';
+import type { ILocalMessages } from '../i18n/messages';
+
+export function useFormatMessage(): (
+  id: keyof ILocalMessages,
+  values?: Record<string, PrimitiveType>
+) => string {
+  const intl = useIntl();
+  return (id, values) => intl.formatMessage({ id }, values);
+}
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();

@@ -11,11 +11,11 @@ import {
   useState,
 } from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
-import { useIntl } from 'react-intl';
 
 import { IColumn } from '../../api/types';
 import { columnThunks, useReduxAsyncDispatch } from '../../redux';
 import { EReduxThunkErrorMessage } from '../../redux/types';
+import { useFormatMessage } from '../hooks';
 import styles from './index.module.scss';
 
 interface IColumnHeaderProps {
@@ -31,7 +31,7 @@ enum EMode {
 const ColumnHeader = forwardRef<HTMLDivElement, IColumnHeaderProps>(
   (props, ref) => {
     const { data, dragHandle } = props;
-    const { formatMessage: f } = useIntl();
+    const f = useFormatMessage();
     const inputRef = useRef<Input>(null);
     const [newTitle, setNewTitle] = useState(data.title);
     const [mode, setMode] = useState(EMode.TEXT);
@@ -55,7 +55,7 @@ const ColumnHeader = forwardRef<HTMLDivElement, IColumnHeaderProps>(
       ).catch((error) => {
         switch (error.message) {
           case EReduxThunkErrorMessage.EXISTED_COLUMN:
-            message.error(f({ id: 'columnWithTheSameTitleAlreadyExists' }));
+            message.error(f('columnWithTheSameTitleAlreadyExists'));
             break;
           default:
             break;

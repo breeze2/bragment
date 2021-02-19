@@ -1,7 +1,7 @@
 import { Modal, Tabs } from 'antd';
 import { memo } from 'react';
-import { useIntl } from 'react-intl';
 
+import { useFormatMessage } from '../../components/hooks';
 import {
   selectUserSignInDialogVisible,
   userActions,
@@ -13,7 +13,7 @@ import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 
 function UserSignInDialog() {
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const dispatch = useReduxDispatch();
   const visible = useReduxSelector(selectUserSignInDialogVisible);
   const hideSignInDialog = () => {
@@ -30,10 +30,10 @@ function UserSignInDialog() {
       footer={null}
       onCancel={hideSignInDialog}>
       <Tabs defaultActiveKey="signIn">
-        <Tabs.TabPane tab={f({ id: 'signIn' })} key="signIn">
+        <Tabs.TabPane tab={f('signIn')} key="signIn">
           <SignInForm onFinish={hideSignInDialog} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab={f({ id: 'signUp' })} key="signUp">
+        <Tabs.TabPane tab={f('signUp')} key="signUp">
           <SignUpForm onFinish={hideSignInDialog} />
         </Tabs.TabPane>
       </Tabs>

@@ -5,7 +5,7 @@ import { Route, Switch, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { auth } from '../../api/firebase';
 import UserSignInDialog from '../../dialogs/UserSignInDialog';
-import { defaultLanguage, messages } from '../../locales';
+import { defaultLanguage, messages } from '../../i18n';
 import {
   boardThunks,
   selectAppLanguage,

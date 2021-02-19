@@ -6,7 +6,6 @@ import {
 import { Button, Form, Input } from 'antd';
 import classnames from 'classnames';
 import { memo, useLayoutEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 import {
   columnThunks,
@@ -18,6 +17,7 @@ import {
   useReduxDispatch,
   useReduxSelector,
 } from '../../redux';
+import { useFormatMessage } from '../hooks';
 import styles from './index.module.scss';
 
 enum EMode {
@@ -36,7 +36,7 @@ interface ICreateColumnFormData {
 }
 
 function ColumnCreator(props: IColumnCreatorProps) {
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const asyncDispatch = useReduxAsyncDispatch();
   const dispatch = useReduxDispatch();
   const selfRef = useRef<HTMLDivElement>(null);
@@ -107,12 +107,12 @@ function ColumnCreator(props: IColumnCreatorProps) {
           {loading ? (
             <>
               <LoadingOutlined />
-              {f({ id: 'loading' })}
+              {f('loading')}
             </>
           ) : (
             <>
               <PlusOutlined />
-              {f({ id: 'addAnotherColumn' })}
+              {f('addAnotherColumn')}
             </>
           )}
         </div>
@@ -122,7 +122,7 @@ function ColumnCreator(props: IColumnCreatorProps) {
           name="creat_column_for_board"
           className={styles.input}>
           <Form.Item name="title">
-            <Input ref={inputRef} placeholder={f({ id: 'inputColumnTitle' })} />
+            <Input ref={inputRef} placeholder={f('inputColumnTitle')} />
           </Form.Item>
           <div className={styles.actions}>
             <Button
@@ -130,7 +130,7 @@ function ColumnCreator(props: IColumnCreatorProps) {
               htmlType="submit"
               loading={submitting}
               onClick={handleCreate}>
-              {f({ id: 'addColumn' })}
+              {f('addColumn')}
             </Button>
             <CloseOutlined
               style={{ display: submitting ? 'none' : undefined }}

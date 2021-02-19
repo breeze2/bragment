@@ -2,12 +2,12 @@ import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import { memo, useLayoutEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import BoardCard from '../../components/Board';
 import BoardCardCreator from '../../components/Board/Creator';
+import { useFormatMessage } from '../../components/hooks';
 import CreateBoardDialog from '../../dialogs/CreateBoardDialog';
 import {
   boardActions,
@@ -23,7 +23,7 @@ import styles from './index.module.scss';
 
 function BoardsRoute() {
   const dispatch = useReduxDispatch();
-  const { formatMessage: f } = useIntl();
+  const f = useFormatMessage();
   const isSignedIn = useReduxSelector(selectUserSignedIn);
   const personalList = useReduxSelector(selectPersonalBoardList);
   const recentList = useReduxSelector(selectRecentlyBoardList);
@@ -54,7 +54,7 @@ function BoardsRoute() {
             <div className={styles.boardList}>
               <p className={styles.boardListLabel}>
                 <ClockCircleOutlined />
-                {f({ id: 'recent' })}
+                {f('recent')}
               </p>
               <TransitionGroup className="ant-row">
                 {recentList.map((board) => (
@@ -78,7 +78,7 @@ function BoardsRoute() {
             <div className={styles.boardList}>
               <p className={styles.boardListLabel}>
                 <UserOutlined />
-                {f({ id: 'personal' })}
+                {f('personal')}
               </p>
               <TransitionGroup className="ant-row">
                 {personalList.map((board) => (
