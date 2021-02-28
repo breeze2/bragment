@@ -1,12 +1,8 @@
-const {
-  addWebpackPlugin,
-  fixBabelImports,
-  override,
-} = require('customize-cra');
+const CracoAntDesignPlugin = require('craco-antd');
 const dotenv = require('dotenv');
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
-const webpack = require('webpack');
 
+const { DefinePlugin } = require('webpack');
 dotenv.config();
 
 const setWebpackTarget = (config) => {
@@ -23,7 +19,7 @@ const setWebpackPublicPath = (config) => {
   return config;
 };
 
-const setEnv = new webpack.DefinePlugin({
+const setEnvPlugin = new DefinePlugin({
   'process.env.UNSPLASH_ACCESSKEY': JSON.stringify(
     process.env.UNSPLASH_ACCESSKEY
   ),
@@ -161,21 +157,23 @@ const monacoEditorPlugin = new MonacoEditorWebpackPlugin({
 });
 
 module.exports = {
-  // The Webpack config to use when compiling your react app for development or production.
-  webpack: override(
-    fixBabelImports('import', {
-      libraryName: 'antd',
-      libraryDirectory: 'es',
-      style: 'css',
-    }),
-    setWebpackPublicPath,
-    setWebpackTarget,
-    addWebpackPlugin(setEnv),
-    addWebpackPlugin(monacoEditorPlugin)
-  ),
-  // The Jest config to use when running your jest tests - note that the normal rewires do not
-  // work here.
-  jest: function (config) {
-    return config;
+  webpack: {
+    plugins: [monacoEditorPlugin, setEnvPlugin],
   },
+  plugins: [
+    {
+      plugin: {
+        overrideWebpackConfig: ({ webpackConfig }) => {
+          if (process.env.BROWSER === 'none') {
+            webpackConfig = setWebpackPublicPath(webpackConfig);
+            webpackConfig = setWebpackTarget(webpackConfig);
+          }
+          return webpackConfig;
+        },
+      },
+    },
+    {
+      plugin: CracoAntDesignPlugin,
+    },
+  ],
 };
