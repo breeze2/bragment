@@ -2,20 +2,15 @@ import { Typography } from 'antd';
 import classnames from 'classnames';
 import { memo } from 'react';
 
-import { ICardFile } from '../../api/types';
+import { ICardSampleViewProps } from '../types';
 import styles from './index.module.scss';
-
-interface IGistCardProps {
-  title?: string;
-  files?: ICardFile[];
-}
 
 const { Paragraph, Text } = Typography;
 
-function GistCard(props: IGistCardProps) {
-  const { title, files } = props;
+function SampleView(props: ICardSampleViewProps) {
+  const { title, files } = props.data;
   return (
-    <Typography>
+    <Typography className={styles.sampleView}>
       {title && (
         <Paragraph
           className={classnames(!files?.length && styles.singleLineTitle)}>
@@ -31,4 +26,4 @@ function GistCard(props: IGistCardProps) {
   );
 }
 
-export default memo(GistCard);
+export default memo(SampleView);

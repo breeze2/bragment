@@ -6,12 +6,10 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { ECardType, ICard } from '../../api/types';
+import { ICard } from '../../api/types';
+import { getCardComponent } from '../../cards';
 import { cardActions, useReduxDispatch } from '../../redux';
-import GistCard from './GistCard';
 import styles from './index.module.scss';
-import LinkCard from './LinkCard';
-import NoteCard from './NoteCard';
 
 interface ICardProps {
   data: ICard;
@@ -19,22 +17,9 @@ interface ICardProps {
 }
 
 function renderContent(data: ICard) {
-  switch (data.type) {
-    case ECardType.NOTE:
-      return <NoteCard content={data.content} title={data.title} />;
-    case ECardType.GIST:
-      return <GistCard title={data.title} files={data.files} />;
-    case ECardType.LINK:
-      return (
-        <LinkCard
-          link={data.link || ''}
-          title={data.title}
-          image={data.image}
-        />
-      );
-    default:
-      return <>{data.title}</>;
-  }
+  const CardComponent = getCardComponent(data.type);
+  const SampleView = CardComponent?.SampleView;
+  return SampleView ? <SampleView data={data} /> : <>{data.title}</>;
 }
 
 function Card(props: ICardProps) {
@@ -56,7 +41,7 @@ function Card(props: ICardProps) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <AntdCard hoverable bordered={false} onClick={handleClick}>
-            <div className={styles.content}>{content}</div>
+            <div className={styles.body}>{content}</div>
           </AntdCard>
         </div>
       )}

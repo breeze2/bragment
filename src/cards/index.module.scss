@@ -1,0 +1,6 @@
+@mixin editable {
+  &:hover,
+  &:focus-within {
+    background-color: rgba(0, 0, 0, 0.018);
+  }
+}

@@ -1,11 +1,6 @@
 import { EntityState } from '@reduxjs/toolkit';
-import {
-  ECardType,
-  IBoard,
-  ICard,
-  IColumn,
-  IUnsplashPhoto,
-} from '../api/types';
+import { IBoard, ICard, IColumn, IUnsplashPhoto } from '../api/types';
+import { ELanguage } from '../i18n/types';
 
 // constants
 export const AUTHENTICATING = 'AUTHENTICATING';
@@ -34,7 +29,7 @@ export enum EReduxThunkErrorMessage {
 
 // interfaces
 export interface ICommonState {
-  language: string;
+  language: ELanguage;
   onLine: boolean;
   theme: EAppTheme;
 }
@@ -72,7 +67,7 @@ export interface IColumnExtraState {
 export type ICardState = EntityState<ICard> & ICardExtraState;
 
 export interface ICardExtraState {
-  createAsType: ECardType;
+  createAsType: string;
   createDialogVisible: boolean;
   createForColumnId?: string;
   currentId?: string;

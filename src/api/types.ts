@@ -1,6 +1,9 @@
 import firebase from 'firebase';
 
 // constants
+export { CARD_TYPE as NOTE_CARD_TYPE } from '../cards/NoteCard/types';
+export { CARD_TYPE as LINK_CARD_TYPE } from '../cards/LinkCard/types';
+
 export enum EDatabaseErrorMessage {
   BOARD_NOT_EXISTED = 'BOARD_NOT_EXISTED',
   BOARD_EXPIRED_DATA = 'BOARD_EXPIRED_DATA',
@@ -31,14 +34,6 @@ export enum EBoardPolicy {
 export enum EBoardMemberRole {
   OWNER = 'OWNER',
   NORMAL = 'NORMAL',
-}
-
-export enum ECardType {
-  GIST = 'GIST',
-  LINK = 'LINK',
-  NOTE = 'NOTE',
-  POST = 'POST',
-  TODO = 'TODO',
 }
 
 // interfaces
@@ -119,5 +114,6 @@ export interface ICard extends IBaseDocument {
   link?: string;
   archived: boolean;
   tags: string[];
-  type: ECardType;
+  meta?: any;
+  type: string;
 }

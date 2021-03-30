@@ -4,26 +4,25 @@ import { Button, Card, Form, Input } from 'antd';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import classnames from 'classnames';
 import { getClassWithColor } from 'file-icons-js';
-import { memo, ChangeEvent as ReactChangeEvent, useState } from 'react';
+import { memo, ChangeEvent as ReactChangeEvent, useRef, useState } from 'react';
 
-import {
-  DEFAULT_LANGUAGE,
-  detectLanguageByFileName,
-} from '../../../api/editor';
-import { useFormatMessage } from '../../../components/hooks';
-import styles from '../index.module.scss';
+import { DEFAULT_LANGUAGE, detectLanguageByFileName } from '../../api/editor';
+import { useCardFormatMessage } from '../helpers';
 import GistCodeEditor from './CodeEditor';
+import styles from './index.module.scss';
+import { CARD_TYPE, IGistCardFormatMessages } from './types';
 
-export interface IGistFileFieldProps {
+export interface IFileFieldProps {
   field: FormListFieldData;
   deletable?: boolean;
   onDelete?: () => void;
 }
 
-function GistFileField(props: IGistFileFieldProps) {
+function FileField(props: IFileFieldProps) {
   const { deletable, field, onDelete } = props;
-  const f = useFormatMessage();
   const defaultFileIconClassName = 'default-icon dark-blue';
+  const f = useCardFormatMessage<IGistCardFormatMessages>(CARD_TYPE);
+  const inputRef = useRef<Input>(null);
   const [fileIconClassName, setFileIconClassName] = useState<string>(
     defaultFileIconClassName
   );
@@ -35,15 +34,19 @@ function GistFileField(props: IGistFileFieldProps) {
     setFileIconClassName(className || defaultFileIconClassName);
     setLanguage(detectLanguageByFileName(value) || DEFAULT_LANGUAGE);
   };
+  const handleEmptyExtraClick = () => {
+    inputRef.current?.focus();
+  };
 
   return (
     <Card
-      className={styles.gistFileField}
+      className={styles.fileField}
       title={
         <Form.Item
           name={[field.name, 'name']}
           fieldKey={[field.fieldKey, 'name']}>
           <Input
+            ref={inputRef}
             bordered={false}
             className={styles.fileNameInput}
             onChange={handleFileNameChange}
@@ -65,7 +68,7 @@ function GistFileField(props: IGistFileFieldProps) {
             danger
           />
         ) : (
-          <span />
+          <div className={styles.emptyExtra} onClick={handleEmptyExtraClick} />
         )
       }>
       <Form.Item
@@ -77,4 +80,4 @@ function GistFileField(props: IGistFileFieldProps) {
   );
 }
 
-export default memo(GistFileField);
+export default memo(FileField);

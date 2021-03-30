@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { asyncCreateCard, asyncFetchCards } from '../api/database/card';
-import { ECardType, ICard } from '../api/types';
+import { ICard, LINK_CARD_TYPE, NOTE_CARD_TYPE } from '../api/types';
 import { checkIfHttpUrl, checkIfSingleLine } from '../utils';
 import { ICardExtraState } from './types';
 
@@ -26,13 +26,13 @@ const thunks = {
       const data: Parameters<typeof asyncCreateCard>[0] = { boardId, columnId };
       if (checkIfHttpUrl(options.content)) {
         data.link = content;
-        data.type = ECardType.LINK;
+        data.type = LINK_CARD_TYPE;
       } else if (checkIfSingleLine(content)) {
         data.title = content;
-        data.type = ECardType.NOTE;
+        data.type = NOTE_CARD_TYPE;
       } else {
         data.content = content;
-        data.type = ECardType.NOTE;
+        data.type = NOTE_CARD_TYPE;
       }
       const card = await asyncCreateCard(data);
       return card;
@@ -60,19 +60,19 @@ const slice = createSlice({
   name: 'card',
   initialState: adapter.getInitialState<ICardExtraState>({
     createDialogVisible: false,
-    createAsType: ECardType.NOTE,
+    createAsType: NOTE_CARD_TYPE,
     createForColumnId: undefined,
     currentId: undefined,
     loading: false,
   }),
   reducers: {
     showCreateDialog: {
-      prepare(columnId: string, type: ECardType) {
+      prepare(columnId: string, type: string) {
         return { payload: { columnId, type } };
       },
       reducer(
         state,
-        action: PayloadAction<{ columnId: string; type: ECardType }>
+        action: PayloadAction<{ columnId: string; type: string }>
       ) {
         const { columnId, type } = action.payload;
         state.createForColumnId = columnId;
