@@ -1,17 +1,14 @@
 import { memo, useEffect, useRef } from 'react';
-import {
-  createMonacoEditor,
-  setMonacoEditorLanguage,
-} from '../../../api/editor';
-import styles from '../index.module.scss';
+import { createMonacoEditor, setMonacoEditorLanguage } from '../../api/editor';
+import styles from './index.module.scss';
 
-export interface IGistCodeEditor {
+export interface ICodeEditor {
   language: string;
   value?: string;
   onChange?: (value: string) => void;
 }
 
-function GistCodeEditor(props: IGistCodeEditor) {
+function CodeEditor(props: ICodeEditor) {
   const { language, value, onChange } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<ReturnType<typeof createMonacoEditor> | null>(null);
@@ -47,7 +44,7 @@ function GistCodeEditor(props: IGistCodeEditor) {
     }
   }, [language]);
 
-  return <div className={styles.gistCodeEditor} ref={containerRef} />;
+  return <div className={styles.codeEditor} ref={containerRef} />;
 }
 
-export default memo(GistCodeEditor);
+export default memo(CodeEditor);

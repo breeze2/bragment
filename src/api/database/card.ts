@@ -1,5 +1,10 @@
 import { arrayUnion, firestore, serverTimestamp } from '../firebase';
-import { ECardType, EDatabaseErrorMessage, EDataTable, ICard } from '../types';
+import {
+  EDatabaseErrorMessage,
+  EDataTable,
+  ICard,
+  NOTE_CARD_TYPE,
+} from '../types';
 import {
   documentTimestampToNumber,
   generateUUID,
@@ -34,7 +39,7 @@ export async function asyncCreateCard(
     id: generateUUID(),
     userId,
     tags: [],
-    type: ECardType.NOTE,
+    type: NOTE_CARD_TYPE,
     archived: false,
     createdAt: timestamp,
     updatedAt: timestamp,

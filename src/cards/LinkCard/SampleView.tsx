@@ -1,16 +1,11 @@
 import { Typography } from 'antd';
 import { memo } from 'react';
-
-interface ILinkCardProps {
-  link: string;
-  image?: string;
-  title?: string;
-}
+import { ICardSampleViewProps } from '../types';
 
 const { Link } = Typography;
 
-function LinkCard(props: ILinkCardProps) {
-  const { link } = props;
+function SampleView(props: ICardSampleViewProps) {
+  const { link } = props.data;
   return (
     <Typography>
       <Link href={link} target="_blank">
@@ -20,4 +15,4 @@ function LinkCard(props: ILinkCardProps) {
   );
 }
 
-export default memo(LinkCard);
+export default memo(SampleView);

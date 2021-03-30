@@ -1,0 +1,8 @@
+{
+  "addGistCard": "添加一张 gist 卡片",
+  "addGistTitle": "添加 gist 标题",
+  "createGistCard": "创建 gist 卡片",
+  "fileName": "文件名称",
+  "gistFileContentIsRequired": "Gist 内容不能为空",
+  "gistTitleIsRequired": "Gist 标题不能为空"
+}

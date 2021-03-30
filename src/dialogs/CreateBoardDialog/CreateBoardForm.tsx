@@ -17,26 +17,26 @@ import { preloadImage } from '../../utils';
 import BackgroundPopover, { ISelectedBackground } from './BackgroundPopover';
 import styles from './index.module.scss';
 
-interface IBoardFormData {
+interface ICreateBoardFormData {
   title: string;
   groupId: string;
   policy: EBoardPolicy;
 }
 
-interface IBoardFormProps {
+interface ICreateBoardFormProps {
   background: ISelectedBackground;
   onFinish?: () => void;
   onBackgroundChange?: (bg: ISelectedBackground) => void;
 }
 
-function BoardForm(props: IBoardFormProps) {
+function CreateBoardForm(props: ICreateBoardFormProps) {
   const { background, onFinish, onBackgroundChange } = props;
   const f = useFormatMessage();
-  const [form] = Form.useForm<IBoardFormData>();
+  const [form] = Form.useForm<ICreateBoardFormData>();
   const [submitting, setSubmitting] = useState(false);
   const [bgPopoverVisible, setBgPopoverVisible] = useState(false);
   const asyncDispatch = useReduxAsyncDispatch();
-  const initialFormValues = useMemo<IBoardFormData>(
+  const initialFormValues = useMemo<ICreateBoardFormData>(
     () => ({
       title: '',
       groupId: EBoardType.PERSONAL,
@@ -150,4 +150,4 @@ function BoardForm(props: IBoardFormProps) {
   );
 }
 
-export default memo(BoardForm);
+export default memo(CreateBoardForm);

@@ -18,7 +18,7 @@ import {
 } from '../../redux';
 import { preloadImage } from '../../utils';
 import { ISelectedBackground } from './BackgroundPopover';
-import BoardForm from './BoardForm';
+import CreateBoardForm from './CreateBoardForm';
 import styles from './index.module.scss';
 
 export interface ICreateBoardDialogProps {
@@ -74,7 +74,7 @@ function CreateBoardDialog(props: ICreateBoardDialogProps) {
       onCancel={handleClose}
       bodyStyle={bodyStyle}>
       <div className={styles.body}>
-        <BoardForm
+        <CreateBoardForm
           background={background}
           onBackgroundChange={setBackground}
           onFinish={handleFinish}

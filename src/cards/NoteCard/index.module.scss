@@ -1,0 +1,24 @@
+.sampleView {
+  .singleLineContent {
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .singleLineTitle {
+    margin-bottom: 0;
+  }
+
+  .content {
+    ul li {
+      input[type='checkbox'] {
+        margin-right: 6px;
+        cursor: pointer;
+        position: relative;
+        top: 2px;
+        height: 14px;
+        width: 14px;
+      }
+    }
+  }
+}

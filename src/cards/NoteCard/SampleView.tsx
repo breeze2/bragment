@@ -5,21 +5,17 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 
 import { checkIfSingleLine } from '../../utils';
+import { ICardSampleViewProps } from '../types';
 import styles from './index.module.scss';
-
-interface INoteCardProps {
-  title?: string;
-  content?: string;
-}
 
 const { Paragraph, Text } = Typography;
 
-function NoteCard(props: INoteCardProps) {
-  const { title, content } = props;
+function SampleView(props: ICardSampleViewProps) {
+  const { title, content } = props.data;
   const isSingleLineTitle = !content && title && checkIfSingleLine(title);
   const isSingleLineContent = !title && content && checkIfSingleLine(content);
   return (
-    <Typography>
+    <Typography className={styles.sampleView}>
       {title && (
         <Paragraph
           className={classnames(isSingleLineTitle && styles.singleLineTitle)}>
@@ -29,7 +25,7 @@ function NoteCard(props: INoteCardProps) {
       {content && (
         <ReactMarkdown
           className={classnames(
-            styles.note,
+            styles.content,
             isSingleLineContent && styles.singleLineContent
           )}
           plugins={[gfm]}
@@ -40,4 +36,4 @@ function NoteCard(props: INoteCardProps) {
   );
 }
 
-export default memo(NoteCard);
+export default memo(SampleView);
