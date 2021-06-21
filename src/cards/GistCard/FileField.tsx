@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { getClassWithColor } from 'file-icons-js';
 import { memo, ChangeEvent as ReactChangeEvent, useRef, useState } from 'react';
 
-import { DEFAULT_LANGUAGE, detectLanguageByFileName } from '../../api/editor';
+import { detectFileExtension } from '../../api/coditor';
 import { useCardFormatMessage } from '../helpers';
 import GistCodeEditor from './CodeEditor';
 import styles from './index.module.scss';
@@ -17,6 +17,7 @@ export interface IFileFieldProps {
   deletable?: boolean;
   onDelete?: () => void;
 }
+const DEFAULT_FILE_EXTENSION = '.md';
 
 function FileField(props: IFileFieldProps) {
   const { deletable, field, onDelete } = props;
@@ -26,13 +27,15 @@ function FileField(props: IFileFieldProps) {
   const [fileIconClassName, setFileIconClassName] = useState<string>(
     defaultFileIconClassName
   );
-  const [language, setLanguage] = useState<string>(DEFAULT_LANGUAGE);
+  const [fileExtension, setFileExtension] = useState<string>(
+    DEFAULT_FILE_EXTENSION
+  );
 
   const handleFileNameChange = (event: ReactChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const className = getClassWithColor(value);
     setFileIconClassName(className || defaultFileIconClassName);
-    setLanguage(detectLanguageByFileName(value) || DEFAULT_LANGUAGE);
+    setFileExtension(detectFileExtension(value) || DEFAULT_FILE_EXTENSION);
   };
   const handleEmptyExtraClick = () => {
     inputRef.current?.focus();
@@ -74,7 +77,7 @@ function FileField(props: IFileFieldProps) {
       <Form.Item
         name={[field.name, 'content']}
         fieldKey={[field.fieldKey, 'content']}>
-        <GistCodeEditor language={language} />
+        <GistCodeEditor fileExtension={fileExtension} />
       </Form.Item>
     </Card>
   );

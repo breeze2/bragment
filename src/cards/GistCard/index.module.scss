@@ -40,9 +40,12 @@
 .fileField {
   border: 1px solid #ddd;
   border-radius: 2px;
-  margin-bottom: 22px;
+
   .fileNameInput {
     padding-right: 0;
+  }
+  &:global(.ant-card) {
+    margin-bottom: 22px;
   }
   :global {
     .ant-card-head-title,
@@ -57,7 +60,7 @@
       @include editable;
       min-height: 36px;
       padding: 0;
-      border-bottom: 1px solid #ddd;
+      // border-bottom: 1px solid #ddd;
       margin-bottom: 0;
     }
     .ant-input-prefix {
@@ -80,8 +83,18 @@
 .codeEditor {
   height: 320px;
   :global {
-    .scrollbar .slider {
-      border-radius: 4px;
+    .cm-editor {
+      height: 100%;
+      outline: none;
+      .cm-gutters {
+        border-right: none;
+        .cm-lineNumbers .cm-gutterElement {
+          min-width: 25px;
+        }
+      }
+      .cm-content {
+        user-select: text;
+      }
     }
   }
 }
