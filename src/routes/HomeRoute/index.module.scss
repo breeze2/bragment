@@ -3,26 +3,7 @@
   .container {
     padding: calc(var(--header-height) + 16px) 16px 36px 16px;
   }
-
-  .boardList {
-    display: block;
+  .boardCreatorWrapper {
     margin-bottom: 20px;
-    :global {
-      .ant-row {
-        margin: -6px -6px 6px;
-      }
-      .ant-col {
-        padding: 6px;
-      }
-    }
-  }
-
-  .boardListLabel {
-    display: block;
-    :global {
-      .anticon {
-        margin-right: 4px;
-      }
-    }
   }
 }

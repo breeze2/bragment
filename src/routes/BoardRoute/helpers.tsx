@@ -15,7 +15,7 @@ export function getColumnPlaceholder() {
 
 export function getColumnWrapper(index: number) {
   return document.querySelector<HTMLDivElement>(
-    `.${columnStyles.wrapper}:nth-of-type(${index + 2})`
+    `.${columnStyles.wrapper}[data-rdb-draggable-index="${index}"]`
   );
 }
 
@@ -51,7 +51,7 @@ export function getCardWrapperInColumnContainer(
   index: number
 ) {
   return container.querySelector<HTMLDivElement>(
-    `.${cardStyles.wrapper}:nth-of-type(${index + 2})`
+    `.${cardStyles.wrapper}[data-rdb-draggable-index="${index}"]`
   );
 }
 
