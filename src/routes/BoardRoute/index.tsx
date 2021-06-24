@@ -11,11 +11,9 @@ import {
 } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { RouteComponentProps } from 'react-router-dom';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { IColumn } from '../../api/types';
-import Column from '../../components/Column';
 import ColumnCreator from '../../components/Column/Creator';
+import ColumnList from '../../components/Column/List';
 import CreateCardDialog from '../../dialogs/CreateCardDialog';
 import {
   boardActions,
@@ -56,6 +54,9 @@ function BoardRoute(props: IBoardRouteProps) {
   const isSignedIn = useReduxSelector(selectUserSignedIn);
   const columnEntities = useReduxSelector(selectColumnEntities);
   const currentBoard = boardId ? boardEntities[boardId] : undefined;
+  const currentColumnIds = currentBoard
+    ? currentBoard.columnOrder.filter((columnId) => columnEntities[columnId])
+    : undefined;
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
@@ -183,22 +184,9 @@ function BoardRoute(props: IBoardRouteProps) {
                 )}
                 {...provided.droppableProps}>
                 <div className={styles.columnPlaceholder} />
-                <TransitionGroup component={null}>
-                  {currentBoard?.columnOrder
-                    .filter((columnId) => columnEntities[columnId])
-                    .map((columnId, index) => (
-                      <CSSTransition
-                        key={columnId}
-                        classNames="fade-right"
-                        timeout={500}>
-                        <Column
-                          key={columnId}
-                          index={index}
-                          data={columnEntities[columnId] as IColumn}
-                        />
-                      </CSSTransition>
-                    ))}
-                </TransitionGroup>
+                {currentColumnIds && (
+                  <ColumnList columnIds={currentColumnIds} />
+                )}
                 {provided.placeholder}
                 <div className={styles.actions}>
                   <ColumnCreator />

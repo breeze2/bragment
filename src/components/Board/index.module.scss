@@ -67,3 +67,29 @@
     }
   }
 }
+
+.boardList {
+  display: block;
+  margin-bottom: 20px;
+  :global {
+    .ant-row {
+      margin-left: -6px;
+      margin-right: -6px;
+      row-gap: 12px;
+    }
+    .ant-col {
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+  }
+}
+
+.boardListLabel {
+  display: block;
+  margin-bottom: 8px;
+  :global {
+    .anticon {
+      margin-right: 4px;
+    }
+  }
+}

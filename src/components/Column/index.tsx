@@ -64,6 +64,7 @@ function Column(props: IColumnProps) {
       ) => (
         <div
           className={classnames(styles.wrapper)}
+          data-rdb-draggable-index={index}
           ref={(ref) => {
             dragProvided.innerRef(ref);
             wrapperRef.current = ref;

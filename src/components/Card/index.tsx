@@ -36,8 +36,9 @@ function Card(props: ICardProps) {
     <Draggable draggableId={data.id} index={index}>
       {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
         <div
-          ref={provided.innerRef}
           className={styles.wrapper}
+          data-rdb-draggable-index={index}
+          ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <AntdCard hoverable bordered={false} onClick={handleClick}>

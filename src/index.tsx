@@ -7,7 +7,7 @@ import { store } from './redux';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-import './styles/index.scss';
+import './index.scss';
 
 initFirebase();
 
