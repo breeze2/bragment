@@ -1,16 +1,12 @@
 import { arrayUnion, firestore, serverTimestamp } from '../firebase';
-import {
-  EDatabaseErrorMessage,
-  EDataTable,
-  IColumn,
-  IFieldValueMap,
-} from '../types';
+import { IFieldValueMap } from '../firebase/types';
+import { EDatabaseErrorMessage, EDataTable, IColumn } from './types';
 import {
   checkStringArrayEqual,
   documentTimestampToNumber,
   generateUUID,
   getCurrentUserId,
-} from '../utils';
+} from './utils';
 
 export async function asyncFetchColumns(boardId: string) {
   const querySnapshot = await firestore()

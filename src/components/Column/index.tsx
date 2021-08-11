@@ -13,7 +13,7 @@ import {
   Scrollbars,
 } from 'react-custom-scrollbars';
 
-import { ICard, IColumn } from '../../api/types';
+import { ICard, IColumn } from '../../api/database/types';
 import { selectCardEntities, useReduxSelector } from '../../redux';
 import { APP_HEADER_HEIGHT } from '../../redux/types';
 import Card from '../Card';

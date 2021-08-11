@@ -11,7 +11,7 @@ import {
   asyncFetchBoard,
   // boardComparatorByTimestamp,
 } from '../api/database/board';
-import { EBoardPolicy, EBoardType, IBoard } from '../api/types';
+import { EBoardPolicy, EBoardType, IBoard } from '../api/database/types';
 import { getRandomPhoto } from '../api/unsplash';
 import {
   getLocalRecentlyBoardIds,

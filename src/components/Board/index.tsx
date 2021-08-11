@@ -1,6 +1,6 @@
 import { Card as AntdCard } from 'antd';
 import { memo } from 'react';
-import { IBoard } from '../../api/types';
+import { IBoard } from '../../api/database/types';
 import BoardBackground from './Background';
 import styles from './index.module.scss';
 

@@ -1,5 +1,6 @@
 import { EntityState } from '@reduxjs/toolkit';
-import { IBoard, ICard, IColumn, IUnsplashPhoto } from '../api/types';
+import { IBoard, ICard, IColumn } from '../api/database/types';
+import { IUnsplashPhoto } from '../api/unsplash/types';
 import { ELanguage } from '../i18n/types';
 
 // constants

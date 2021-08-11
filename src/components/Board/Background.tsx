@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import ProgressiveImage from 'react-progressive-image';
-import { IBoard } from '../../api/types';
+import { IBoard } from '../../api/database/types';
 import { getSmallUrl, getThumbUrl } from '../../api/unsplash';
 import styles from './index.module.scss';
 

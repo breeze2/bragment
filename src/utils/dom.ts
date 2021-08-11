@@ -3,6 +3,7 @@ export function preloadImage(source: string) {
   preloadLink.href = source;
   preloadLink.rel = 'preload';
   preloadLink.as = 'image';
+  preloadLink.crossOrigin = 'anonymous';
   document.head.appendChild(preloadLink);
 }
 

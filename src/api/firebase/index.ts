@@ -1,8 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { IUpdateDataGroup } from '../types';
 import config from './config';
+import { IUpdateDataGroup } from './types';
 
 export const firebaseApp = firebase.initializeApp(config);
 

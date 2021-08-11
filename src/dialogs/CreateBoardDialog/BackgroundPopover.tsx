@@ -2,7 +2,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Col, Popover, Row } from 'antd';
 import { memo, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
 
-import { IUnsplashPhoto } from '../../api/types';
+import { IUnsplashPhoto } from '../../api/unsplash/types';
 import {
   selectStandbyBoardBgColors,
   selectStandbyBoardBgImages,

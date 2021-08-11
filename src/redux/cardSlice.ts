@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { asyncCreateCard, asyncFetchCards } from '../api/database/card';
-import { ICard, LINK_CARD_TYPE, NOTE_CARD_TYPE } from '../api/types';
+import { ICard, LINK_CARD_TYPE, NOTE_CARD_TYPE } from '../api/database/types';
 import { checkIfHttpUrl, checkIfSingleLine } from '../utils';
 import { ICardExtraState } from './types';
 

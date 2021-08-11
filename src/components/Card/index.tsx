@@ -6,7 +6,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { ICard } from '../../api/types';
+import { ICard } from '../../api/database/types';
 import { getCardComponent } from '../../cards';
 import { cardActions, useReduxDispatch } from '../../redux';
 import styles from './index.module.scss';

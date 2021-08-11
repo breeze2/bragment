@@ -1,5 +1,5 @@
 import type { FormInstance } from 'antd';
-import type { ICard, ICardFile } from '../api/types';
+import type { ICard, ICardFile } from '../api/database/types';
 
 export interface ICardSampleViewProps {
   data: ICard;

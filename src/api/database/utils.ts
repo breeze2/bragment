@@ -1,5 +1,5 @@
 import { v4 as UUID4 } from 'uuid';
-import { auth, timestampToNumber } from './firebase';
+import { auth, timestampToNumber } from '../firebase';
 import { EDatabaseErrorMessage, IBaseDocument } from './types';
 
 export function generateUUID() {

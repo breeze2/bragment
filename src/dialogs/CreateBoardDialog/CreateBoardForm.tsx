@@ -10,7 +10,7 @@ import { Button, Form, Input, Select } from 'antd';
 import classnames from 'classnames';
 import { memo, useCallback, useMemo, useState } from 'react';
 
-import { EBoardPolicy, EBoardType, IBoard } from '../../api/types';
+import { EBoardPolicy, EBoardType, IBoard } from '../../api/database/types';
 import { useFormatMessage } from '../../components/hooks';
 import { boardThunks, useReduxAsyncDispatch } from '../../redux';
 import { preloadImage } from '../../utils';
