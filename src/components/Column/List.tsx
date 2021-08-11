@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { a, useTrail } from 'react-spring';
-import { IColumn } from '../../api/types';
+import { a, config, useTrail } from 'react-spring';
+import { IColumn } from '../../api/database/types';
 import { selectColumnEntities, useReduxSelector } from '../../redux';
 import Column from './index';
 
@@ -12,6 +12,7 @@ function ColumnList(props: IColumnListProps) {
   const { columnIds } = props;
   const columnEntities = useReduxSelector(selectColumnEntities);
   const trail = useTrail(columnIds.length, {
+    config: { ...config.gentle, duration: config.gentle.tension },
     delay: 120,
     opacity: 1,
     x: '0%',

@@ -1,4 +1,4 @@
-import { EBoardType, IBoard, IColumn } from '../api/types';
+import { EBoardType, IBoard, IColumn } from '../api/database/types';
 import { boardSelectors } from './boardSlice';
 import { cardSelectors } from './cardSlice';
 import { columnSelectors } from './columnSlice';

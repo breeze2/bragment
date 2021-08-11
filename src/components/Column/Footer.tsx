@@ -4,7 +4,7 @@ import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import classnames from 'classnames';
 import { memo, useLayoutEffect, useRef, useState } from 'react';
 
-import { IColumn } from '../../api/types';
+import { IColumn } from '../../api/database/types';
 import { cardThunks, useReduxAsyncDispatch } from '../../redux';
 import { useFormatMessage } from '../hooks';
 import FooterDropdown from './FooterDropdown';

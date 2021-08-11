@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
-import { IColumn } from '../../api/types';
+import { IColumn } from '../../api/database/types';
 import { columnThunks, useReduxAsyncDispatch } from '../../redux';
 import { EReduxThunkErrorMessage } from '../../redux/types';
 import { useFormatMessage } from '../hooks';

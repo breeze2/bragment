@@ -1,15 +1,15 @@
 import { arrayUnion, firestore, serverTimestamp } from '../firebase';
 import {
+  DEFAULT_CARD_TYPE,
   EDatabaseErrorMessage,
   EDataTable,
   ICard,
-  NOTE_CARD_TYPE,
-} from '../types';
+} from './types';
 import {
   documentTimestampToNumber,
   generateUUID,
   getCurrentUserId,
-} from '../utils';
+} from './utils';
 
 export async function asyncFetchCards(boardId: string) {
   const querySnapshot = await firestore()
@@ -39,7 +39,7 @@ export async function asyncCreateCard(
     id: generateUUID(),
     userId,
     tags: [],
-    type: NOTE_CARD_TYPE,
+    type: DEFAULT_CARD_TYPE,
     archived: false,
     createdAt: timestamp,
     updatedAt: timestamp,

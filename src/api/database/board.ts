@@ -4,6 +4,7 @@ import {
   serverTimestamp,
   timestampToNumber,
 } from '../firebase';
+import { IFieldValueMap } from '../firebase/types';
 import {
   EBoardMemberRole,
   EBoardPolicy,
@@ -11,14 +12,13 @@ import {
   EDatabaseErrorMessage,
   EDataTable,
   IBoard,
-  IFieldValueMap,
-} from '../types';
+} from './types';
 import {
   checkStringArrayEqual,
   documentTimestampToNumber,
   generateUUID,
   getCurrentUserId,
-} from '../utils';
+} from './utils';
 
 export function boardComparatorByTimestamp(
   ts: 'createdAt' | 'updatedAt',
@@ -49,15 +49,22 @@ export async function asyncFetchAllBoards() {
 
 export async function asyncFetchBoard(boardId: string) {
   const boardRef = firestore().collection(EDataTable.BOARD).doc(boardId);
-  return firestore().runTransaction(async (transaction) => {
-    const boardDoc = await transaction.get(boardRef);
-    if (!boardDoc.exists) {
-      throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
-    }
-    const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
-    documentTimestampToNumber(board);
-    return board;
-  });
+  const boardDoc = await boardRef.get();
+  if (!boardDoc.exists) {
+    throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
+  }
+  const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
+  documentTimestampToNumber(board);
+  return board;
+  // return firestore().runTransaction(async (transaction) => {
+  //   const boardDoc = await transaction.get(boardRef);
+  //   if (!boardDoc.exists) {
+  //     throw new Error(EDatabaseErrorMessage.BOARD_NOT_EXISTED);
+  //   }
+  //   const board = boardDoc.data({ serverTimestamps: 'estimate' }) as IBoard;
+  //   documentTimestampToNumber(board);
+  //   return board;
+  // });
 }
 
 export async function asyncUpdateBoard(

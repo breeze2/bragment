@@ -1,8 +1,9 @@
-import firebase from 'firebase';
+import { ITimeStamp } from '../firebase/types';
 
 // constants
-export { CARD_TYPE as NOTE_CARD_TYPE } from '../cards/NoteCard/types';
-export { CARD_TYPE as LINK_CARD_TYPE } from '../cards/LinkCard/types';
+export const NOTE_CARD_TYPE = 'NOTE';
+export const LINK_CARD_TYPE = 'LINK';
+export const DEFAULT_CARD_TYPE = NOTE_CARD_TYPE;
 
 export enum EDatabaseErrorMessage {
   BOARD_NOT_EXISTED = 'BOARD_NOT_EXISTED',
@@ -37,35 +38,6 @@ export enum EBoardMemberRole {
 }
 
 // interfaces
-export type IFieldValueMap = {
-  [key: string]: firebase.firestore.FieldValue;
-};
-
-export type IUpdateDataGroup<T> = {
-  id: string;
-  data: Partial<T> | IFieldValueMap;
-}[];
-
-export interface IUnsplashPhoto {
-  id: string;
-  color: string;
-  links: {
-    download: string;
-  };
-  urls: {
-    raw: string;
-    full: string;
-    small: string;
-    thumb: string;
-    regular: string;
-  };
-}
-
-type ITimeStamp =
-  | number
-  | firebase.firestore.Timestamp
-  | firebase.firestore.FieldValue;
-
 type IBoardMemberShip = Record<string, EBoardMemberRole>;
 
 export interface IBaseDocument {

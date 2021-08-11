@@ -1,7 +1,7 @@
 import { memo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { a, useTrail } from 'react-spring';
-import { IBoard } from '../../api/types';
+import { a, config, useTrail } from 'react-spring';
+import { IBoard } from '../../api/database/types';
 import styles from './index.module.scss';
 import Board from './index';
 
@@ -14,6 +14,7 @@ interface IBoardListProps {
 function BoardList(props: IBoardListProps) {
   const { boards, icon, label } = props;
   const trail = useTrail(boards.length, {
+    config: { ...config.gentle, duration: config.gentle.tension },
     delay: 120,
     opacity: 1,
     x: '0%',

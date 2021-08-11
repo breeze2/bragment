@@ -1,4 +1,4 @@
-import { auth } from './firebase';
+import { auth } from '../firebase';
 
 export function asyncSignIn(email: string, password: string) {
   return auth().signInWithEmailAndPassword(email, password);

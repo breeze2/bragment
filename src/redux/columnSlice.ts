@@ -10,7 +10,7 @@ import {
   asyncFetchColumns,
   asyncUpdateColumn,
 } from '../api/database/column';
-import { IColumn } from '../api/types';
+import { IColumn } from '../api/database/types';
 import { cardThunks } from './cardSlice';
 import {
   EReduxThunkErrorMessage,
